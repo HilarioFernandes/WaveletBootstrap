@@ -2,7 +2,7 @@
 
 > Quasi U-statistics for wavelet variance estimation; bootstrap inference; applications: standard error, CIs, changepoint detection, clustering of stationary time series.
 
-This repository contains the full source code and text for the PhD thesis:
+This repository contains the full source code and research methodology for the PhD thesis:
 **"Quase U-estatísticas: Representação, Classificação e Detecção de Mudanças"**
 *(Quasi U-statistics: Representation, Classification and Change-point Detection)*
 
@@ -11,43 +11,56 @@ This repository contains the full source code and text for the PhD thesis:
 *   **Institution:** IMECC – Unicamp, 2024
 *   **Thesis PDF:** [View via Repositório Unicamp](https://hdl.handle.net/20.500.12733/41334)
 
+---
+
 ## 📂 Repository Structure
 
-The project is divided into two primary environments:
+The project is organized into the following core directories:
 
+- `src/`: Standardized R scripts for simulations, library functions, and real-data applications.
+- `Dados/`: (Optional) Raw data directory. *Note: Some proprietary datasets are excluded for licensing reasons.*
+
+## 🛠️ Getting Started
+
+### Prerequisites
+The implementation relies on several R packages for time series analysis and wavelets:
+```r
+install.packages(c("ltsa", "fracdiff", "waveslim", "multitaper", "fossil", "TSclust", "cluster", "dplyr", "imputeTS", "grDevices"))
 ```
-WaveletBootstrap/
-├── src/           # R scripts used to generate simulations and results
-└── Tese/          # Full LaTeX source for the final thesis document
-```
 
-## 🛠️ How to Run (`src/`)
+### ⚠️ Critical Configuration: `BASE_PATH`
+To ensure file I/O works seamlessly across different machines, every script in `src/` uses a global `BASE_PATH` variable. 
 
-The implementation heavily utilizes core time series and wavelet functionalities.
-**Required R packages:** `ltsa`, `fracdiff`, `waveslim`, `multitaper`, `fossil`, `TSclust`, `cluster`, `dplyr`.
-
-### ⚠️ IMPORTANT: Path Setup
-Every single R script requires a variable called `BASE_PATH` to be correctly pointed to this cloned repository's root directory on your local machine.
+**Before running any script, set this variable at the top of the file to point to your local clone of this repository:**
 
 ```r
 # Example:
 BASE_PATH <- "C:/Users/YourUser/Projects/WaveletBootstrap"
 ```
-Place this definition at the top of any script before you execute it, ensuring all imports and `source()` calls resolve successfully.
 
-### Script Dependency Map
+---
 
-Scripts in the `src/` directory are numerically serialized. Some define reusable capabilities, while others apply them towards specific simulation tests or real-world datasets:
-*   `1_*.R`, `2_*.R`, `7_*.R`, `10_*.R`: Foundational **library scripts**. Run these to load models, bootstrap resamplers, and quasi-U methods.
-*   The remaining scripts are heavily parameterized simulations (`*_sim.R`, `*_resampling.R`) or studies plotting true inputs (`*_aplicacoes.R`). Note that these study components rely directly on the function scopes defined in the core libraries.
+## 📖 Script Guide (`src/`)
+
+The R scripts are numerically serialized according to the thesis chapters and logical dependencies:
+
+| Category | Scripts | Description |
+| :--- | :--- | :--- |
+| **Libraries** | `1_`, `2_`, `7_`, `10_` | Foundational functions (Simulations, Bootstrap methods, Quasi-U machinery). |
+| **Validation** | `3_`, `4_`, `5_` | Studies on bootstrap ordering, standard errors, and confidence intervals. |
+| **Analysis** | `6_`, `8_`, `9_` | Characteristic scales, resampling validation, and model comparisons. |
+| **Advanced** | `11_`, `12_` | Changepoint detection and time series clustering algorithms. |
+| **Utilities** | `0_` | General plotting and data visualization tools. |
+
+---
 
 ## 📊 Data Availability
 
-**Certain datasets used in this thesis are NOT INCLUDED in this repository.** This is due to proprietary licensures. However, all public equivalent sources and structural descriptors are properly credited within the chapters of the text itself. In `_aplicacoes.R` files, comments denote where custom files were inherently pulled.
+Certain datasets (*SPX Returns*) are not included due to license restrictions. Please refer to the thesis text for detailed data sources and methodology for reconstruction. Publicly available datasets are referenced within the respective `*_aplicacoes.R` scripts.
 
 ## 📜 Citation
 
-If you use code from this repository or cite the thesis directly, please use the following BibTeX format:
+If you use this code or cite the thesis research, please use:
 
 ```bibtex
 @phdthesis{araujo2024quase,

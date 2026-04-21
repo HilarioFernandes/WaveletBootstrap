@@ -220,7 +220,7 @@ multiple_comparison_fun <- function(data, alpha, B){
 
 #Interest rates data
 
-# interest_rates <- read.csv("C:/Users/Hilar/Downloads/Interest Rates/Interest_rates.csv", row.names = 1)
+# interest_rates <- read.csv(file.path(BASE_PATH, "Dados", "Interest Rates", "Interest_rates.csv"), row.names = 1)
 # 
 # plot(interest_rates[1:239,1], type = "l")
 # lines(interest_rates[1:239,2], col = "red")
