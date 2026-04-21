@@ -1,0 +1,15 @@
+.Rhistory
+*.RData
+.DS_Store
+Thumbs.db
+desktop.ini
+*.aux
+*.log
+*.out
+*.toc
+*.blg
+*.bbl
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+Tese/
