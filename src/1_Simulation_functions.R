@@ -19,6 +19,12 @@ library(ltsa)
 #install.packages("fracdiff")
 library(fracdiff)
 
+# Set and create output directory for plots
+library(grDevices)
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_modelos")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
+
 ################################################################################
 
 #' Number Formatting function
@@ -184,8 +190,8 @@ if (FALSE) {
 ################################################################################
 
 ## ---- Example plots ----
-## Wrap inline plotting under this test conditional to avoid side-effects on source()
-if (FALSE) {
+## Set to TRUE to enable plot generation on source, or run the block manually.
+if (TRUE) {
   
 set.seed(1)
 
@@ -198,7 +204,7 @@ YD <- Model_D_sim(128)
 
 {
   
-png(file=file.path(BASE_PATH, "Tese", "Plots_modelos", "Plotmodelos.png"),
+png(file=file.path(OUTPUT_PATH, "Plotmodelos.png"),
     width=1800, height=900, res =210)  
   
 par(mfrow = c(2, 2))
@@ -221,26 +227,26 @@ dev.off()
 
 #ACVS plot
 
-acvs_A <- sapply(0:79,acvs_A_fun)
-acvs_B <- sapply(0:79,acvs_B_fun)
-acvs_C <- sapply(0:79,acvs_C_fun)
-acvs_D <- acvs_D_fun(0.25, 79)
+acvs_A_plot <- sapply(0:79,acvs_A_fun)
+acvs_B_plot <- sapply(0:79,acvs_B_fun)
+acvs_C_plot <- sapply(0:79,acvs_C_fun)
+acvs_D_plot <- acvs_D_fun(0.25, 79)
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_modelos", "Plotacvss.png"),
+png(file=file.path(OUTPUT_PATH, "Plotacvss.png"),
     width=1800, height=900, res = 210)  
 
 par(mfrow = c(1, 1))
 par(mar = c(4, 4, 2, 1))
 {
-plot(1:80, acvs_B/acvs_B[1], type = "l", col = "grey", lty = "dashed",xlab = "Defasagem",
+plot(1:80, acvs_B_plot/acvs_B_plot[1], type = "l", col = "grey", lty = "dashed",xlab = "Defasagem",
      ylab = "Autocovariância",
      lwd = 1.5)
-lines(1:80, acvs_A/acvs_A[1], col = "black", lty = "dashed",
+lines(1:80, acvs_A_plot/acvs_A_plot[1], col = "black", lty = "dashed",
       lwd = 1.5)
-lines(1:80, acvs_C/acvs_C[1], col = "grey",
+lines(1:80, acvs_C_plot/acvs_C_plot[1], col = "grey",
       lwd = 1.5)
-lines(1:80, acvs_D/acvs_D[1], col = "black",
+lines(1:80, acvs_D_plot/acvs_D_plot[1], col = "black",
       lwd = 1.5)
 abline(h = 0, lty = "dotdash", col = "lightgrey",
        lwd = 1.5)
@@ -253,5 +259,5 @@ legend(70, 1, legend=c("(a)", "(b)", "(c)", "(d)"),
 dev.off()
 }
 
-} # End FALSE
+}
 

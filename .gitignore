@@ -13,3 +13,5 @@ desktop.ini
 *.fls
 *.fdb_latexmk
 Tese/
+Dados/
+Plots/

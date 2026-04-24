@@ -16,6 +16,11 @@ source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
 
 library(dplyr)
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_11")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
+
 B <- 1000
 alpha <- 0.05
 
@@ -56,7 +61,7 @@ jmax <- 3
 meter_indexes <- seq(350.1, by = 0.1, length.out = length(X_oceanshear))
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_11", "OceanShearApplication.png"), width=1800, height=900, res = 210)
+png(file=file.path(OUTPUT_PATH, "OceanShearApplication.png"), width=1800, height=900, res = 210)
 
 par(mar = c(4, 5, 2, 2), mfrow = c(1,1))
 plot(X_oceanshear, type = "l", xaxt = "n", xlab = "Profundidade (metros)",
@@ -145,7 +150,7 @@ block_length <- 128
 jmax <- 2
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_11", "CBOEApplication.png"), width=1800, height=900, res = 210)
+png(file=file.path(OUTPUT_PATH, "CBOEApplication.png"), width=1800, height=900, res = 210)
 par(mar = c(4, 4, 2, 2))
 plot(X_CBOE, type = "l", xaxt = "n", xlab = "Horário (hh:mm)", ylab = "Retorno",
      ylim= c(-0.001,0.001),
@@ -158,7 +163,7 @@ dev.off()
 }
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_11", "CBOEApplication2.png"), width=1800, height=900, res = 210)
+png(file=file.path(OUTPUT_PATH, "CBOEApplication2.png"), width=1800, height=900, res = 210)
   par(mar = c(4, 4, 2, 2))
 plot(CBOE_selection[1:2048,2], type = "l", xaxt = "n", xlab = "Horário (hh:mm)",
      ylab = "Valor (dólares)", 

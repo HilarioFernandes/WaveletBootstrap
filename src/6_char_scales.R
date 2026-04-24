@@ -15,6 +15,10 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
 ################################################################################
 
 #characteristic scales
@@ -790,7 +794,7 @@ wv_est_D <- wv_estimates(YD)
 
 
 {
-+ png(file=file.path(BASE_PATH, "Tese", "Plots_6", "Realizations.png"), width=1200, height=800, res = 150)
+  png(file=file.path(OUTPUT_PATH, "Realizations.png"), width=1200, height=800, res = 150)
 
 par(mfrow=c(2,2), mar = c(4.1, 4.1, 1.1, 2.1))
 

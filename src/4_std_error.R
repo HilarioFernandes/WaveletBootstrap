@@ -15,6 +15,11 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_4")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
+
 ################################################################################
 
 #multitaper estimation
@@ -327,7 +332,7 @@ col2 <- "lightgrey"
 ## ---- Model A ----
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "A_wv_std_2.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "A_wv_std_2.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(A.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.17), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -401,7 +406,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "A_wv_std_4.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "A_wv_std_4.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(A.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.17), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -475,7 +480,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "A_wv_std_8.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "A_wv_std_8.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(A.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.17), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -551,7 +556,7 @@ col2 <- "lightgrey"
 ## ---- Model B ----
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "B_wv_std_2.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "B_wv_std_2.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(B.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.5), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -625,7 +630,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "B_wv_std_4.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "B_wv_std_4.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(B.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.5), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -698,7 +703,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "B_wv_std_8.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "B_wv_std_8.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(B.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.5), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -774,7 +779,7 @@ col2 <- "lightgrey"
 
 {
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "C_wv_std_2.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "C_wv_std_2.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(C.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.18), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -846,7 +851,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "C_wv_std_4.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "C_wv_std_4.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(C.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", xaxt = "n", ylim = c(0,0.18),
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -918,7 +923,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "C_wv_std_8.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "C_wv_std_8.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(C.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", xaxt = "n", ylim = c(0,0.18),
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -994,7 +999,7 @@ col2 <- "lightgrey"
 
 {
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "D_wv_std_2.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "D_wv_std_2.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(D.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.12), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -1066,7 +1071,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "D_wv_std_4.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "D_wv_std_4.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(D.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.12), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,
@@ -1138,7 +1143,7 @@ col2 <- "lightgrey"
   
   #
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_4", "D_wv_std_8.png"), width=1800, height=2100, res=210)
+  png(file=file.path(OUTPUT_PATH, "D_wv_std_8.png"), width=1800, height=2100, res=210)
   par(mfrow=c(3,1), mar = c(4.1, 6.1, 1.1, 2.1))
   plot(D.wv_std[[1]], type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0,0.12), xaxt = "n",
        cex.lab=1.5, cex.main=1.5, cex.axis=1.5, cex.sub=1.5,

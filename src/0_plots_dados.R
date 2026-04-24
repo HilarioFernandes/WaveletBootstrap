@@ -16,6 +16,11 @@ source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
 library(grDevices)
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_0")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
+
 ################################################################################
 
 #Cisalhamento Oceânico
@@ -26,7 +31,7 @@ ocean_shear <- unname(unlist(as.vector(read.table(file.path(BASE_PATH, "Dados", 
 
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "OceanShear.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "OceanShear.png"), width=1800, height=900, res = 210)
   
 par(mfrow = c(1,1), mar = c(4.1, 4, 1, 1))
 plot(ocean_shear, type = "l", xaxt = "n", xlab = "Profundidade (metros)",
@@ -42,7 +47,7 @@ dev.off()
 oceanshear_diff <- diff(ocean_shear)
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "OceanShear2.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "OceanShear2.png"), width=1800, height=900, res = 210)
 par(mfrow = c(1,1), mar = c(4.1, 5, 1, 1))
 plot(oceanshear_diff, type = "l", xaxt = "n", xlab = "Profundidade (metros)",
      ylab = "Cisalhamento \n (diferenciado)", yaxt = "n",
@@ -72,7 +77,7 @@ for(j in 1:n_levels){
 
 {
   
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "OceanShear3.png"), width=1600, height=1600, res = 280)
+  png(file=file.path(OUTPUT_PATH, "OceanShear3.png"), width=1600, height=1600, res = 280)
   
   par(mar = c(3, 3.5, 0.1, 1))
   par(mfrow=c(6,1))
@@ -185,7 +190,7 @@ labels_plot <- substr(colnames(CBOE_selection)[1 + seq(1,43,by = 7)], 6,10)
 labels_plot <- sapply(labels_plot, function(x){paste0(substr(x,4,5), ".", substr(x,1,2))})
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "CBOE.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "CBOE.png"), width=1800, height=900, res = 210)
   
   par(mar = c(4, 4, 1, 1), mfrow = c(1,1))
   
@@ -202,7 +207,7 @@ dev.off()
 CBOE_selection_returns <- returns_fun(CBOE_selection)
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "CBOE2.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "CBOE2.png"), width=1800, height=900, res = 210)
 
   par(mar = c(4, 4, 1, 1))
     
@@ -220,14 +225,14 @@ CBOE_selection_returns <- returns_fun(CBOE_selection)
 #Oscilação de Madden-Julian
 
 # Note: Data file is not included in the repository. See thesis for sources.
-MJO <- read.table(file.path(BASE_PATH, "Dados", "MJO", "MJO.txt"))
-MJO_labels <- substr(rownames(MJO)[2:nrow(MJO)],1,4)
+# Added na.strings="*****" to handle missing values and prevent coercion warnings
+MJO_df <- read.table(file.path(BASE_PATH, "Dados", "MJO", "MJO.txt"), 
+                     na.strings = c("NA", "*****"))
+MJO_labels <- substr(rownames(MJO_df)[2:nrow(MJO_df)], 1, 4)
 
-MJO <- as.numeric(MJO$INDEX_1[2:nrow(MJO)])
+# Data is now numeric automatically thanks to na.strings
+MJO <- MJO_df$INDEX_1[2:nrow(MJO_df)]
 
-sum(is.na(MJO))
-
-which(is.na(MJO))
 
 MJO_paper <- MJO[1:2354]
 MJO_labels_paper <- MJO_labels[1:2354]
@@ -242,7 +247,7 @@ for(year in years_plot){
 }
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "MJO.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "MJO.png"), width=1800, height=900, res = 210)
   
 par(mar = c(4.1, 5, 1, 1))
 par(mfrow=c(1,1))
@@ -265,7 +270,7 @@ arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Dados", "Arrowhead",
 {
 indexes_min = c(1,64,126,189,251,314,377,439,503,565,629,691,753,816,878,942,1005,1068,1130,1192,1255,1319,1381,1443,1506)
 
-png(file=file.path(BASE_PATH, "Tese", "Plots_0", "arrowhead.png"),
+png(file=file.path(OUTPUT_PATH, "arrowhead.png"),
     width=1200, height=600, res = 140)
 
 par(mar = c(4, 5, 1, 1))
@@ -307,7 +312,7 @@ for(i in unique(substr(INMET_selec[,1],1,2))){
 }
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_0", "Temperaturas.png"),
+png(file=file.path(OUTPUT_PATH, "Temperaturas.png"),
     width=1800, height=1200, res=210)  
   
 par(mar = c(4.1, 4.1, 1, 1))
@@ -333,7 +338,7 @@ dev.off()
 INMET_selec_diff <- apply(INMET_selec[-(1:2)], 2, diff)
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "Temperaturas2.png"),
+  png(file=file.path(OUTPUT_PATH, "Temperaturas2.png"),
       width=1800, height=1200, res=210)    
   
 par(mfrow=c(2,1))
@@ -378,7 +383,7 @@ boot_example_bootstrap = c(boot_example_extended[block_start_points[1]:(block_st
                             boot_example_extended[block_start_points[6]:(block_start_points[6]+block_lengths[6]-1)])
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "boot_example_1.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "boot_example_1.png"), width=1800, height=900, res = 210)
   
   par(mar = c(3.1, 3, 1, 1))
   par(mfrow=c(1,1))
@@ -389,7 +394,7 @@ boot_example_bootstrap = c(boot_example_extended[block_start_points[1]:(block_st
 }
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_0", "boot_example_2.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "boot_example_2.png"), width=1800, height=900, res = 210)
   
   par(mar = c(3.1, 3, 1, 1))
   par(mfrow=c(1,1))

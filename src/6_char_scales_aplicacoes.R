@@ -18,6 +18,10 @@ source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
 B <- 100
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
 ################################################################################
 
 #characteristic scales
@@ -355,7 +359,7 @@ set.seed(0)
 results_MJO <- char_scale_fun(MJO_paper, 0.05, 100)
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_6", "plot_aplicacao.png"), width=1800, height=900, res = 210)
+  png(file=file.path(OUTPUT_PATH, "plot_aplicacao.png"), width=1800, height=900, res = 210)
   
   par(mfrow=c(1,1))
   par(mar=c(4.1, 4.1, 1, 2.1))
@@ -408,7 +412,7 @@ for(i in 1:10){
 
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_6", "plot_aplicacao_INMET.png"), width=1800, height=1200, res = 210)
+  png(file=file.path(OUTPUT_PATH, "plot_aplicacao_INMET.png"), width=1800, height=1200, res = 210)
   
 par(mfrow=c(2,2))
 par(mar=c(4,5,1,1))

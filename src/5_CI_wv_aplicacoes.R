@@ -17,6 +17,10 @@ source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 library(multitaper)
 B <- 100
 
+# Set and create output directory for plots
+OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_5")
+if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+
 ################################################################################
 
 #this function calculates the wavelet variance standard deviation estimates
@@ -207,7 +211,7 @@ lty1 <- "solid"
 lty2 <- "dotted"
 
 {
-  png(file=file.path(BASE_PATH, "Tese", "Plots_5", "5_OceanShear.png"),
+  png(file=file.path(OUTPUT_PATH, "5_OceanShear.png"),
       width=1500, height=1000, res = 150)
 
 par(mfrow=c(2,2))
@@ -398,7 +402,7 @@ for(i in unique(labels_plot)){
 }
 
 {
-png(file=file.path(BASE_PATH, "Tese", "Plots_5", "5_CBOE.png"),
+png(file=file.path(OUTPUT_PATH, "5_CBOE.png"),
     width=1500, height=1000, res = 150)
 
 par(mfrow=c(2,2))
