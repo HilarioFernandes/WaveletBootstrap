@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
@@ -1218,3 +1220,5 @@ col2 <- "lightgrey"
   dev.off()
   
 }
+
+save.image(file.path(WORKSPACE_DIR, "4_std_error.RData"))

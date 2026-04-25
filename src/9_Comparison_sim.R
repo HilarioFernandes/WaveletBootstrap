@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
@@ -317,6 +319,7 @@ set.seed(58)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_1.RData"))
 set.seed(59)
 
 #variance change (factor 1.5), independent blocks, independent method
@@ -414,6 +417,7 @@ set.seed(59)
 
 ################################################################################
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_2.RData"))
 set.seed(60)
 
 #No variance change, independent blocks, dependent method
@@ -501,6 +505,7 @@ set.seed(60)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_3.RData"))
 set.seed(61)
 
 #variance change (factor 1.5), independent blocks, dependent method
@@ -590,6 +595,7 @@ set.seed(61)
 
 ################################################################################
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_4.RData"))
 set.seed(62)
 
 #No variance change, dependent blocks, dependent method
@@ -685,6 +691,7 @@ set.seed(62)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_5.RData"))
 set.seed(63)
 
 #variance change (factor 1.5), dependent blocks, dependent method
@@ -782,6 +789,7 @@ set.seed(63)
 
 ################################################################################
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_6.RData"))
 set.seed(64)
 
 #No variance change, dependent blocks, independent method
@@ -869,6 +877,7 @@ set.seed(64)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_7.RData"))
 set.seed(65)
 
 #variance change (factor 1.5), dependent blocks, independent method
@@ -1323,3 +1332,5 @@ latex_fun2(rejection_proportions_boot_A_1_depground_depmethod,
 plot(Model_A_sim(128), type = "l")
 
 
+
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_final.RData"))

@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
 
@@ -141,6 +143,9 @@ X <- hohenthanner[hohenthanner[,2] == 1,1]
 
 Y <- hohenthanner[hohenthanner[,2] == 2,1]
 
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_aplicacoes_part_1.RData"))
 set.seed(0)
 
 Bn_resampling_tests(X,Y,0.05,1000)
+
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_aplicacoes_final.RData"))

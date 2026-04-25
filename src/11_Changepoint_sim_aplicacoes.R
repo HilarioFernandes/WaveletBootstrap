@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
 
@@ -181,6 +183,7 @@ dev.off()
 }
 
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_aplicacoes_part_1.RData"))
 set.seed(0)
 results_CBOE <- changepointdetection_fun(X_CBOE,block_length, alpha, jmax, B)
 
@@ -256,3 +259,5 @@ latex_fun <- function(results){
 
 latex_oceanshear <- latex_fun(results_oceanshear)[,-3]
 latex_CBOE <- latex_fun(results_CBOE)[,-3]
+
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_aplicacoes_final.RData"))

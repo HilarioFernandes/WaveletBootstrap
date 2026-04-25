@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # 3_Bootstrap_Wavelet_order.R
 # =============================================================================
 # Purpose  : Compare bw vs wb ordering and NBB vs SB bootstrap methods.
@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
@@ -563,3 +565,5 @@ latex_output(C.SB_bw_var_summary, C.SB_wb_var_summary)
 
 latex_output(D.NBB_bw_var_summary, D.NBB_wb_var_summary)
 latex_output(D.SB_bw_var_summary, D.SB_wb_var_summary)
+
+save.image(file.path(WORKSPACE_DIR, "3_Bootstrap_Wavelet_order.RData"))

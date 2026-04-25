@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 
@@ -715,3 +717,5 @@ latex_fun2 <- function(resultsA, resultsB, resultsC, resultsD){
 }
 
 latex_fun2(resultsA, resultsB, resultsC, resultsD)
+
+save.image(file.path(WORKSPACE_DIR, "5_CI_wv.RData"))

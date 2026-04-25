@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
 
@@ -108,6 +110,8 @@ for(i in 1:iterations){
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_e.RData"))
+
 ################################################################################
 
 X_f <- vector(mode = "list", length = iterations)
@@ -194,6 +198,8 @@ for(i in 1:iterations){
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_f.RData"))
+
 ################################################################################
 
 X_g <- vector(mode = "list", length = iterations)
@@ -277,6 +283,8 @@ for(i in 1:iterations){
   }
   
 }
+
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_g.RData"))
 
 ################################################################################
 
@@ -364,6 +372,8 @@ for(i in 1:iterations){
   
 }
 
+
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_h.RData"))
 
 ################################################################################
 
@@ -460,4 +470,6 @@ table_results[4,] <- c(coverage_CI(statistics_h, t(quantile_CI_boot_discy_h)),
                        coverage_CI(statistics_h, t(normal_approx_CI_jackknife_h)))
 
 View(table_results)
+
+save.image(file.path(WORKSPACE_DIR, "8_Bn_resampling_final.RData"))
 

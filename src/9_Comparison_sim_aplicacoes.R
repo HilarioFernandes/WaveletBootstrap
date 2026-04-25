@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
@@ -342,7 +344,10 @@ comparison_fun(INMET_selec_diff[,1],
                INMET_selec_diff[,6],
                0.05,100)
 
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_aplicacoes_part_1.RData"))
 set.seed(0)
 results_INMET <- multiple_comparison_fun(INMET_selec_diff, 0.05, 100)
 
 
+
+save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_aplicacoes_final.RData"))

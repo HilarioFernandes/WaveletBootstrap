@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
@@ -540,6 +542,7 @@ set.seed(72)
 
 #Time series length = 128, sample size = 12, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_1.RData"))
 set.seed(73)
 
 {
@@ -568,6 +571,7 @@ set.seed(73)
 
 #Time series length = 128, sample size = 14, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_2.RData"))
 set.seed(74)
 
 {
@@ -596,6 +600,7 @@ set.seed(74)
 
 #Time series length = 128, sample size = 14, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_3.RData"))
 set.seed(75)
 
 {
@@ -624,6 +629,7 @@ set.seed(75)
 
 #Time series length = 128, sample size = 16, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_4.RData"))
 set.seed(76)
 
 {
@@ -652,6 +658,7 @@ set.seed(76)
 
 #Time series length = 128, sample size = 16, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_5.RData"))
 set.seed(77)
 
 {
@@ -682,6 +689,7 @@ set.seed(77)
 
 #Time series length = 256, sample size = 12, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_6.RData"))
 set.seed(78)
 
 {
@@ -710,6 +718,7 @@ set.seed(78)
 
 #Time series length = 256, sample size = 12, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_7.RData"))
 set.seed(79)
 
 {
@@ -738,6 +747,7 @@ set.seed(79)
 
 #Time series length = 256, sample size = 14, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_8.RData"))
 set.seed(80)
 
 {
@@ -766,6 +776,7 @@ set.seed(80)
 
 #Time series length = 256, sample size = 14, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_9.RData"))
 set.seed(81)
 
 {
@@ -794,6 +805,7 @@ set.seed(81)
 
 #Time series length = 256, sample size = 16, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_10.RData"))
 set.seed(82)
 
 {
@@ -822,6 +834,7 @@ set.seed(82)
 
 #Time series length = 256, sample size = 16, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_11.RData"))
 set.seed(83)
 
 {
@@ -853,6 +866,7 @@ set.seed(83)
 
 #Time series length = 512, sample size = 12, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_12.RData"))
 set.seed(84)
 
 {
@@ -881,6 +895,7 @@ set.seed(84)
 
 #Time series length = 512, sample size = 12, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_13.RData"))
 set.seed(85)
 
 {
@@ -909,6 +924,7 @@ set.seed(85)
 
 #Time series length = 512, sample size = 14, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_14.RData"))
 set.seed(86)
 
 {
@@ -937,6 +953,7 @@ set.seed(86)
 
 #Time series length = 512, sample size = 14, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_15.RData"))
 set.seed(87)
 
 {
@@ -965,6 +982,7 @@ set.seed(87)
 
 #Time series length = 512, sample size = 16, n1/n2 approx 1
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_16.RData"))
 set.seed(88)
 
 {
@@ -993,6 +1011,7 @@ set.seed(88)
 
 #Time series length = 512, sample size = 16, n1/n2 approx 2
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_17.RData"))
 set.seed(89)
 
 {
@@ -1123,3 +1142,5 @@ for(q in c(1,2)){
 #It could be pure random search with a time constraint or something based on swapping
 #pairs of elements from distinct groups in order to decrease the p-value
 
+
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_final.RData"))

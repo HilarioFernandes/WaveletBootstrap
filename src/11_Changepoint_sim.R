@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
 
@@ -111,6 +113,7 @@ set.seed(66)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_1.RData"))
 set.seed(67)
 
 {
@@ -197,6 +200,7 @@ changepoint_sim_512("B", 10, 100, 0.05, TRUE, "abrupt")
 ################################################################################
 #512
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_2.RData"))
 set.seed(68)
 
 {
@@ -214,6 +218,7 @@ set.seed(68)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_3.RData"))
 set.seed(69)
 
 {
@@ -231,6 +236,7 @@ set.seed(69)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_4.RData"))
 set.seed(70)
 
 {
@@ -248,6 +254,7 @@ set.seed(70)
   
 }
 
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_5.RData"))
 set.seed(71)
 
 {
@@ -315,3 +322,5 @@ latex_fun(changepoint_sim_D_NA, changepoint_sim_D_NA_512)
 latex_fun(changepoint_sim_D_drift, changepoint_sim_D_drift_512)
 latex_fun(changepoint_sim_D_abrupt, changepoint_sim_D_abrupt_512)
 
+
+save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_final.RData"))

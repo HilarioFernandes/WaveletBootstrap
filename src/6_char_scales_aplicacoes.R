@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 library(imputeTS)
 
@@ -401,6 +403,7 @@ INMET <- read.csv(file.path(BASE_PATH, "Dados", "Selecao", "dados_INMET_processa
 
 results_INMET <- matrix(NA, nrow = 10, ncol = 6)
 
+save.image(file.path(WORKSPACE_DIR, "6_char_scales_aplicacoes_part_1.RData"))
 set.seed(0)
 
 for(i in 1:10){
@@ -465,3 +468,5 @@ for(i in 3:12){
   wv_ests <- rbind(wv_ests, wv_estimates(INMET[,i]))
   
 }
+
+save.image(file.path(WORKSPACE_DIR, "6_char_scales_aplicacoes_final.RData"))

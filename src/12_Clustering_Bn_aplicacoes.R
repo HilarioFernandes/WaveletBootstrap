@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
@@ -488,6 +490,7 @@ INMET <- t(INMET[seq(1,nrow(INMET), by = 12),-c(1,2)])
 
 INMET_diff <- unname(t(apply(INMET, 1, diff)))
 
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_aplicacoes_part_1.RData"))
 set.seed(0)
 results_INMET <- cluster_fun(INMET_diff, B)
 
@@ -496,3 +499,5 @@ results_INMET <- as.data.frame(matrix(unlist(results_INMET), ncol = 10, byrow = 
 results_INMET[-c(1,4),] <- 3 - results_INMET[-c(1,4),]
 
 results_INMET <- 3 - results_INMET
+
+save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_aplicacoes_final.RData"))

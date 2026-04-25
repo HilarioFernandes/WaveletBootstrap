@@ -11,6 +11,8 @@
 # =============================================================================
 
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
+WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
+if(!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive=TRUE)
 
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
@@ -19,7 +21,7 @@ TEST_MODE <- TRUE
 # --------------------
 
 library(multitaper)
-B <- if(TEST_MODE) 5 else 100
+B <- if(TEST_MODE) 2 else 100
 
 # Set and create output directory for plots
 OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_5")
@@ -389,6 +391,7 @@ CBOE_selection_returns <- returns_fun(CBOE_selection)
 
 plot(CBOE_selection_returns, type = "l")
 
+save.image(file.path(WORKSPACE_DIR, "5_CI_wv_aplicacoes_part_1.RData"))
 set.seed(0)
 
 results_CBOE <- CI_wv_fun_local(CBOE_selection_returns, 512, 0.05, B)
@@ -521,3 +524,5 @@ par(mar=c(4.1, 4.1, 1.5, 0.5))
 }
 dev.off()
 }
+
+save.image(file.path(WORKSPACE_DIR, "5_CI_wv_aplicacoes_final.RData"))
