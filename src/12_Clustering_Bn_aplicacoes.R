@@ -2,7 +2,7 @@
 # 12_Clustering_Bn_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data clustering applications (Arrowhead, INMET).
-# Chapter  : Thesis Chapter 4
+# Chapter  : Chapter 4
 # Inputs   : ArrowHead.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : Clustering labels and ARI results for various methods.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R, 7_Quasi_U_statistics_functions.R
@@ -16,6 +16,10 @@ source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 # Define kernel for Bn
 kernel <- function(x, y) (x - y)^2
 
@@ -25,7 +29,7 @@ library(TSclust)
 
 library(cluster)
 
-B <- 100
+B <- if(TEST_MODE) 5 else 100
 
 ################################################################################
 

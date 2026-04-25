@@ -1,8 +1,8 @@
-# =============================================================================
+﻿# =============================================================================
 # 3_Bootstrap_Wavelet_order.R
 # =============================================================================
 # Purpose  : Compare bw vs wb ordering and NBB vs SB bootstrap methods.
-# Chapter  : Thesis Chapter 2
+# Chapter  : Chapter 2
 # Inputs   : None
 # Outputs  : Distribution/variance estimation comparison outputs.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -15,14 +15,18 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 ################################################################################
 
 #Study for distribution/variance estimation
 
 set.seed(42)
 
-B <- 100
-iterations <- 100
+B <- if(TEST_MODE) 5 else 100
+iterations <- if(TEST_MODE) 2 else 100
 
 A.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)

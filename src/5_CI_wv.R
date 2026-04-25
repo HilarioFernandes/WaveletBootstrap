@@ -2,7 +2,7 @@
 # 5_CI_wv.R
 # =============================================================================
 # Purpose  : Simulation study of bootstrap CI coverage for wavelet variance.
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3, Appendix B.2
 # Inputs   : None
 # Outputs  : LaTeX tables for CI coverage.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -13,14 +13,18 @@
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
+
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))################################################################################
 
 #study for CI
 
 set.seed(44)
 
-B <- 100
-iterations <- 100
+B <- if(TEST_MODE) 5 else 100
+iterations <- if(TEST_MODE) 2 else 100
 
 A.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)

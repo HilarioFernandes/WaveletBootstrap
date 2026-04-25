@@ -2,7 +2,7 @@
 # 5_CI_wv_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data CI applications for wavelet variance. (Ocean Shear, SPX/CBOE)
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3
 # Inputs   : Ocean Shear.txt, SPX.csv (Data files not included in repository).
 # Outputs  : Real-data CI plots (PNGs).
 # Depends  : 2_Bootstrap_methods.R
@@ -14,8 +14,12 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 library(multitaper)
-B <- 100
+B <- if(TEST_MODE) 5 else 100
 
 # Set and create output directory for plots
 OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_5")

@@ -2,7 +2,7 @@
 # 6_char_scales_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data characteristic scales applications (MJO, INMET datasets).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3
 # Inputs   : MJO.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : Characteristic scale estimates and application plots.
 # Depends  : 2_Bootstrap_methods.R
@@ -16,7 +16,11 @@ library(imputeTS)
 
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
-B <- 100
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
+B <- if(TEST_MODE) 5 else 100
 
 # Set and create output directory for plots
 OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")

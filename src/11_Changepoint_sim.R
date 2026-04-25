@@ -2,7 +2,7 @@
 # 11_Changepoint_sim.R
 # =============================================================================
 # Purpose  : Simulation study for changepoint detection performance.
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3, Appendix B.5
 # Inputs   : 10_Comparison_Changepoint_functions.R
 # Outputs  : Power and size rejection rates for changepoint detection.
 # Depends  : 10_Comparison_Changepoint_functions.R
@@ -13,6 +13,10 @@
 BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before running
 
 source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
+
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
 
 ################################################################################
 
@@ -80,8 +84,8 @@ changepoint_sim_B_NA <- changepoint_sim("B", 10, 100, 0.05, FALSE, NA)
 
 ################################################################################
 
-iterations <- 100
-B <- 100
+iterations <- if(TEST_MODE) 2 else 100
+B <- if(TEST_MODE) 5 else 100
 
 ################################################################################
 #128

@@ -2,7 +2,7 @@
 # 11_Changepoint_sim_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data changepoint applications (Ocean Shear, CBOE SPX).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3
 # Inputs   : Ocean Shear.txt, SPX.csv (Data files not included).
 # Outputs  : Detected changepoints and visualization of variance shifts.
 # Depends  : 10_Comparison_Changepoint_functions.R
@@ -14,6 +14,10 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 library(dplyr)
 
 # Set and create output directory for plots
@@ -21,7 +25,7 @@ OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_11")
 if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
 
 
-B <- 1000
+B <- if(TEST_MODE) 5 else 1000
 alpha <- 0.05
 
 ################################################################################

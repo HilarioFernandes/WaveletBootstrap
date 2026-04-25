@@ -2,7 +2,7 @@
 # 8_Bn_resampling_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data Bn applications (Nelson and Hohenthanner case studies).
-# Chapter  : Thesis Chapter 4
+# Chapter  : Chapter 4
 # Inputs   : Nelson.txt, Hohenthanner.txt (Data files not included).
 # Outputs  : Quasi U-statistic calculations and CI coverage for applications.
 # Depends  : 7_Quasi_U_statistics_functions.R
@@ -14,10 +14,14 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 # Define kernel used across all simulations
 kernel <- function(x, y) (x - y)^2
 
-B <- 100
+B <- if(TEST_MODE) 5 else 100
 
 ################################################################################
 
@@ -112,7 +116,7 @@ Bn_resampling_tests <- function(X,Y,alpha,B){
 #Nelson
 
 # Note: Data file is not included in the repository. See thesis for sources.
-nelson <- read.csv(file.path(BASE_PATH, "Two sample tests", "Nelson.txt"), header = T)
+nelson <- read.csv(file.path(BASE_PATH, "Dados/Two sample tests", "Nelson.txt"), header = T)
 
 plot(y = nelson[,1], x = c(rep(1,10), rep(2,10)), xlim = c(0,3))
 
@@ -129,7 +133,7 @@ Bn_resampling_tests(X,Y,0.05,1000)
 #hohenthanner
 
 # Note: Data file is not included in the repository. See thesis for sources.
-hohenthanner <- read.csv(file.path(BASE_PATH, "Two sample tests", "Hohenthanner.txt"), header = T)
+hohenthanner <- read.csv(file.path(BASE_PATH, "Dados/Two sample tests", "Hohenthanner.txt"), header = T)
 
 plot(y = hohenthanner[,1], x = c(rep(1,5), rep(2,5)), xlim = c(0,3))
 

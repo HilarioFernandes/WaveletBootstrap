@@ -2,7 +2,7 @@
 # 12_Clustering_Bn.R
 # =============================================================================
 # Purpose  : Simulation study for time series clustering based on Bn statistics.
-# Chapter  : Thesis Chapter 4
+# Chapter  : Chapter 4, Appendix C.2
 # Inputs   : 1_Simulation_functions.R, 2_Bootstrap_methods.R, 7_Quasi_U_statistics_functions.R
 # Outputs  : ARI comparisons against ACF, PER, COR, and EUCL Dissimilarities.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R, 7_Quasi_U_statistics_functions.R
@@ -15,6 +15,10 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
+
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
 
 # Define kernel for Bn
 kernel <- function(x, y) (x - y)^2
@@ -359,7 +363,7 @@ cluster_notation_conv <- function(cluster_list, n){
   
   max_Bn_scales <- max_per_col_list(Bn_matrices,n)
   
-  B <- 100
+  B <- if(TEST_MODE) 5 else 100
   
   Bootstrap_Bn_versions <- Bootstrap_Bn_multiscale_list(data_wv, clusters_list, n, B)
   
@@ -480,9 +484,9 @@ n1 <- n/2
 
 t <- 512
 
-B <- 100
+B <- if(TEST_MODE) 5 else 100
 
-iterations <- 5
+iterations <- if(TEST_MODE) 2 else 5
 
 model <- "A"
 
@@ -500,9 +504,9 @@ model <- "A"
 
 ################################################################################
 
-B <- 100
+B <- if(TEST_MODE) 5 else 100
 
-iterations <- 100
+iterations <- if(TEST_MODE) 2 else 100
 
 ################################################################################
 

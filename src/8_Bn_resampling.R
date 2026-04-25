@@ -2,7 +2,7 @@
 # 8_Bn_resampling.R
 # =============================================================================
 # Purpose  : Simulation study of Bn distribution via resampling methods.
-# Chapter  : Thesis Chapter 4
+# Chapter  : Chapter 4, Appendix C.1
 # Inputs   : 7_Quasi_U_statistics_functions.R
 # Outputs  : Size and power study results for the Bn statistic.
 # Depends  : 7_Quasi_U_statistics_functions.R
@@ -14,12 +14,16 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
 
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
 # Define kernel used across all simulations
 kernel <- function(x, y) (x - y)^2
 
 n <- 100
-iterations <- 100
-B <- 100
+iterations <- if(TEST_MODE) 2 else 100
+B <- if(TEST_MODE) 5 else 100
 
 
 ################################################################################

@@ -2,7 +2,7 @@
 # 7_Quasi_U_statistics_functions.R
 # =============================================================================
 # Purpose  : Bn quasi U-statistic machinery for two-sample comparison.
-# Chapter  : Thesis Chapter 4
+# Chapter  : Chapter 4
 # Inputs   : User-supplied symmetric kernel.
 # Outputs  : Quasi U-statistic calculations and bootstrap/CI logic.
 # Author   : Hilário Fernandes de Araujo Júnior

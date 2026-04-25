@@ -2,7 +2,7 @@
 # 6_char_scales.R
 # =============================================================================
 # Purpose  : Characteristic scales study (scales where wavelet variance is maximised).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3, Appendix B.3
 # Inputs   : None
 # Outputs  : Characteristic scale estimates and CIs.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -14,6 +14,10 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
 
 # Set and create output directory for plots
 OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")
@@ -428,8 +432,8 @@ if (FALSE) {
 
 set.seed(45)
 
-B <- 100
-iterations <- 100
+B <- if(TEST_MODE) 5 else 100
+iterations <- if(TEST_MODE) 2 else 100
 
 char_scale_est_A <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 char_scale_est_B <- list("128" = NULL, "512" = NULL, "2048" = NULL)

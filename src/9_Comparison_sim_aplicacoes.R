@@ -2,7 +2,7 @@
 # 9_Comparison_sim_aplicacoes.R
 # =============================================================================
 # Purpose  : Real-data comparison of feature sets (Arrowhead, INMET).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3
 # Inputs   : ArrowHead.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : LaTeX tables for feature comparisons.
 # Depends  : 2_Bootstrap_methods.R
@@ -14,7 +14,11 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 
-B <- 100
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
+
+B <- if(TEST_MODE) 5 else 100
 
 alpha_0 <- 0.05
 
@@ -265,7 +269,7 @@ multiple_comparison_fun <- function(data, alpha, B){
 #Arrowhead
 
 # Note: Data file is not included in the repository. See thesis for sources.
-arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Arrowhead", "ArrowHead.txt"))))
+arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Dados/Arrowhead", "ArrowHead.txt"))))
 
 plot(arrowhead, type = "l")
 

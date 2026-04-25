@@ -2,7 +2,7 @@
 # 10_Comparison_Changepoint_functions.R
 # =============================================================================
 # Purpose  : Changepoint detection machinery (sequential and non-sequential).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3
 # Inputs   : 1_Simulation_functions.R, 2_Bootstrap_methods.R
 # Outputs  : Block index pairs indicating detected variance changes.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R

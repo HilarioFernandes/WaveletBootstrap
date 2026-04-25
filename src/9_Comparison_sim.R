@@ -2,7 +2,7 @@
 # 9_Comparison_sim.R
 # =============================================================================
 # Purpose  : Simulation study for wavelet variance ratio tests (F-test vs Bootstrap).
-# Chapter  : Thesis Chapter 3
+# Chapter  : Chapter 3, Appendix B.4
 # Inputs   : None
 # Outputs  : Size and power rejection proportions for ratio tests.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -14,6 +14,10 @@ BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap"  # <- SET THIS before ru
 
 source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
 source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+
+# --- Testing Mode ---
+TEST_MODE <- TRUE
+# --------------------
 
 #' Check if ratio falls outside confidence interval
 #' 
@@ -213,8 +217,8 @@ if (FALSE) {
 
 ################################################################################
 
-iterations <- 100
-B <- 100
+iterations <- if(TEST_MODE) 2 else 100
+B <- if(TEST_MODE) 5 else 100
 
 ################################################################################
 
