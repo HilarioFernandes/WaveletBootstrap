@@ -31,7 +31,7 @@ library(TSclust)
 
 library(cluster)
 
-B <- if(TEST_MODE) 5 else 100
+B <- if(TEST_MODE) 2 else 100
 
 ################################################################################
 

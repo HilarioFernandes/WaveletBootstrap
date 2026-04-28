@@ -20,7 +20,7 @@ source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
 TEST_MODE <- TRUE
 # --------------------
 
-B <- if(TEST_MODE) 5 else 100
+B <- if(TEST_MODE) 2 else 100
 
 alpha_0 <- 0.05
 

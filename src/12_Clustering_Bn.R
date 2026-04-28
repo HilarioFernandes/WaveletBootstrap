@@ -38,20 +38,20 @@ library(cluster)
 #' @param n Number of elements
 #' @return A list with two lists: clusters_1 and clusters_2
 possible_clusters <- function(n){
-  
+
   output1 <- list()
   output2 <- list()
-  
+ 
   for(nprime in 2:floor(n/2)){
-    
+
     clusters_1 <- t(combn(n,nprime))
-    
+
     if(nprime == n/2){
-      
+
       clusters_1 <- clusters_1[1:(nrow(clusters_1)/2),]
-      
+
     }
-    
+
     output1[[nprime-1]] <- clusters_1
     
     clusters_2 <- t(apply(clusters_1, 1, function(x){setdiff(1:n, x)}))
@@ -365,7 +365,7 @@ cluster_notation_conv <- function(cluster_list, n){
   
   max_Bn_scales <- max_per_col_list(Bn_matrices,n)
   
-  B <- if(TEST_MODE) 5 else 100
+  B <- if(TEST_MODE) 2 else 100
   
   Bootstrap_Bn_versions <- Bootstrap_Bn_multiscale_list(data_wv, clusters_list, n, B)
   
@@ -486,7 +486,7 @@ n1 <- n/2
 
 t <- 512
 
-B <- if(TEST_MODE) 5 else 100
+B <- if(TEST_MODE) 2 else 100
 
 iterations <- if(TEST_MODE) 2 else 5
 
@@ -506,7 +506,7 @@ model <- "A"
 
 ################################################################################
 
-B <- if(TEST_MODE) 5 else 100
+B <- if(TEST_MODE) 2 else 100
 
 iterations <- if(TEST_MODE) 2 else 100
 
