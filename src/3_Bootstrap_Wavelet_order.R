@@ -35,103 +35,101 @@ B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 C.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 D.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
-{
-  A.wv_wb_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_wb_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  A.wv_bw_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_bw_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  A.wv_wb_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_wb_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  A.wv_bw_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_bw_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_wb_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_wb_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_bw_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_bw_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_wb_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_wb_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_bw_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_bw_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_wb_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_wb_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_bw_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_bw_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_wb_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_wb_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_bw_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_bw_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_wb_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+D.wv_wb_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_bw_NBB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+D.wv_bw_NBB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_wb_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+D.wv_wb_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_bw_SB <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-}
+D.wv_bw_SB <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
 
 # Design of the simulation study:

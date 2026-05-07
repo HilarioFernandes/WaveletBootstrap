@@ -181,93 +181,85 @@ if (FALSE) {
 
 ## ---- Example plots ----
 ## Set to TRUE to enable plot generation on source, or run the block manually.
-if (TRUE) {
-  set.seed(1)
+set.seed(1)
 
-  YA <- Model_A_sim(128)
-  YB <- Model_B_sim(128)
-  YC <- Model_C_sim(128)
-  YD <- Model_D_sim(128)
+YA <- Model_A_sim(128)
+YB <- Model_B_sim(128)
+YC <- Model_C_sim(128)
+YD <- Model_D_sim(128)
 
 
-  {
-    png(
-      file = file.path(OUTPUT_PATH, "Plotmodelos.png"),
-      width = 1800, height = 900, res = 210
-    )
+png(
+  file = file.path(OUTPUT_PATH, "Plotmodelos.png"),
+  width = 1800, height = 900, res = 210
+)
 
-    par(mfrow = c(2, 2))
-    par(
-      mar = c(3, 2, 2, 1),
-      lwd = 1.5
-    )
-    par(oma = c(1, 0, 0, 0))
-    plot(YA,
-      type = "l", main = "(a)", xaxt = "n",
-      lwd = 1.5
-    )
-    axis(1, labels = FALSE)
-    plot(YB,
-      type = "l", main = "(b)", xaxt = "n",
-      lwd = 1.5
-    )
-    axis(1, labels = FALSE)
-    plot(YC,
-      type = "l", main = "(c)", xlab = "Índice", mgp = c(2, 1, 0),
-      lwd = 1.5
-    )
-    plot(YD,
-      type = "l", main = "(d)", xlab = "Índice", mgp = c(2, 1, 0),
-      lwd = 1.5
-    )
+par(mfrow = c(2, 2))
+par(
+  mar = c(3, 2, 2, 1),
+  lwd = 1.5
+)
+par(oma = c(1, 0, 0, 0))
+plot(YA,
+  type = "l", main = "(a)", xaxt = "n",
+  lwd = 1.5
+)
+axis(1, labels = FALSE)
+plot(YB,
+  type = "l", main = "(b)", xaxt = "n",
+  lwd = 1.5
+)
+axis(1, labels = FALSE)
+plot(YC,
+  type = "l", main = "(c)", xlab = "Índice", mgp = c(2, 1, 0),
+  lwd = 1.5
+)
+plot(YD,
+  type = "l", main = "(d)", xlab = "Índice", mgp = c(2, 1, 0),
+  lwd = 1.5
+)
 
-    dev.off()
-  }
+dev.off()
 
-  # ACVS plot
+# ACVS plot
 
-  acvs_A_plot <- sapply(0:79, acvs_A_fun)
-  acvs_B_plot <- sapply(0:79, acvs_B_fun)
-  acvs_C_plot <- sapply(0:79, acvs_C_fun)
-  acvs_D_plot <- acvs_D_fun(0.25, 79)
+acvs_A_plot <- sapply(0:79, acvs_A_fun)
+acvs_B_plot <- sapply(0:79, acvs_B_fun)
+acvs_C_plot <- sapply(0:79, acvs_C_fun)
+acvs_D_plot <- acvs_D_fun(0.25, 79)
 
-  {
-    png(
-      file = file.path(OUTPUT_PATH, "Plotacvss.png"),
-      width = 1800, height = 900, res = 210
-    )
+png(
+  file = file.path(OUTPUT_PATH, "Plotacvss.png"),
+  width = 1800, height = 900, res = 210
+)
 
-    par(mfrow = c(1, 1))
-    par(mar = c(4, 4, 2, 1))
-    {
-      plot(1:80, acvs_B_plot / acvs_B_plot[1],
-        type = "l", col = "grey", lty = "dashed", xlab = "Defasagem",
-        ylab = "Autocovariância",
-        lwd = 1.5
-      )
-      lines(1:80, acvs_A_plot / acvs_A_plot[1],
-        col = "black", lty = "dashed",
-        lwd = 1.5
-      )
-      lines(1:80, acvs_C_plot / acvs_C_plot[1],
-        col = "grey",
-        lwd = 1.5
-      )
-      lines(1:80, acvs_D_plot / acvs_D_plot[1],
-        col = "black",
-        lwd = 1.5
-      )
-      abline(
-        h = 0, lty = "dotdash", col = "lightgrey",
-        lwd = 1.5
-      )
-      legend(70, 1,
-        legend = c("(a)", "(b)", "(c)", "(d)"),
-        col = c("black", "grey", "grey", "black"),
-        lty = c("dashed", "dashed", "solid", "solid")
-      )
-    }
+par(mfrow = c(1, 1))
+par(mar = c(4, 4, 2, 1))
+plot(1:80, acvs_B_plot / acvs_B_plot[1],
+  type = "l", col = "grey", lty = "dashed", xlab = "Defasagem",
+  ylab = "Autocovariância",
+  lwd = 1.5
+)
+lines(1:80, acvs_A_plot / acvs_A_plot[1],
+  col = "black", lty = "dashed",
+  lwd = 1.5
+)
+lines(1:80, acvs_C_plot / acvs_C_plot[1],
+  col = "grey",
+  lwd = 1.5
+)
+lines(1:80, acvs_D_plot / acvs_D_plot[1],
+  col = "black",
+  lwd = 1.5
+)
+abline(
+  h = 0, lty = "dotdash", col = "lightgrey",
+  lwd = 1.5
+)
+legend(70, 1,
+  legend = c("(a)", "(b)", "(c)", "(d)"),
+  col = c("black", "grey", "grey", "black"),
+  lty = c("dashed", "dashed", "solid", "solid")
+)
 
-    dev.off()
-  }
-}
+dev.off()

@@ -33,148 +33,140 @@ B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 C.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 D.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
-{
-  A.wv_waveslim_gaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  B.wv_waveslim_gaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  C.wv_waveslim_gaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  D.wv_waveslim_gaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-}
+A.wv_waveslim_gaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+B.wv_waveslim_gaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+C.wv_waveslim_gaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+D.wv_waveslim_gaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-{
-  A.wv_waveslim_nongaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  B.wv_waveslim_nongaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  C.wv_waveslim_nongaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  D.wv_waveslim_nongaussian <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-}
+A.wv_waveslim_nongaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+B.wv_waveslim_nongaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+C.wv_waveslim_nongaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+D.wv_waveslim_nongaussian <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-{
-  A.wv_waveslim_eta3 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  B.wv_waveslim_eta3 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  C.wv_waveslim_eta3 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-  D.wv_waveslim_eta3 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-}
+A.wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+B.wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+C.wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+D.wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-{
-  A.wv_SB_2 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_SB_2 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  A.wv_SB_4 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_SB_4 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  A.wv_SB_8 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+A.wv_SB_8 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_SB_2 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_SB_2 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_SB_4 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_SB_4 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  B.wv_SB_8 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+B.wv_SB_8 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_SB_2 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_SB_2 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_SB_4 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_SB_4 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  C.wv_SB_8 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+C.wv_SB_8 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_SB_2 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+D.wv_SB_2 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_SB_4 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
+D.wv_SB_4 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
-  D.wv_SB_8 <- list(
-    "128" = vector("list", length = iterations),
-    "512" = vector("list", length = iterations),
-    "2048" = vector("list", length = iterations)
-  )
-}
+D.wv_SB_8 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
 
 
 for (iter in 1:iterations) {

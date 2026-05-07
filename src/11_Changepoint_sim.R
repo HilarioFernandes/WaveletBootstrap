@@ -84,42 +84,38 @@ B <- if (TEST_MODE) 2 else 100
 
 set.seed(66)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_A_abrupt <- changepoint_sim("A", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_A_drift <- changepoint_sim("A", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_A_NA <- changepoint_sim("A", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_A_abrupt <- changepoint_sim("A", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_A_drift <- changepoint_sim("A", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_A_NA <- changepoint_sim("A", iterations, B, 0.05, FALSE, NA)
 
-  changepoint_sim_B_abrupt <- changepoint_sim("B", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_B_drift <- changepoint_sim("B", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_B_NA <- changepoint_sim("B", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_B_abrupt <- changepoint_sim("B", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_B_drift <- changepoint_sim("B", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_B_NA <- changepoint_sim("B", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
-  print(duration)
-}
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_1.RData"))
 set.seed(67)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_C_abrupt <- changepoint_sim("C", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_C_drift <- changepoint_sim("C", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_C_NA <- changepoint_sim("C", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_C_abrupt <- changepoint_sim("C", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_C_drift <- changepoint_sim("C", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_C_NA <- changepoint_sim("C", iterations, B, 0.05, FALSE, NA)
 
-  changepoint_sim_D_abrupt <- changepoint_sim("D", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_D_drift <- changepoint_sim("D", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_D_NA <- changepoint_sim("D", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_D_abrupt <- changepoint_sim("D", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_D_drift <- changepoint_sim("D", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_D_NA <- changepoint_sim("D", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
-  print(duration)
-}
+duration <- end_time - start_time
+print(duration)
 
 ################################################################################
 
@@ -179,66 +175,58 @@ changepoint_sim_512("B", 10, 100, 0.05, TRUE, "abrupt")
 save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_2.RData"))
 set.seed(68)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_A_abrupt_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_A_drift_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_A_NA_512 <- changepoint_sim_512("A", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_A_abrupt_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_A_drift_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_A_NA_512 <- changepoint_sim_512("A", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
-  print(duration)
-}
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_3.RData"))
 set.seed(69)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_B_abrupt_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_B_drift_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_B_NA_512 <- changepoint_sim_512("B", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_B_abrupt_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_B_drift_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_B_NA_512 <- changepoint_sim_512("B", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
+duration <- end_time - start_time
   print(duration)
-}
 
 save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_4.RData"))
 set.seed(70)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_C_abrupt_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_C_drift_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_C_NA_512 <- changepoint_sim_512("C", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_C_abrupt_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_C_drift_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_C_NA_512 <- changepoint_sim_512("C", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
-  print(duration)
-}
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_5.RData"))
 set.seed(71)
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  changepoint_sim_D_abrupt_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "abrupt")
-  changepoint_sim_D_drift_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "drift")
-  changepoint_sim_D_NA_512 <- changepoint_sim_512("D", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_D_abrupt_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "abrupt")
+changepoint_sim_D_drift_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "drift")
+changepoint_sim_D_NA_512 <- changepoint_sim_512("D", iterations, B, 0.05, FALSE, NA)
 
-  end_time <- Sys.time()
+end_time <- Sys.time()
 
-  duration <- end_time - start_time
-  print(duration)
-}
+duration <- end_time - start_time
+print(duration)
 
 ################################################################################
 

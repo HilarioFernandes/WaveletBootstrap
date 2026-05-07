@@ -300,59 +300,57 @@ cluster_notation_conv <- function(cluster_list, n) {
 
 ################################################################################
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 256
+t <- 256
 
-  true_cluster <- c(rep(1, n1), rep(2, n - n1))
+true_cluster <- c(rep(1, n1), rep(2, n - n1))
 
-  data <- data_matrix_gen(t, n, n1, "A")
+data <- data_matrix_gen(t, n, n1, "A")
 
-  data_wv <- t(apply(data, 1, wv_estimates))
+data_wv <- t(apply(data, 1, wv_estimates))
 
-  clusters_list <- possible_clusters(n)
+clusters_list <- possible_clusters(n)
 
-  Bn_matrices <- Bn_matrices_list(data_wv, n, clusters_list)
+Bn_matrices <- Bn_matrices_list(data_wv, n, clusters_list)
 
-  max_Bn_scales <- max_per_col_list(Bn_matrices, n)
+max_Bn_scales <- max_per_col_list(Bn_matrices, n)
 
-  B <- if (TEST_MODE) 2 else 100
+B <- if (TEST_MODE) 2 else 100
 
-  Bootstrap_Bn_versions <- Bootstrap_Bn_multiscale_list(data_wv, clusters_list, n, B)
+Bootstrap_Bn_versions <- Bootstrap_Bn_multiscale_list(data_wv, clusters_list, n, B)
 
-  std.errors <- std.errors_calc(Bootstrap_Bn_versions, n)
+std.errors <- std.errors_calc(Bootstrap_Bn_versions, n)
 
-  p_values <- p_values_calc(max_Bn_scales, std.errors, n)
+p_values <- p_values_calc(max_Bn_scales, std.errors, n)
 
-  best_clusters <- best_clusters_fun(p_values, t, max_Bn_scales, clusters_list)
+best_clusters <- best_clusters_fun(p_values, t, max_Bn_scales, clusters_list)
 
-  best_clusters <- lapply(best_clusters, function(x) {
-    cluster_notation_conv(x, n)
-  })
+best_clusters <- lapply(best_clusters, function(x) {
+  cluster_notation_conv(x, n)
+})
 
-  unlist(lapply(best_clusters, function(x) {
-    adj.rand.index(x, true_cluster)
-  }))
+unlist(lapply(best_clusters, function(x) {
+  adj.rand.index(x, true_cluster)
+}))
 
-  #
+#
 
-  # ACF, COR, EUCL, PER
+# ACF, COR, EUCL, PER
 
-  dist_obj <- diss(data, "ACF")
+dist_obj <- diss(data, "ACF")
 
-  clust_ACF <- pam(dist_obj, k = 2, diss = TRUE)
+clust_ACF <- pam(dist_obj, k = 2, diss = TRUE)
 
-  adj.rand.index(clust_ACF$clustering, true_cluster)
+adj.rand.index(clust_ACF$clustering, true_cluster)
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # 31.59271 secs (16)
 
@@ -454,15 +452,13 @@ iterations <- if (TEST_MODE) 2 else 5
 
 model <- "A"
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  test <- main_fun(iterations, B, n, n1, t, model)
+test <- main_fun(iterations, B, n, n1, t, model)
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 ################################################################################
 
@@ -476,162 +472,150 @@ iterations <- if (TEST_MODE) 2 else 100
 
 set.seed(72)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 128
+t <- 128
 
-  results_128_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 128, sample size = 12, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_1.RData"))
 set.seed(73)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 128
+t <- 128
 
-  results_128_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 128, sample size = 14, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_2.RData"))
 set.seed(74)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 128
+t <- 128
 
-  results_128_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 128, sample size = 14, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_3.RData"))
 set.seed(75)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 128
+t <- 128
 
-  results_128_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 128, sample size = 16, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_4.RData"))
 set.seed(76)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 128
+t <- 128
 
-  results_128_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 128, sample size = 16, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_5.RData"))
 set.seed(77)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 128
+t <- 128
 
-  results_128_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_128_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_128_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_128_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_128_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_128_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_128_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_128_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 ################################################################################
 
@@ -640,162 +624,150 @@ set.seed(77)
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_6.RData"))
 set.seed(78)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 256
+t <- 256
 
-  results_256_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 256, sample size = 12, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_7.RData"))
 set.seed(79)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 256
+t <- 256
 
-  results_256_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 256, sample size = 14, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_8.RData"))
 set.seed(80)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 256
+t <- 256
 
-  results_256_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 256, sample size = 14, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_9.RData"))
 set.seed(81)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 256
+t <- 256
 
-  results_256_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 256, sample size = 16, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_10.RData"))
 set.seed(82)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 256
+t <- 256
 
-  results_256_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 256, sample size = 16, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_11.RData"))
 set.seed(83)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 256
+t <- 256
 
-  results_256_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_256_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_256_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_256_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_256_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_256_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_256_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_256_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 
 ################################################################################
@@ -805,162 +777,150 @@ set.seed(83)
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_12.RData"))
 set.seed(84)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 512
+t <- 512
 
-  results_512_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_12_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_12_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_12_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_12_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 512, sample size = 12, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_13.RData"))
 set.seed(85)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 12
+n <- 12
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 512
+t <- 512
 
-  results_512_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_12_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_12_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_12_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_12_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 512, sample size = 14, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_14.RData"))
 set.seed(86)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 512
+t <- 512
 
-  results_512_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_14_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_14_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_14_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_14_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 512, sample size = 14, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_15.RData"))
 set.seed(87)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 14
+n <- 14
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 512
+t <- 512
 
-  results_512_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_14_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_14_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_14_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_14_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 512, sample size = 16, n1/n2 approx 1
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_16.RData"))
 set.seed(88)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- n / 2
+n1 <- n / 2
 
-  t <- 512
+t <- 512
 
-  results_512_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_16_1_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_16_1_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_16_1_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_16_1_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 # Time series length = 512, sample size = 16, n1/n2 approx 2
 
 save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_part_17.RData"))
 set.seed(89)
 
-{
-  start.time <- Sys.time()
+start.time <- Sys.time()
 
-  n <- 16
+n <- 16
 
-  n1 <- floor((2 / 3) * n)
+n1 <- floor((2 / 3) * n)
 
-  t <- 512
+t <- 512
 
-  results_512_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
+results_512_16_2_A <- main_fun(iterations, B, n, n1, t, "A")
 
-  results_512_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
+results_512_16_2_B <- main_fun(iterations, B, n, n1, t, "B")
 
-  results_512_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
+results_512_16_2_C <- main_fun(iterations, B, n, n1, t, "C")
 
-  results_512_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
+results_512_16_2_D <- main_fun(iterations, B, n, n1, t, "D")
 
-  end.time <- Sys.time()
+end.time <- Sys.time()
 
-  end.time - start.time
-}
+end.time - start.time
 
 
 ################################################################################

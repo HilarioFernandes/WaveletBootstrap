@@ -214,156 +214,136 @@ set.seed(58)
 
 # No variance change, independent blocks, independent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_F_A_1_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_A_1_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_A_1_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, TRUE, TRUE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, TRUE, TRUE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_F_A_1_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_A_1_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_A_1_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_A_1_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model B
+# model B
 
-  {
-    rejection_proportions_F_B_1_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_B_1_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_B_1_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_B_1_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, TRUE, TRUE, "B", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, TRUE, TRUE, "B", iterations, B, alpha_0)
 
-      rejection_proportions_F_B_1_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_B_1_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_B_1_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_B_1_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model C
+# model C
 
-  {
-    rejection_proportions_F_C_1_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_C_1_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_C_1_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_C_1_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, TRUE, TRUE, "C", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, TRUE, TRUE, "C", iterations, B, alpha_0)
 
-      rejection_proportions_F_C_1_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_C_1_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_C_1_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_C_1_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model D
+# model D
 
-  {
-    rejection_proportions_F_D_1_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_D_1_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_D_1_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_D_1_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, TRUE, TRUE, "D", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, TRUE, TRUE, "D", iterations, B, alpha_0)
 
-      rejection_proportions_F_D_1_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_D_1_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_D_1_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_D_1_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
   end_time <- Sys.time()
 
   duration <- end_time - start_time
   print(duration)
-}
 
 save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_1.RData"))
 set.seed(59)
 
 # variance change (factor 1.5), independent blocks, independent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_F_A_1.5_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_A_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_A_1.5_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_F_A_1.5_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_A_1.5_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_A_1.5_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_A_1.5_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model B
+# model B
 
-  {
-    rejection_proportions_F_B_1.5_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_B_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_B_1.5_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_B_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "B", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "B", iterations, B, alpha_0)
 
-      rejection_proportions_F_B_1.5_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_B_1.5_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_B_1.5_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_B_1.5_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model C
+# model C
 
-  {
-    rejection_proportions_F_C_1.5_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_C_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_C_1.5_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_C_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "C", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "C", iterations, B, alpha_0)
 
-      rejection_proportions_F_C_1.5_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_C_1.5_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_C_1.5_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_C_1.5_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
-  # model D
+# model D
 
-  {
-    rejection_proportions_F_D_1.5_indepground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_D_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_D_1.5_indepground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_D_1.5_indepground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "D", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, TRUE, TRUE, "D", iterations, B, alpha_0)
 
-      rejection_proportions_F_D_1.5_indepground[[i]] <- temp[[1]]
-      rejection_proportions_boot_D_1.5_indepground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
+  rejection_proportions_F_D_1.5_indepground[[i]] <- temp[[1]]
+  rejection_proportions_boot_D_1.5_indepground_indepmethod[[i]] <- temp[[2]]
+}
 
   end_time <- Sys.time()
 
   duration <- end_time - start_time
   print(duration)
-}
 
 ################################################################################
 
@@ -372,140 +352,120 @@ set.seed(60)
 
 # No variance change, independent blocks, dependent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_boot_A_1_indepground_depmethod <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1_indepground_depmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, TRUE, FALSE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, TRUE, FALSE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_boot_A_1_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_boot_B_1_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, TRUE, FALSE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_boot_B_1_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_boot_C_1_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, TRUE, FALSE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_boot_C_1_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_boot_D_1_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, TRUE, FALSE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_boot_D_1_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_boot_A_1_indepground_depmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_boot_B_1_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, TRUE, FALSE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_boot_B_1_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_boot_C_1_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, TRUE, FALSE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_boot_C_1_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_boot_D_1_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, TRUE, FALSE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_boot_D_1_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_3.RData"))
 set.seed(61)
 
 # variance change (factor 1.5), independent blocks, dependent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_boot_A_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_boot_A_1.5_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_boot_B_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_boot_B_1.5_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_boot_C_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_boot_C_1.5_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_boot_D_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_boot_D_1.5_indepground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_boot_A_1.5_indepground_depmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_boot_B_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_boot_B_1.5_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_boot_C_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_boot_C_1.5_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_boot_D_1.5_indepground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, TRUE, FALSE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_boot_D_1.5_indepground_depmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 ################################################################################
 
@@ -514,156 +474,136 @@ set.seed(62)
 
 # No variance change, dependent blocks, dependent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_F_A_1_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_A_1_depground_depmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_A_1_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1_depground_depmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, FALSE, FALSE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, FALSE, FALSE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_F_A_1_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_A_1_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_F_B_1_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_B_1_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, FALSE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_F_B_1_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_B_1_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_F_C_1_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_C_1_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, FALSE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_F_C_1_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_C_1_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_F_D_1_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_D_1_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, FALSE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_F_D_1_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_D_1_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_F_A_1_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_A_1_depground_depmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_F_B_1_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_B_1_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, FALSE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_F_B_1_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_B_1_depground_depmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_F_C_1_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_C_1_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, FALSE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_F_C_1_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_C_1_depground_depmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_F_D_1_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_D_1_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, FALSE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_F_D_1_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_D_1_depground_depmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_5.RData"))
 set.seed(63)
 
 # variance change (factor 1.5), dependent blocks, dependent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_F_A_1.5_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_A_1.5_depground_depmethod <- list(NULL, NULL, NULL)
+rejection_proportions_F_A_1.5_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1.5_depground_depmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_F_A_1.5_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_A_1.5_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_F_B_1.5_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_B_1.5_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_F_B_1.5_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_B_1.5_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_F_C_1.5_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_C_1.5_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_F_C_1.5_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_C_1.5_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_F_D_1.5_depground <- list(NULL, NULL, NULL)
-    rejection_proportions_boot_D_1.5_depground_depmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_F_D_1.5_depground[[i]] <- temp[[1]]
-      rejection_proportions_boot_D_1.5_depground_depmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_F_A_1.5_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_A_1.5_depground_depmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_F_B_1.5_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_B_1.5_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_F_B_1.5_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_B_1.5_depground_depmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_F_C_1.5_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_C_1.5_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_F_C_1.5_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_C_1.5_depground_depmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_F_D_1.5_depground <- list(NULL, NULL, NULL)
+rejection_proportions_boot_D_1.5_depground_depmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, FALSE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_F_D_1.5_depground[[i]] <- temp[[1]]
+  rejection_proportions_boot_D_1.5_depground_depmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 ################################################################################
 
@@ -672,140 +612,120 @@ set.seed(64)
 
 # No variance change, dependent blocks, independent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_boot_A_1_depground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1_depground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1, FALSE, TRUE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1, FALSE, TRUE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_boot_A_1_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_boot_B_1_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, TRUE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_boot_B_1_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_boot_C_1_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, TRUE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_boot_C_1_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_boot_D_1_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1, FALSE, TRUE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_boot_D_1_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_boot_A_1_depground_indepmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_boot_B_1_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, TRUE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_boot_B_1_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_boot_C_1_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, TRUE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_boot_C_1_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_boot_D_1_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1, FALSE, TRUE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_boot_D_1_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_part_7.RData"))
 set.seed(65)
 
 # variance change (factor 1.5), dependent blocks, independent method
 
-{
-  start_time <- Sys.time()
+start_time <- Sys.time()
 
-  # model A
+# model A
 
-  {
-    rejection_proportions_boot_A_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
+rejection_proportions_boot_A_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
 
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
 
-      temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "A", iterations, B, alpha_0)
+  temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "A", iterations, B, alpha_0)
 
-      rejection_proportions_boot_A_1.5_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model B
-
-  {
-    rejection_proportions_boot_B_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "B", iterations, B, alpha_0)
-
-      rejection_proportions_boot_B_1.5_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model C
-
-  {
-    rejection_proportions_boot_C_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "C", iterations, B, alpha_0)
-
-      rejection_proportions_boot_C_1.5_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  # model D
-
-  {
-    rejection_proportions_boot_D_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
-
-    for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
-
-      temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "D", iterations, B, alpha_0)
-
-      rejection_proportions_boot_D_1.5_depground_indepmethod[[i]] <- temp[[2]]
-    }
-  }
-
-  end_time <- Sys.time()
-
-  duration <- end_time - start_time
-  print(duration)
+  rejection_proportions_boot_A_1.5_depground_indepmethod[[i]] <- temp[[2]]
 }
+
+# model B
+
+rejection_proportions_boot_B_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "B", iterations, B, alpha_0)
+
+  rejection_proportions_boot_B_1.5_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+# model C
+
+rejection_proportions_boot_C_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "C", iterations, B, alpha_0)
+
+  rejection_proportions_boot_C_1.5_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+# model D
+
+rejection_proportions_boot_D_1.5_depground_indepmethod <- list(NULL, NULL, NULL)
+
+for (i in 1:3) {
+  N <- 2^((2 * i - 1) + 6)
+
+  temp <- simulations_comparison(N, 1.5, FALSE, TRUE, "D", iterations, B, alpha_0)
+
+  rejection_proportions_boot_D_1.5_depground_indepmethod[[i]] <- temp[[2]]
+}
+
+end_time <- Sys.time()
+
+duration <- end_time - start_time
+print(duration)
 
 ################################################################################
 

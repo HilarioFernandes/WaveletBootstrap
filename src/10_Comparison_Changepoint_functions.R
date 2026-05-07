@@ -164,20 +164,21 @@ changepointdetection <- function(data, block_size, sequential, approximation, al
 if (FALSE) {
   # #Example with two blocks of size 128
   #
-  # {
-  #   mult_factor <- 1
+
+# mult_factor <- 1
+#
+# N <- 128
+# X <- Model_B_sim(2*N)
+# Y <- mult_factor*X[(N+1):(2*N)]
+# X <- X[1:N]
+#
+# jmax <- 3
+#
+# alpha_0 <- 0.05
+#
+# plot(c(X,Y), type = "l")
+
   #
-  #   N <- 128
-  #   X <- Model_B_sim(2*N)
-  #   Y <- mult_factor*X[(N+1):(2*N)]
-  #   X <- X[1:N]
-  #
-  #   jmax <- 3
-  #
-  #   alpha_0 <- 0.05
-  #
-  #   plot(c(X,Y), type = "l")
-  # }
   #
   # blocks_comparison(X, Y, "F", 0.05, 3, NA)
   # changepointdetection(c(X,Y), 128, FALSE, "F", 0.05, 3, NA)
@@ -189,19 +190,20 @@ if (FALSE) {
   #
   # #Example with three blocks of size 128
   #
-  # {
-  #   N <- 128
-  #   X <- Model_B_sim(3*N)
-  #   Z <- X[(2*N+1):(3*N)]
-  #   Y <- X[(N+1):(2*N)]
-  #   X <- X[1:N]
+
+# N <- 128
+# X <- Model_B_sim(3*N)
+# Z <- X[(2*N+1):(3*N)]
+# Y <- X[(N+1):(2*N)]
+# X <- X[1:N]
+#
+# jmax <- 3
+#
+# alpha_0 <- 0.05
+#
+# plot(c(X,Y), type = "l")
+
   #
-  #   jmax <- 3
-  #
-  #   alpha_0 <- 0.05
-  #
-  #   plot(c(X,Y), type = "l")
-  # }
   #
   # changepointdetection(c(X,Y,Z), 128, FALSE, "F", 0.05, 3, NA)
   # changepointdetection(c(X,Y,Z), 128, TRUE, "F", 0.05, 3, NA)
