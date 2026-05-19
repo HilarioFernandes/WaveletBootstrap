@@ -2,7 +2,7 @@
 # 5_CI_wv.R
 # =============================================================================
 # Purpose  : Simulation study of bootstrap CI coverage for wavelet variance.
-# Chapter  : Chapter 3, Appendix B.2
+# Chapter  : Chapter 3, Appendix b.2
 # Inputs   : None
 # Outputs  : LaTeX tables for CI coverage.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -10,159 +10,159 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R")) ################################################################################
+source(file.path(base_path, "src", "2_Bootstrap_methods.R")) ################################################################################
 
 # study for CI
 
 set.seed(44)
 
-B <- if (TEST_MODE) 5 else 100
-iterations <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 5 else 100
+iterations <- if (test_mode) 2 else 100
 
-A.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-C.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-D.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+a_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+b_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+c_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+d_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
-A.wv_waveslim_gaussian <- list(
+a_wv_waveslim_gaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-B.wv_waveslim_gaussian <- list(
+b_wv_waveslim_gaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-C.wv_waveslim_gaussian <- list(
+c_wv_waveslim_gaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-D.wv_waveslim_gaussian <- list(
-  "128" = vector("list", length = iterations),
-  "512" = vector("list", length = iterations),
-  "2048" = vector("list", length = iterations)
-)
-
-A.wv_waveslim_nongaussian <- list(
-  "128" = vector("list", length = iterations),
-  "512" = vector("list", length = iterations),
-  "2048" = vector("list", length = iterations)
-)
-B.wv_waveslim_nongaussian <- list(
-  "128" = vector("list", length = iterations),
-  "512" = vector("list", length = iterations),
-  "2048" = vector("list", length = iterations)
-)
-C.wv_waveslim_nongaussian <- list(
-  "128" = vector("list", length = iterations),
-  "512" = vector("list", length = iterations),
-  "2048" = vector("list", length = iterations)
-)
-D.wv_waveslim_nongaussian <- list(
+d_wv_waveslim_gaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_waveslim_eta3 <- list(
+a_wv_waveslim_nongaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-B.wv_waveslim_eta3 <- list(
+b_wv_waveslim_nongaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-C.wv_waveslim_eta3 <- list(
+c_wv_waveslim_nongaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
-D.wv_waveslim_eta3 <- list(
-  "128" = vector("list", length = iterations),
-  "512" = vector("list", length = iterations),
-  "2048" = vector("list", length = iterations)
-)
-
-A.wv_SB_2 <- list(
+d_wv_waveslim_nongaussian <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_SB_4 <- list(
+a_wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+b_wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+c_wv_waveslim_eta3 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+d_wv_waveslim_eta3 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_SB_8 <- list(
+a_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_2 <- list(
+a_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_4 <- list(
+a_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_8 <- list(
+b_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_2 <- list(
+b_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_4 <- list(
+b_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_8 <- list(
+c_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_2 <- list(
+c_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_4 <- list(
+c_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_8 <- list(
+d_wv_sb_2 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+
+d_wv_sb_4 <- list(
+  "128" = vector("list", length = iterations),
+  "512" = vector("list", length = iterations),
+  "2048" = vector("list", length = iterations)
+)
+
+d_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
@@ -177,111 +177,111 @@ for (iter in 1:iterations) {
   for (i in 1:3) {
     # print(c(iter,i))
 
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
-    n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+    n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
     # simulating from each model
-    YA <- Model_A_sim(N)
-    YB <- Model_B_sim(N)
-    YC <- Model_C_sim(N)
-    YD <- Model_D_sim(N)
+    ya <- model_a_sim(n)
+    yb <- model_b_sim(n)
+    yc <- model_c_sim(n)
+    yd <- model_d_sim(n)
 
     # calculating the point estimates of the wavelet variances
-    A.wv[[i]] <- rbind(A.wv[[i]], wv_estimates(YA))
-    B.wv[[i]] <- rbind(B.wv[[i]], wv_estimates(YB))
-    C.wv[[i]] <- rbind(C.wv[[i]], wv_estimates(YC))
-    D.wv[[i]] <- rbind(D.wv[[i]], wv_estimates(YD))
+    a_wv[[i]] <- rbind(a_wv[[i]], wv_estimates(ya))
+    b_wv[[i]] <- rbind(b_wv[[i]], wv_estimates(yb))
+    c_wv[[i]] <- rbind(c_wv[[i]], wv_estimates(yc))
+    d_wv[[i]] <- rbind(d_wv[[i]], wv_estimates(yd))
 
     # calculating the confidence intervals via waveslim
-    A.wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(YA, n.levels = n_levels),
+    a_wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(ya, n.levels = n_levels),
       p = 0.025, type = "gaussian"
     )[1:n_levels, ]
-    B.wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(YB, n.levels = n_levels),
+    b_wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(yb, n.levels = n_levels),
       p = 0.025, type = "gaussian"
     )[1:n_levels, ]
-    C.wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(YC, n.levels = n_levels),
+    c_wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(yc, n.levels = n_levels),
       p = 0.025, type = "gaussian"
     )[1:n_levels, ]
-    D.wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(YD, n.levels = n_levels),
+    d_wv_waveslim_gaussian[[i]][[iter]] <- wave.variance(modwt(yd, n.levels = n_levels),
       p = 0.025, type = "gaussian"
     )[1:n_levels, ]
 
-    A.wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(YA, n.levels = n_levels),
+    a_wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(ya, n.levels = n_levels),
       p = 0.025, type = "nongaussian"
     )[1:n_levels, ]
-    B.wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(YB, n.levels = n_levels),
+    b_wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(yb, n.levels = n_levels),
       p = 0.025, type = "nongaussian"
     )[1:n_levels, ]
-    C.wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(YC, n.levels = n_levels),
+    c_wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(yc, n.levels = n_levels),
       p = 0.025, type = "nongaussian"
     )[1:n_levels, ]
-    D.wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(YD, n.levels = n_levels),
+    d_wv_waveslim_nongaussian[[i]][[iter]] <- wave.variance(modwt(yd, n.levels = n_levels),
       p = 0.025, type = "nongaussian"
     )[1:n_levels, ]
 
 
-    A.wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(YA, n.levels = n_levels),
+    a_wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(ya, n.levels = n_levels),
       p = 0.025, type = "eta3"
     )[1:n_levels, ]
-    B.wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(YB, n.levels = n_levels),
+    b_wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(yb, n.levels = n_levels),
       p = 0.025, type = "eta3"
     )[1:n_levels, ]
-    C.wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(YC, n.levels = n_levels),
+    c_wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(yc, n.levels = n_levels),
       p = 0.025, type = "eta3"
     )[1:n_levels, ]
-    D.wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(YD, n.levels = n_levels),
+    d_wv_waveslim_eta3[[i]][[iter]] <- wave.variance(modwt(yd, n.levels = n_levels),
       p = 0.025, type = "eta3"
     )[1:n_levels, ]
 
     # bootstrap wavelet estimates
-    A.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    a_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    A.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    a_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    A.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    a_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    B.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    b_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    B.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    b_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    B.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    b_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    C.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    c_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    C.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    c_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    C.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    c_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    D.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    d_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    D.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    d_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    D.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    d_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
   }
 }
 
@@ -289,7 +289,7 @@ for (iter in 1:iterations) {
 
 # confidence intervals
 
-# CI_calculation_boot <- function(list1, alpha){
+# ci_calculation_boot <- function(list1, alpha){
 #
 #   lower <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 #   upper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
@@ -298,9 +298,9 @@ for (iter in 1:iterations) {
 #
 #     for(i in 1:3){
 #
-#       N <- 2^((2*i-1)+6)
+#       n <- 2^((2*i-1)+6)
 #
-#       n_levels <- floor(log2(1+(N-1)/(8-1)))
+#       n_levels <- floor(log2(1+(n-1)/(8-1)))
 #
 #       lower[[i]] <- rbind(lower[[i]], apply(list1[[i]][[iter]], 2, function(x){quantile(x, probs = alpha/2)}))
 #
@@ -320,15 +320,15 @@ for (iter in 1:iterations) {
 #' @param list2 List of point estimates for wavelet variances
 #' @param alpha Significance level
 #' @return A list containing lower and upper limits matrices
-CI_calculation_boot <- function(list1, list2, alpha) {
+ci_calculation_boot <- function(list1, list2, alpha) {
   lower <- list("128" = NULL, "512" = NULL, "2048" = NULL)
   upper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
   for (iter in 1:iterations) {
     for (i in 1:3) {
-      N <- 2^((2 * i - 1) + 6)
+      n <- 2^((2 * i - 1) + 6)
 
-      n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+      n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
       # bootstrap variances estimates and point estimates for wavelet variances
 
@@ -354,21 +354,21 @@ CI_calculation_boot <- function(list1, list2, alpha) {
   return(list(lower, upper))
 }
 
-A.wv_SB_2_CI <- CI_calculation_boot(A.wv_SB_2, A.wv, 0.05)
-A.wv_SB_4_CI <- CI_calculation_boot(A.wv_SB_4, A.wv, 0.05)
-A.wv_SB_8_CI <- CI_calculation_boot(A.wv_SB_8, A.wv, 0.05)
+a_wv_sb_2_ci <- ci_calculation_boot(a_wv_sb_2, a_wv, 0.05)
+a_wv_sb_4_ci <- ci_calculation_boot(a_wv_sb_4, a_wv, 0.05)
+a_wv_sb_8_ci <- ci_calculation_boot(a_wv_sb_8, a_wv, 0.05)
 
-B.wv_SB_2_CI <- CI_calculation_boot(B.wv_SB_2, B.wv, 0.05)
-B.wv_SB_4_CI <- CI_calculation_boot(B.wv_SB_4, B.wv, 0.05)
-B.wv_SB_8_CI <- CI_calculation_boot(B.wv_SB_8, B.wv, 0.05)
+b_wv_sb_2_ci <- ci_calculation_boot(b_wv_sb_2, b_wv, 0.05)
+b_wv_sb_4_ci <- ci_calculation_boot(b_wv_sb_4, b_wv, 0.05)
+b_wv_sb_8_ci <- ci_calculation_boot(b_wv_sb_8, b_wv, 0.05)
 
-C.wv_SB_2_CI <- CI_calculation_boot(C.wv_SB_2, C.wv, 0.05)
-C.wv_SB_4_CI <- CI_calculation_boot(C.wv_SB_4, C.wv, 0.05)
-C.wv_SB_8_CI <- CI_calculation_boot(C.wv_SB_8, C.wv, 0.05)
+c_wv_sb_2_ci <- ci_calculation_boot(c_wv_sb_2, c_wv, 0.05)
+c_wv_sb_4_ci <- ci_calculation_boot(c_wv_sb_4, c_wv, 0.05)
+c_wv_sb_8_ci <- ci_calculation_boot(c_wv_sb_8, c_wv, 0.05)
 
-D.wv_SB_2_CI <- CI_calculation_boot(D.wv_SB_2, D.wv, 0.05)
-D.wv_SB_4_CI <- CI_calculation_boot(D.wv_SB_4, D.wv, 0.05)
-D.wv_SB_8_CI <- CI_calculation_boot(D.wv_SB_8, D.wv, 0.05)
+d_wv_sb_2_ci <- ci_calculation_boot(d_wv_sb_2, d_wv, 0.05)
+d_wv_sb_4_ci <- ci_calculation_boot(d_wv_sb_4, d_wv, 0.05)
+d_wv_sb_8_ci <- ci_calculation_boot(d_wv_sb_8, d_wv, 0.05)
 
 
 #' Calculate true wavelet variances
@@ -383,10 +383,10 @@ true_wv <- function(list1) {
   return(temp)
 }
 
-A.wv_mean <- true_wv(A.wv)
-B.wv_mean <- true_wv(B.wv)
-C.wv_mean <- true_wv(C.wv)
-D.wv_mean <- true_wv(D.wv)
+a_wv_mean <- true_wv(a_wv)
+b_wv_mean <- true_wv(b_wv)
+c_wv_mean <- true_wv(c_wv)
+d_wv_mean <- true_wv(d_wv)
 
 ################################################################################
 
@@ -405,9 +405,9 @@ coverages_boot <- function(list1, array2) {
   )
 
   for (i in 1:3) {
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
-    n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+    n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
     for (iter in 1:iterations) {
       for (j in 1:n_levels) {
@@ -423,21 +423,21 @@ coverages_boot <- function(list1, array2) {
   return(output)
 }
 
-A.wv_SB_2_CI_coverage <- coverages_boot(A.wv_SB_2_CI, A.wv_mean)
-A.wv_SB_4_CI_coverage <- coverages_boot(A.wv_SB_4_CI, A.wv_mean)
-A.wv_SB_8_CI_coverage <- coverages_boot(A.wv_SB_8_CI, A.wv_mean)
+a_wv_sb_2_ci_coverage <- coverages_boot(a_wv_sb_2_ci, a_wv_mean)
+a_wv_sb_4_ci_coverage <- coverages_boot(a_wv_sb_4_ci, a_wv_mean)
+a_wv_sb_8_ci_coverage <- coverages_boot(a_wv_sb_8_ci, a_wv_mean)
 
-B.wv_SB_2_CI_coverage <- coverages_boot(B.wv_SB_2_CI, B.wv_mean)
-B.wv_SB_4_CI_coverage <- coverages_boot(B.wv_SB_4_CI, B.wv_mean)
-B.wv_SB_8_CI_coverage <- coverages_boot(B.wv_SB_8_CI, B.wv_mean)
+b_wv_sb_2_ci_coverage <- coverages_boot(b_wv_sb_2_ci, b_wv_mean)
+b_wv_sb_4_ci_coverage <- coverages_boot(b_wv_sb_4_ci, b_wv_mean)
+b_wv_sb_8_ci_coverage <- coverages_boot(b_wv_sb_8_ci, b_wv_mean)
 
-C.wv_SB_2_CI_coverage <- coverages_boot(C.wv_SB_2_CI, C.wv_mean)
-C.wv_SB_4_CI_coverage <- coverages_boot(C.wv_SB_4_CI, C.wv_mean)
-C.wv_SB_8_CI_coverage <- coverages_boot(C.wv_SB_8_CI, C.wv_mean)
+c_wv_sb_2_ci_coverage <- coverages_boot(c_wv_sb_2_ci, c_wv_mean)
+c_wv_sb_4_ci_coverage <- coverages_boot(c_wv_sb_4_ci, c_wv_mean)
+c_wv_sb_8_ci_coverage <- coverages_boot(c_wv_sb_8_ci, c_wv_mean)
 
-D.wv_SB_2_CI_coverage <- coverages_boot(D.wv_SB_2_CI, D.wv_mean)
-D.wv_SB_4_CI_coverage <- coverages_boot(D.wv_SB_4_CI, D.wv_mean)
-D.wv_SB_8_CI_coverage <- coverages_boot(D.wv_SB_8_CI, D.wv_mean)
+d_wv_sb_2_ci_coverage <- coverages_boot(d_wv_sb_2_ci, d_wv_mean)
+d_wv_sb_4_ci_coverage <- coverages_boot(d_wv_sb_4_ci, d_wv_mean)
+d_wv_sb_8_ci_coverage <- coverages_boot(d_wv_sb_8_ci, d_wv_mean)
 
 #' Check CI coverage using waveslim
 #'
@@ -452,9 +452,9 @@ coverages_waveslim <- function(list1, array2) {
   )
 
   for (i in 1:3) {
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
-    n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+    n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
     for (iter in 1:iterations) {
       for (j in 1:n_levels) {
@@ -470,20 +470,20 @@ coverages_waveslim <- function(list1, array2) {
   return(output)
 }
 
-A.wv_waveslim_gaussian_coverage <- coverages_waveslim(A.wv_waveslim_gaussian, A.wv_mean)
-B.wv_waveslim_gaussian_coverage <- coverages_waveslim(B.wv_waveslim_gaussian, B.wv_mean)
-C.wv_waveslim_gaussian_coverage <- coverages_waveslim(C.wv_waveslim_gaussian, C.wv_mean)
-D.wv_waveslim_gaussian_coverage <- coverages_waveslim(D.wv_waveslim_gaussian, D.wv_mean)
+a_wv_waveslim_gaussian_coverage <- coverages_waveslim(a_wv_waveslim_gaussian, a_wv_mean)
+b_wv_waveslim_gaussian_coverage <- coverages_waveslim(b_wv_waveslim_gaussian, b_wv_mean)
+c_wv_waveslim_gaussian_coverage <- coverages_waveslim(c_wv_waveslim_gaussian, c_wv_mean)
+d_wv_waveslim_gaussian_coverage <- coverages_waveslim(d_wv_waveslim_gaussian, d_wv_mean)
 
-A.wv_waveslim_nongaussian_coverage <- coverages_waveslim(A.wv_waveslim_nongaussian, A.wv_mean)
-B.wv_waveslim_nongaussian_coverage <- coverages_waveslim(B.wv_waveslim_nongaussian, B.wv_mean)
-C.wv_waveslim_nongaussian_coverage <- coverages_waveslim(C.wv_waveslim_nongaussian, C.wv_mean)
-D.wv_waveslim_nongaussian_coverage <- coverages_waveslim(D.wv_waveslim_nongaussian, D.wv_mean)
+a_wv_waveslim_nongaussian_coverage <- coverages_waveslim(a_wv_waveslim_nongaussian, a_wv_mean)
+b_wv_waveslim_nongaussian_coverage <- coverages_waveslim(b_wv_waveslim_nongaussian, b_wv_mean)
+c_wv_waveslim_nongaussian_coverage <- coverages_waveslim(c_wv_waveslim_nongaussian, c_wv_mean)
+d_wv_waveslim_nongaussian_coverage <- coverages_waveslim(d_wv_waveslim_nongaussian, d_wv_mean)
 
-A.wv_waveslim_eta3_coverage <- coverages_waveslim(A.wv_waveslim_eta3, A.wv_mean)
-B.wv_waveslim_eta3_coverage <- coverages_waveslim(B.wv_waveslim_eta3, B.wv_mean)
-C.wv_waveslim_eta3_coverage <- coverages_waveslim(C.wv_waveslim_eta3, C.wv_mean)
-D.wv_waveslim_eta3_coverage <- coverages_waveslim(D.wv_waveslim_eta3, D.wv_mean)
+a_wv_waveslim_eta3_coverage <- coverages_waveslim(a_wv_waveslim_eta3, a_wv_mean)
+b_wv_waveslim_eta3_coverage <- coverages_waveslim(b_wv_waveslim_eta3, b_wv_mean)
+c_wv_waveslim_eta3_coverage <- coverages_waveslim(c_wv_waveslim_eta3, c_wv_mean)
+d_wv_waveslim_eta3_coverage <- coverages_waveslim(d_wv_waveslim_eta3, d_wv_mean)
 
 ################################################################################
 
@@ -505,36 +505,36 @@ coverages_percentual <- function(list1) {
   return(temp)
 }
 
-A.wv_SB_2_CI_coverage_percentual <- coverages_percentual(A.wv_SB_2_CI_coverage)
-A.wv_SB_4_CI_coverage_percentual <- coverages_percentual(A.wv_SB_4_CI_coverage)
-A.wv_SB_8_CI_coverage_percentual <- coverages_percentual(A.wv_SB_8_CI_coverage)
+a_wv_sb_2_ci_coverage_percentual <- coverages_percentual(a_wv_sb_2_ci_coverage)
+a_wv_sb_4_ci_coverage_percentual <- coverages_percentual(a_wv_sb_4_ci_coverage)
+a_wv_sb_8_ci_coverage_percentual <- coverages_percentual(a_wv_sb_8_ci_coverage)
 
-B.wv_SB_2_CI_coverage_percentual <- coverages_percentual(B.wv_SB_2_CI_coverage)
-B.wv_SB_4_CI_coverage_percentual <- coverages_percentual(B.wv_SB_4_CI_coverage)
-B.wv_SB_8_CI_coverage_percentual <- coverages_percentual(B.wv_SB_8_CI_coverage)
+b_wv_sb_2_ci_coverage_percentual <- coverages_percentual(b_wv_sb_2_ci_coverage)
+b_wv_sb_4_ci_coverage_percentual <- coverages_percentual(b_wv_sb_4_ci_coverage)
+b_wv_sb_8_ci_coverage_percentual <- coverages_percentual(b_wv_sb_8_ci_coverage)
 
-C.wv_SB_2_CI_coverage_percentual <- coverages_percentual(C.wv_SB_2_CI_coverage)
-C.wv_SB_4_CI_coverage_percentual <- coverages_percentual(C.wv_SB_4_CI_coverage)
-C.wv_SB_8_CI_coverage_percentual <- coverages_percentual(C.wv_SB_8_CI_coverage)
+c_wv_sb_2_ci_coverage_percentual <- coverages_percentual(c_wv_sb_2_ci_coverage)
+c_wv_sb_4_ci_coverage_percentual <- coverages_percentual(c_wv_sb_4_ci_coverage)
+c_wv_sb_8_ci_coverage_percentual <- coverages_percentual(c_wv_sb_8_ci_coverage)
 
-D.wv_SB_2_CI_coverage_percentual <- coverages_percentual(D.wv_SB_2_CI_coverage)
-D.wv_SB_4_CI_coverage_percentual <- coverages_percentual(D.wv_SB_4_CI_coverage)
-D.wv_SB_8_CI_coverage_percentual <- coverages_percentual(D.wv_SB_8_CI_coverage)
+d_wv_sb_2_ci_coverage_percentual <- coverages_percentual(d_wv_sb_2_ci_coverage)
+d_wv_sb_4_ci_coverage_percentual <- coverages_percentual(d_wv_sb_4_ci_coverage)
+d_wv_sb_8_ci_coverage_percentual <- coverages_percentual(d_wv_sb_8_ci_coverage)
 
-A.wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(A.wv_waveslim_gaussian_coverage)
-B.wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(B.wv_waveslim_gaussian_coverage)
-C.wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(C.wv_waveslim_gaussian_coverage)
-D.wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(D.wv_waveslim_gaussian_coverage)
+a_wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(a_wv_waveslim_gaussian_coverage)
+b_wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(b_wv_waveslim_gaussian_coverage)
+c_wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(c_wv_waveslim_gaussian_coverage)
+d_wv_waveslim_gaussian_coverage_percentual <- coverages_percentual(d_wv_waveslim_gaussian_coverage)
 
-A.wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(A.wv_waveslim_nongaussian_coverage)
-B.wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(B.wv_waveslim_nongaussian_coverage)
-C.wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(C.wv_waveslim_nongaussian_coverage)
-D.wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(D.wv_waveslim_nongaussian_coverage)
+a_wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(a_wv_waveslim_nongaussian_coverage)
+b_wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(b_wv_waveslim_nongaussian_coverage)
+c_wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(c_wv_waveslim_nongaussian_coverage)
+d_wv_waveslim_nongaussian_coverage_percentual <- coverages_percentual(d_wv_waveslim_nongaussian_coverage)
 
-A.wv_waveslim_eta3_coverage_percentual <- coverages_percentual(A.wv_waveslim_eta3_coverage)
-B.wv_waveslim_eta3_coverage_percentual <- coverages_percentual(B.wv_waveslim_eta3_coverage)
-C.wv_waveslim_eta3_coverage_percentual <- coverages_percentual(C.wv_waveslim_eta3_coverage)
-D.wv_waveslim_eta3_coverage_percentual <- coverages_percentual(D.wv_waveslim_eta3_coverage)
+a_wv_waveslim_eta3_coverage_percentual <- coverages_percentual(a_wv_waveslim_eta3_coverage)
+b_wv_waveslim_eta3_coverage_percentual <- coverages_percentual(b_wv_waveslim_eta3_coverage)
+c_wv_waveslim_eta3_coverage_percentual <- coverages_percentual(c_wv_waveslim_eta3_coverage)
+d_wv_waveslim_eta3_coverage_percentual <- coverages_percentual(d_wv_waveslim_eta3_coverage)
 
 ## ---- Tables and LateX Generation ----
 
@@ -548,8 +548,8 @@ latex_fun <- function(results) {
 
     if ((i + 1) %% 3 == 0) {
       str_temp <- c(
-        "Gaussian ", "$\\hat{\\eta}_3$ ", "Multitaper ", "$(2\\log_2(N))^{-1}$ ",
-        "$(4\\log_2(N))^{-1}$ ", "$(8\\log_2(N))^{-1}$ "
+        "Gaussian ", "$\\hat{\\eta}_3$ ", "Multitaper ", "$(2\\log_2(n))^{-1}$ ",
+        "$(4\\log_2(n))^{-1}$ ", "$(8\\log_2(n))^{-1}$ "
       )[(i + 1) %/% 3]
     }
 
@@ -568,160 +568,160 @@ latex_fun <- function(results) {
   }
 }
 
-resultsA <- rbind(
-  c(A.wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
-  A.wv_waveslim_gaussian_coverage_percentual[[3]],
-  c(A.wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
-  A.wv_waveslim_eta3_coverage_percentual[[3]],
-  c(A.wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
-  A.wv_waveslim_nongaussian_coverage_percentual[[3]],
-  c(A.wv_SB_2_CI_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_SB_2_CI_coverage_percentual[[2]], rep("", 2)),
-  A.wv_SB_2_CI_coverage_percentual[[3]],
-  c(A.wv_SB_4_CI_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_SB_4_CI_coverage_percentual[[2]], rep("", 2)),
-  A.wv_SB_4_CI_coverage_percentual[[3]],
-  c(A.wv_SB_8_CI_coverage_percentual[[1]], rep("", 4)),
-  c(A.wv_SB_8_CI_coverage_percentual[[2]], rep("", 2)),
-  A.wv_SB_8_CI_coverage_percentual[[3]]
+results_a <- rbind(
+  c(a_wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
+  a_wv_waveslim_gaussian_coverage_percentual[[3]],
+  c(a_wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
+  a_wv_waveslim_eta3_coverage_percentual[[3]],
+  c(a_wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
+  a_wv_waveslim_nongaussian_coverage_percentual[[3]],
+  c(a_wv_sb_2_ci_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_sb_2_ci_coverage_percentual[[2]], rep("", 2)),
+  a_wv_sb_2_ci_coverage_percentual[[3]],
+  c(a_wv_sb_4_ci_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_sb_4_ci_coverage_percentual[[2]], rep("", 2)),
+  a_wv_sb_4_ci_coverage_percentual[[3]],
+  c(a_wv_sb_8_ci_coverage_percentual[[1]], rep("", 4)),
+  c(a_wv_sb_8_ci_coverage_percentual[[2]], rep("", 2)),
+  a_wv_sb_8_ci_coverage_percentual[[3]]
 )
 
-resultsB <- rbind(
-  c(B.wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
-  B.wv_waveslim_gaussian_coverage_percentual[[3]],
-  c(B.wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
-  B.wv_waveslim_eta3_coverage_percentual[[3]],
-  c(B.wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
-  B.wv_waveslim_nongaussian_coverage_percentual[[3]],
-  c(B.wv_SB_2_CI_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_SB_2_CI_coverage_percentual[[2]], rep("", 2)),
-  B.wv_SB_2_CI_coverage_percentual[[3]],
-  c(B.wv_SB_4_CI_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_SB_4_CI_coverage_percentual[[2]], rep("", 2)),
-  B.wv_SB_4_CI_coverage_percentual[[3]],
-  c(B.wv_SB_8_CI_coverage_percentual[[1]], rep("", 4)),
-  c(B.wv_SB_8_CI_coverage_percentual[[2]], rep("", 2)),
-  B.wv_SB_8_CI_coverage_percentual[[3]]
+results_b <- rbind(
+  c(b_wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
+  b_wv_waveslim_gaussian_coverage_percentual[[3]],
+  c(b_wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
+  b_wv_waveslim_eta3_coverage_percentual[[3]],
+  c(b_wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
+  b_wv_waveslim_nongaussian_coverage_percentual[[3]],
+  c(b_wv_sb_2_ci_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_sb_2_ci_coverage_percentual[[2]], rep("", 2)),
+  b_wv_sb_2_ci_coverage_percentual[[3]],
+  c(b_wv_sb_4_ci_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_sb_4_ci_coverage_percentual[[2]], rep("", 2)),
+  b_wv_sb_4_ci_coverage_percentual[[3]],
+  c(b_wv_sb_8_ci_coverage_percentual[[1]], rep("", 4)),
+  c(b_wv_sb_8_ci_coverage_percentual[[2]], rep("", 2)),
+  b_wv_sb_8_ci_coverage_percentual[[3]]
 )
 
-resultsC <- rbind(
-  c(C.wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
-  C.wv_waveslim_gaussian_coverage_percentual[[3]],
-  c(C.wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
-  C.wv_waveslim_eta3_coverage_percentual[[3]],
-  c(C.wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
-  C.wv_waveslim_nongaussian_coverage_percentual[[3]],
-  c(C.wv_SB_2_CI_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_SB_2_CI_coverage_percentual[[2]], rep("", 2)),
-  C.wv_SB_2_CI_coverage_percentual[[3]],
-  c(C.wv_SB_4_CI_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_SB_4_CI_coverage_percentual[[2]], rep("", 2)),
-  C.wv_SB_4_CI_coverage_percentual[[3]],
-  c(C.wv_SB_8_CI_coverage_percentual[[1]], rep("", 4)),
-  c(C.wv_SB_8_CI_coverage_percentual[[2]], rep("", 2)),
-  C.wv_SB_8_CI_coverage_percentual[[3]]
+results_c <- rbind(
+  c(c_wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
+  c_wv_waveslim_gaussian_coverage_percentual[[3]],
+  c(c_wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
+  c_wv_waveslim_eta3_coverage_percentual[[3]],
+  c(c_wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
+  c_wv_waveslim_nongaussian_coverage_percentual[[3]],
+  c(c_wv_sb_2_ci_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_sb_2_ci_coverage_percentual[[2]], rep("", 2)),
+  c_wv_sb_2_ci_coverage_percentual[[3]],
+  c(c_wv_sb_4_ci_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_sb_4_ci_coverage_percentual[[2]], rep("", 2)),
+  c_wv_sb_4_ci_coverage_percentual[[3]],
+  c(c_wv_sb_8_ci_coverage_percentual[[1]], rep("", 4)),
+  c(c_wv_sb_8_ci_coverage_percentual[[2]], rep("", 2)),
+  c_wv_sb_8_ci_coverage_percentual[[3]]
 )
 
-resultsD <- rbind(
-  c(D.wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
-  D.wv_waveslim_gaussian_coverage_percentual[[3]],
-  c(D.wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
-  D.wv_waveslim_eta3_coverage_percentual[[3]],
-  c(D.wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
-  D.wv_waveslim_nongaussian_coverage_percentual[[3]],
-  c(D.wv_SB_2_CI_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_SB_2_CI_coverage_percentual[[2]], rep("", 2)),
-  D.wv_SB_2_CI_coverage_percentual[[3]],
-  c(D.wv_SB_4_CI_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_SB_4_CI_coverage_percentual[[2]], rep("", 2)),
-  D.wv_SB_4_CI_coverage_percentual[[3]],
-  c(D.wv_SB_8_CI_coverage_percentual[[1]], rep("", 4)),
-  c(D.wv_SB_8_CI_coverage_percentual[[2]], rep("", 2)),
-  D.wv_SB_8_CI_coverage_percentual[[3]]
+results_d <- rbind(
+  c(d_wv_waveslim_gaussian_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_waveslim_gaussian_coverage_percentual[[2]], rep("", 2)),
+  d_wv_waveslim_gaussian_coverage_percentual[[3]],
+  c(d_wv_waveslim_eta3_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_waveslim_eta3_coverage_percentual[[2]], rep("", 2)),
+  d_wv_waveslim_eta3_coverage_percentual[[3]],
+  c(d_wv_waveslim_nongaussian_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_waveslim_nongaussian_coverage_percentual[[2]], rep("", 2)),
+  d_wv_waveslim_nongaussian_coverage_percentual[[3]],
+  c(d_wv_sb_2_ci_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_sb_2_ci_coverage_percentual[[2]], rep("", 2)),
+  d_wv_sb_2_ci_coverage_percentual[[3]],
+  c(d_wv_sb_4_ci_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_sb_4_ci_coverage_percentual[[2]], rep("", 2)),
+  d_wv_sb_4_ci_coverage_percentual[[3]],
+  c(d_wv_sb_8_ci_coverage_percentual[[1]], rep("", 4)),
+  c(d_wv_sb_8_ci_coverage_percentual[[2]], rep("", 2)),
+  d_wv_sb_8_ci_coverage_percentual[[3]]
 )
 
-latex_fun(resultsA)
-latex_fun(resultsB)
-latex_fun(resultsC)
-latex_fun(resultsD)
+latex_fun(results_a)
+latex_fun(results_b)
+latex_fun(results_c)
+latex_fun(results_d)
 
 ################################################################################
 
 
 #' Detailed LaTeX formatting wrapper function
 #'
-#' @param resultsA Results from Model A
-#' @param resultsB Results from Model B
-#' @param resultsC Results from Model C
-#' @param resultsD Results from Model D
+#' @param results_a Results from Model A
+#' @param results_b Results from Model b
+#' @param results_c Results from Model C
+#' @param results_d Results from Model D
 #' @return Latex table row median values printed to console
-latex_fun2 <- function(resultsA, resultsB, resultsC, resultsD) {
-  for (i in 1:nrow(resultsA)) {
+latex_fun2 <- function(results_a, results_b, results_c, results_d) {
+  for (i in 1:nrow(results_a)) {
     if (i %% 3 == 1) {
-      val1A <- median(as.numeric(resultsA[i, 1:2]), na.rm = TRUE)
-      val2A <- median(as.numeric(resultsA[i, 3:4]), na.rm = TRUE)
+      val1a <- median(as.numeric(results_a[i, 1:2]), na.rm = TRUE)
+      val2a <- median(as.numeric(results_a[i, 3:4]), na.rm = TRUE)
 
-      val1B <- median(as.numeric(resultsB[i, 1:2]), na.rm = TRUE)
-      val2B <- median(as.numeric(resultsB[i, 3:4]), na.rm = TRUE)
+      val1b <- median(as.numeric(results_b[i, 1:2]), na.rm = TRUE)
+      val2b <- median(as.numeric(results_b[i, 3:4]), na.rm = TRUE)
 
-      val1C <- median(as.numeric(resultsC[i, 1:2]), na.rm = TRUE)
-      val2C <- median(as.numeric(resultsC[i, 3:4]), na.rm = TRUE)
+      val1c <- median(as.numeric(results_c[i, 1:2]), na.rm = TRUE)
+      val2c <- median(as.numeric(results_c[i, 3:4]), na.rm = TRUE)
 
-      val1D <- median(as.numeric(resultsD[i, 1:2]), na.rm = TRUE)
-      val2D <- median(as.numeric(resultsD[i, 3:4]), na.rm = TRUE)
+      val1d <- median(as.numeric(results_d[i, 1:2]), na.rm = TRUE)
+      val2d <- median(as.numeric(results_d[i, 3:4]), na.rm = TRUE)
     } else if (i %% 3 == 2) {
-      val1A <- median(as.numeric(resultsA[i, 1:3]), na.rm = TRUE)
-      val2A <- median(as.numeric(resultsA[i, 4:6]), na.rm = TRUE)
+      val1a <- median(as.numeric(results_a[i, 1:3]), na.rm = TRUE)
+      val2a <- median(as.numeric(results_a[i, 4:6]), na.rm = TRUE)
 
-      val1B <- median(as.numeric(resultsB[i, 1:3]), na.rm = TRUE)
-      val2B <- median(as.numeric(resultsB[i, 4:6]), na.rm = TRUE)
+      val1b <- median(as.numeric(results_b[i, 1:3]), na.rm = TRUE)
+      val2b <- median(as.numeric(results_b[i, 4:6]), na.rm = TRUE)
 
-      val1C <- median(as.numeric(resultsC[i, 1:3]), na.rm = TRUE)
-      val2C <- median(as.numeric(resultsC[i, 4:6]), na.rm = TRUE)
+      val1c <- median(as.numeric(results_c[i, 1:3]), na.rm = TRUE)
+      val2c <- median(as.numeric(results_c[i, 4:6]), na.rm = TRUE)
 
-      val1D <- median(as.numeric(resultsD[i, 1:3]), na.rm = TRUE)
-      val2D <- median(as.numeric(resultsD[i, 4:6]), na.rm = TRUE)
+      val1d <- median(as.numeric(results_d[i, 1:3]), na.rm = TRUE)
+      val2d <- median(as.numeric(results_d[i, 4:6]), na.rm = TRUE)
     } else if (i %% 3 == 0) {
-      val1A <- median(as.numeric(resultsA[i, 1:4]), na.rm = TRUE)
-      val2A <- median(as.numeric(resultsA[i, 5:8]), na.rm = TRUE)
+      val1a <- median(as.numeric(results_a[i, 1:4]), na.rm = TRUE)
+      val2a <- median(as.numeric(results_a[i, 5:8]), na.rm = TRUE)
 
-      val1B <- median(as.numeric(resultsB[i, 1:4]), na.rm = TRUE)
-      val2B <- median(as.numeric(resultsB[i, 5:8]), na.rm = TRUE)
+      val1b <- median(as.numeric(results_b[i, 1:4]), na.rm = TRUE)
+      val2b <- median(as.numeric(results_b[i, 5:8]), na.rm = TRUE)
 
-      val1C <- median(as.numeric(resultsC[i, 1:4]), na.rm = TRUE)
-      val2C <- median(as.numeric(resultsC[i, 5:8]), na.rm = TRUE)
+      val1c <- median(as.numeric(results_c[i, 1:4]), na.rm = TRUE)
+      val2c <- median(as.numeric(results_c[i, 5:8]), na.rm = TRUE)
 
-      val1D <- median(as.numeric(resultsD[i, 1:4]), na.rm = TRUE)
-      val2D <- median(as.numeric(resultsD[i, 5:8]), na.rm = TRUE)
+      val1d <- median(as.numeric(results_d[i, 1:4]), na.rm = TRUE)
+      val2d <- median(as.numeric(results_d[i, 5:8]), na.rm = TRUE)
     }
 
-    vals <- c(val1A, val2A, val1B, val2B, val1C, val2C, val1D, val2D)
+    vals <- c(val1a, val2a, val1b, val2b, val1c, val2c, val1d, val2d)
 
 
     str_temp <- ""
 
     if ((i + 1) %% 3 == 0) {
       str_temp <- c(
-        "Gaussian ", "$\\hat{\\eta}_3$ ", "Multitaper ", "$(2\\log_2(N))^{-1}$ ",
-        "$(4\\log_2(N))^{-1}$ ", "$(8\\log_2(N))^{-1}$ "
+        "Gaussian ", "$\\hat{\\eta}_3$ ", "Multitaper ", "$(2\\log_2(n))^{-1}$ ",
+        "$(4\\log_2(n))^{-1}$ ", "$(8\\log_2(n))^{-1}$ "
       )[(i + 1) %/% 3]
     }
 
     cat(paste(c(str_temp, c(128, 512, 2048)[((i - 1) %% 3) + 1], vals), collapse = " & "))
 
-    if (i < nrow(resultsA)) {
+    if (i < nrow(results_a)) {
       cat(" \\\\")
     }
 
@@ -734,6 +734,6 @@ latex_fun2 <- function(resultsA, resultsB, resultsC, resultsD) {
   }
 }
 
-latex_fun2(resultsA, resultsB, resultsC, resultsD)
+latex_fun2(results_a, results_b, results_c, results_d)
 
-save.image(file.path(WORKSPACE_DIR, "5_CI_wv.RData"))
+save.image(file.path(workspace_dir, "5_CI_wv.RData"))

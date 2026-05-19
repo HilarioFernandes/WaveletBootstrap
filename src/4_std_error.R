@@ -2,7 +2,7 @@
 # 4_std_error.R
 # =============================================================================
 # Purpose  : Compare SB bootstrap SEs at 3 bandwidth choices vs multitaper estimator.
-# Chapter  : Chapter 3, Appendix B.1
+# Chapter  : Chapter 3, Appendix b.1
 # Inputs   : None
 # Outputs  : Standard error estimation plots (PNGs).
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -10,20 +10,20 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 # Set and create output directory for plots
-OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_4")
-if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+output_path <- file.path(base_path, "Plots/Plots_plots_4")
+if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 
 ################################################################################
@@ -35,15 +35,15 @@ library(multitaper)
 
 #' Calculate the wavelet variance standard deviation estimates using multitaper
 #'
-#' @param Z List with all squared wavelet coefficients (each element corresponds to a scale)
+#' @param z List with all squared wavelet coefficients (each element corresponds to a scale)
 #' @param v List with all tapers (each element corresponds to a scale)
 #' @return A vector of multitaper standard error estimates
-sd_estimate_multitaper <- function(Z, v) {
-  n_levels <- length(Z)
+sd_estimate_multitaper <- function(z, v) {
+  n_levels <- length(z)
 
-  N <- nrow(v[[1]])
+  n <- nrow(v[[1]])
 
-  L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+  l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
   # now we calculate the computable quantity J(0) and V(0)
 
@@ -54,11 +54,11 @@ sd_estimate_multitaper <- function(Z, v) {
     for (j in 1:n_levels) {
       # using non-boundary coeffs and the corresponding tapers
       # must set remove_boundary_coeffs <- TRUE
-      J[k, j] <- Z[[j]] %*% v[[j]][L[j]:N, k]
+      J[k, j] <- z[[j]] %*% v[[j]][l[j]:n, k]
 
 
-      # V[k,j] <- sum(v[[j]][L[j]:N,k])
-      # V[k,j] <- sum(v[[j]][1:(N-L[j]+1),k])
+      # V[k,j] <- sum(v[[j]][l[j]:n,k])
+      # V[k,j] <- sum(v[[j]][1:(n-l[j]+1),k])
       V[k, j] <- sum(v[[j]][, k])
     }
   }
@@ -77,7 +77,7 @@ sd_estimate_multitaper <- function(Z, v) {
     sum <- 0
 
     for (k in 1:5) {
-      sum <- sum + ((J[k, j] - temp * V[k, j])^2) / (N - L[j] + 1)
+      sum <- sum + ((J[k, j] - temp * V[k, j])^2) / (n - l[j] + 1)
     }
 
     sum <- sum / 5
@@ -90,19 +90,19 @@ sd_estimate_multitaper <- function(Z, v) {
 
 #' Generate discrete prolate spheroidal sequences (DPSS) taper
 #'
-#' @param N Sample size
-#' @param L Filter length for the current scale
+#' @param n Sample size
+#' @param l Filter length for the current scale
 #' @return DPSS taper vector
-taper_fun <- function(N, L) {
-  # return(dpss(N,5,3.5/(N-L+1))$v)
+taper_fun <- function(n, l) {
+  # return(dpss(n,5,3.5/(n-l+1))$v)
 
-  # return(dpss(N,5,7/(N-L+1))$v)
+  # return(dpss(n,5,7/(n-l+1))$v)
 
-  return(dpss(N, 5, 7)$v)
+  return(dpss(n, 5, 7)$v)
 }
 
-# given a vector of filter lengths L <- (2^(1:n_levels) -1)*(8 - 1)+1,
-# calculate v <- lapply(L,taper_fun) and use it on sd_estimate_multitaper()
+# given a vector of filter lengths l <- (2^(1:n_levels) -1)*(8 - 1)+1,
+# calculate v <- lapply(l,taper_fun) and use it on sd_estimate_multitaper()
 
 ################################################################################
 
@@ -111,90 +111,90 @@ taper_fun <- function(N, L) {
 
 set.seed(43)
 
-B <- if (TEST_MODE) 5 else 100
-iterations <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 5 else 100
+iterations <- if (test_mode) 2 else 100
 
-A.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-C.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-D.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+a_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+b_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+c_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+d_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
-A.wv_SB_2 <- list(
+a_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_SB_4 <- list(
+a_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_SB_8 <- list(
+a_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_2 <- list(
+b_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_4 <- list(
+b_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_SB_8 <- list(
+b_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_2 <- list(
+c_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_4 <- list(
+c_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_SB_8 <- list(
+c_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_2 <- list(
+d_wv_sb_2 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_4 <- list(
+d_wv_sb_4 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_SB_8 <- list(
+d_wv_sb_8 <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-B.wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-C.wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-D.wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+a_wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+b_wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+c_wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+d_wv_sd_multitaper <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
 
 for (iter in 1:iterations) {
@@ -203,86 +203,86 @@ for (iter in 1:iterations) {
   for (i in 1:3) {
     # print(c(iter,i))
 
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
     # simulating from each model
-    YA <- Model_A_sim(N)
-    YB <- Model_B_sim(N)
-    YC <- Model_C_sim(N)
-    YD <- Model_D_sim(N)
+    ya <- model_a_sim(n)
+    yb <- model_b_sim(n)
+    yc <- model_c_sim(n)
+    yd <- model_d_sim(n)
 
     # calculating the point estimates of the wavelet variances
-    A.wv[[i]] <- rbind(A.wv[[i]], wv_estimates(YA))
-    B.wv[[i]] <- rbind(B.wv[[i]], wv_estimates(YB))
-    C.wv[[i]] <- rbind(C.wv[[i]], wv_estimates(YC))
-    D.wv[[i]] <- rbind(D.wv[[i]], wv_estimates(YD))
+    a_wv[[i]] <- rbind(a_wv[[i]], wv_estimates(ya))
+    b_wv[[i]] <- rbind(b_wv[[i]], wv_estimates(yb))
+    c_wv[[i]] <- rbind(c_wv[[i]], wv_estimates(yc))
+    d_wv[[i]] <- rbind(d_wv[[i]], wv_estimates(yd))
 
     # multitaper wavelet variance standard errors (via multitaper)
 
-    n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+    n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-    L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+    l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
-    taper_fun_temp <- function(L) {
-      return(taper_fun(N, L))
+    taper_fun_temp <- function(l) {
+      return(taper_fun(n, l))
     }
 
-    v <- lapply(L, taper_fun_temp)
+    v <- lapply(l, taper_fun_temp)
 
-    A.wv_sd_multitaper[[i]] <- rbind(A.wv_sd_multitaper[[i]], sd_estimate_multitaper(nonboundary_squared_MODWT_coeffs(YA), v))
-    B.wv_sd_multitaper[[i]] <- rbind(B.wv_sd_multitaper[[i]], sd_estimate_multitaper(nonboundary_squared_MODWT_coeffs(YB), v))
-    C.wv_sd_multitaper[[i]] <- rbind(C.wv_sd_multitaper[[i]], sd_estimate_multitaper(nonboundary_squared_MODWT_coeffs(YC), v))
-    D.wv_sd_multitaper[[i]] <- rbind(D.wv_sd_multitaper[[i]], sd_estimate_multitaper(nonboundary_squared_MODWT_coeffs(YD), v))
+    a_wv_sd_multitaper[[i]] <- rbind(a_wv_sd_multitaper[[i]], sd_estimate_multitaper(nonbnd_sq_modwt_coeffs(ya), v))
+    b_wv_sd_multitaper[[i]] <- rbind(b_wv_sd_multitaper[[i]], sd_estimate_multitaper(nonbnd_sq_modwt_coeffs(yb), v))
+    c_wv_sd_multitaper[[i]] <- rbind(c_wv_sd_multitaper[[i]], sd_estimate_multitaper(nonbnd_sq_modwt_coeffs(yc), v))
+    d_wv_sd_multitaper[[i]] <- rbind(d_wv_sd_multitaper[[i]], sd_estimate_multitaper(nonbnd_sq_modwt_coeffs(yd), v))
 
     # bootstrap wavelet estimates
 
-    A.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    a_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    A.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    a_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    A.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    a_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    B.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    b_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    B.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    b_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    B.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    b_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    C.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    c_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    C.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    c_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    C.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    c_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    D.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    d_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    D.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    d_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    D.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    d_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
   }
 }
 
@@ -303,10 +303,10 @@ std_true <- function(list1) {
 }
 
 
-A.wv_std <- std_true(A.wv)
-B.wv_std <- std_true(B.wv)
-C.wv_std <- std_true(C.wv)
-D.wv_std <- std_true(D.wv)
+a_wv_std <- std_true(a_wv)
+b_wv_std <- std_true(b_wv)
+c_wv_std <- std_true(c_wv)
+d_wv_std <- std_true(d_wv)
 
 std_boot <- function(list1) {
   temp <- list(NULL, NULL, NULL)
@@ -323,21 +323,21 @@ std_boot <- function(list1) {
 }
 
 
-A.wv_SB_2_std <- std_boot(A.wv_SB_2)
-A.wv_SB_4_std <- std_boot(A.wv_SB_4)
-A.wv_SB_8_std <- std_boot(A.wv_SB_8)
+a_wv_sb_2_std <- std_boot(a_wv_sb_2)
+a_wv_sb_4_std <- std_boot(a_wv_sb_4)
+a_wv_sb_8_std <- std_boot(a_wv_sb_8)
 
-B.wv_SB_2_std <- std_boot(B.wv_SB_2)
-B.wv_SB_4_std <- std_boot(B.wv_SB_4)
-B.wv_SB_8_std <- std_boot(B.wv_SB_8)
+b_wv_sb_2_std <- std_boot(b_wv_sb_2)
+b_wv_sb_4_std <- std_boot(b_wv_sb_4)
+b_wv_sb_8_std <- std_boot(b_wv_sb_8)
 
-C.wv_SB_2_std <- std_boot(C.wv_SB_2)
-C.wv_SB_4_std <- std_boot(C.wv_SB_4)
-C.wv_SB_8_std <- std_boot(C.wv_SB_8)
+c_wv_sb_2_std <- std_boot(c_wv_sb_2)
+c_wv_sb_4_std <- std_boot(c_wv_sb_4)
+c_wv_sb_8_std <- std_boot(c_wv_sb_8)
 
-D.wv_SB_2_std <- std_boot(D.wv_SB_2)
-D.wv_SB_4_std <- std_boot(D.wv_SB_4)
-D.wv_SB_8_std <- std_boot(D.wv_SB_8)
+d_wv_sb_2_std <- std_boot(d_wv_sb_2)
+d_wv_sb_4_std <- std_boot(d_wv_sb_4)
+d_wv_sb_8_std <- std_boot(d_wv_sb_8)
 
 
 ################################################################################
@@ -353,60 +353,60 @@ col2 <- "lightgrey"
 ## ---- Model A ----
 
 {
-  png(file = file.path(OUTPUT_PATH, "A_wv_std_2.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "A_wv_std_2.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(A.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.17), xaxt = "n",
+  plot(a_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.17), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_SB_2_std[[1]], 2, function(x) {
+    apply(a_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_2_std[[1]], 2, function(x) {
+    rev(apply(a_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(A.wv_std[[1]],
+  lines(a_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[1]], 2, function(x) {
+    apply(a_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[1]], 2, function(x) {
+    apply(a_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -418,57 +418,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(A.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(a_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_SB_2_std[[2]], 2, function(x) {
+    apply(a_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_2_std[[2]], 2, function(x) {
+    rev(apply(a_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[2]],
+  lines(a_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[2]], 2, function(x) {
+    apply(a_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[2]], 2, function(x) {
+    apply(a_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -480,57 +480,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(A.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(a_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_SB_2_std[[3]], 2, function(x) {
+    apply(a_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_2_std[[3]], 2, function(x) {
+    rev(apply(a_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[3]],
+  lines(a_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[3]], 2, function(x) {
+    apply(a_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_2_std[[3]], 2, function(x) {
+    apply(a_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -544,60 +544,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "A_wv_std_4.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "A_wv_std_4.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(A.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.17), xaxt = "n",
+  plot(a_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.17), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_SB_4_std[[1]], 2, function(x) {
+    apply(a_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_4_std[[1]], 2, function(x) {
+    rev(apply(a_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(A.wv_std[[1]],
+  lines(a_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[1]], 2, function(x) {
+    apply(a_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[1]], 2, function(x) {
+    apply(a_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -609,57 +609,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(A.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(a_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_SB_4_std[[2]], 2, function(x) {
+    apply(a_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_4_std[[2]], 2, function(x) {
+    rev(apply(a_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[2]],
+  lines(a_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[2]], 2, function(x) {
+    apply(a_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[2]], 2, function(x) {
+    apply(a_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -671,57 +671,57 @@ col2 <- "lightgrey"
   )
 
 
-  plot(A.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(a_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_SB_4_std[[3]], 2, function(x) {
+    apply(a_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_4_std[[3]], 2, function(x) {
+    rev(apply(a_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[3]],
+  lines(a_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[3]], 2, function(x) {
+    apply(a_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_4_std[[3]], 2, function(x) {
+    apply(a_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -735,60 +735,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "A_wv_std_8.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "A_wv_std_8.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(A.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.17), xaxt = "n",
+  plot(a_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.17), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_SB_8_std[[1]], 2, function(x) {
+    apply(a_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_8_std[[1]], 2, function(x) {
+    rev(apply(a_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(A.wv_std[[1]],
+  lines(a_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[1]], 2, function(x) {
+    apply(a_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[1]], 2, function(x) {
+    apply(a_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -799,57 +799,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(A.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(a_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(A.wv_SB_8_std[[2]], 2, function(x) {
+    apply(a_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_8_std[[2]], 2, function(x) {
+    rev(apply(a_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[2]],
+  lines(a_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[2]], 2, function(x) {
+    apply(a_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[2]], 2, function(x) {
+    apply(a_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -860,57 +860,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(A.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(a_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(A.wv_SB_8_std[[3]], 2, function(x) {
+    apply(a_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(A.wv_SB_8_std[[3]], 2, function(x) {
+    rev(apply(a_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(A.wv_std[[3]],
+  lines(a_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[3]], 2, function(x) {
+    apply(a_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_SB_8_std[[3]], 2, function(x) {
+    apply(a_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(A.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(a_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -924,63 +924,63 @@ col2 <- "lightgrey"
 }
 
 
-## ---- Model B ----
+## ---- Model b ----
 
 {
-  png(file = file.path(OUTPUT_PATH, "B_wv_std_2.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "B_wv_std_2.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(B.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.5), xaxt = "n",
+  plot(b_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.5), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_SB_2_std[[1]], 2, function(x) {
+    apply(b_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_2_std[[1]], 2, function(x) {
+    rev(apply(b_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(B.wv_std[[1]],
+  lines(b_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[1]], 2, function(x) {
+    apply(b_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[1]], 2, function(x) {
+    apply(b_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -992,57 +992,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(B.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(b_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_SB_2_std[[2]], 2, function(x) {
+    apply(b_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_2_std[[2]], 2, function(x) {
+    rev(apply(b_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[2]],
+  lines(b_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[2]], 2, function(x) {
+    apply(b_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[2]], 2, function(x) {
+    apply(b_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1054,57 +1054,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(B.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(b_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_SB_2_std[[3]], 2, function(x) {
+    apply(b_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_2_std[[3]], 2, function(x) {
+    rev(apply(b_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[3]],
+  lines(b_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[3]], 2, function(x) {
+    apply(b_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_2_std[[3]], 2, function(x) {
+    apply(b_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1118,60 +1118,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "B_wv_std_4.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "B_wv_std_4.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(B.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.5), xaxt = "n",
+  plot(b_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.5), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_SB_4_std[[1]], 2, function(x) {
+    apply(b_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_4_std[[1]], 2, function(x) {
+    rev(apply(b_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(B.wv_std[[1]],
+  lines(b_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[1]], 2, function(x) {
+    apply(b_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[1]], 2, function(x) {
+    apply(b_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1183,57 +1183,57 @@ col2 <- "lightgrey"
   )
   # dev.off()
 
-  plot(B.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(b_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_SB_4_std[[2]], 2, function(x) {
+    apply(b_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_4_std[[2]], 2, function(x) {
+    rev(apply(b_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[2]],
+  lines(b_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[2]], 2, function(x) {
+    apply(b_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[2]], 2, function(x) {
+    apply(b_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1244,57 +1244,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(B.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(b_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_SB_4_std[[3]], 2, function(x) {
+    apply(b_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_4_std[[3]], 2, function(x) {
+    rev(apply(b_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[3]],
+  lines(b_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[3]], 2, function(x) {
+    apply(b_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_4_std[[3]], 2, function(x) {
+    apply(b_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1308,60 +1308,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "B_wv_std_8.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "B_wv_std_8.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(B.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.5), xaxt = "n",
+  plot(b_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.5), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_SB_8_std[[1]], 2, function(x) {
+    apply(b_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_8_std[[1]], 2, function(x) {
+    rev(apply(b_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(B.wv_std[[1]],
+  lines(b_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[1]], 2, function(x) {
+    apply(b_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[1]], 2, function(x) {
+    apply(b_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1372,57 +1372,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(B.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(b_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(B.wv_SB_8_std[[2]], 2, function(x) {
+    apply(b_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_8_std[[2]], 2, function(x) {
+    rev(apply(b_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[2]],
+  lines(b_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[2]], 2, function(x) {
+    apply(b_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[2]], 2, function(x) {
+    apply(b_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1433,57 +1433,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(B.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(b_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(B.wv_SB_8_std[[3]], 2, function(x) {
+    apply(b_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(B.wv_SB_8_std[[3]], 2, function(x) {
+    rev(apply(b_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(B.wv_std[[3]],
+  lines(b_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[3]], 2, function(x) {
+    apply(b_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_SB_8_std[[3]], 2, function(x) {
+    apply(b_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(B.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(b_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1499,60 +1499,60 @@ col2 <- "lightgrey"
 ## ---- Model C ----
 
 {
-  png(file = file.path(OUTPUT_PATH, "C_wv_std_2.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "C_wv_std_2.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(C.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.18), xaxt = "n",
+  plot(c_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.18), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_SB_2_std[[1]], 2, function(x) {
+    apply(c_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_2_std[[1]], 2, function(x) {
+    rev(apply(c_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(C.wv_std[[1]],
+  lines(c_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[1]], 2, function(x) {
+    apply(c_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[1]], 2, function(x) {
+    apply(c_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1563,57 +1563,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(c_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_SB_2_std[[2]], 2, function(x) {
+    apply(c_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_2_std[[2]], 2, function(x) {
+    rev(apply(c_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[2]],
+  lines(c_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[2]], 2, function(x) {
+    apply(c_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[2]], 2, function(x) {
+    apply(c_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1624,57 +1624,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(c_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_SB_2_std[[3]], 2, function(x) {
+    apply(c_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_2_std[[3]], 2, function(x) {
+    rev(apply(c_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[3]],
+  lines(c_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[3]], 2, function(x) {
+    apply(c_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_2_std[[3]], 2, function(x) {
+    apply(c_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1688,60 +1688,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "C_wv_std_4.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "C_wv_std_4.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(C.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", xaxt = "n", ylim = c(0, 0.18),
+  plot(c_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", xaxt = "n", ylim = c(0, 0.18),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_SB_4_std[[1]], 2, function(x) {
+    apply(c_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_4_std[[1]], 2, function(x) {
+    rev(apply(c_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(C.wv_std[[1]],
+  lines(c_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[1]], 2, function(x) {
+    apply(c_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[1]], 2, function(x) {
+    apply(c_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1752,57 +1752,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(c_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_SB_4_std[[2]], 2, function(x) {
+    apply(c_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_4_std[[2]], 2, function(x) {
+    rev(apply(c_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[2]],
+  lines(c_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[2]], 2, function(x) {
+    apply(c_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[2]], 2, function(x) {
+    apply(c_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1813,57 +1813,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(c_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_SB_4_std[[3]], 2, function(x) {
+    apply(c_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_4_std[[3]], 2, function(x) {
+    rev(apply(c_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[3]],
+  lines(c_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[3]], 2, function(x) {
+    apply(c_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_4_std[[3]], 2, function(x) {
+    apply(c_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1877,60 +1877,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "C_wv_std_8.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "C_wv_std_8.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(C.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", xaxt = "n", ylim = c(0, 0.18),
+  plot(c_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", xaxt = "n", ylim = c(0, 0.18),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_SB_8_std[[1]], 2, function(x) {
+    apply(c_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_8_std[[1]], 2, function(x) {
+    rev(apply(c_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(C.wv_std[[1]],
+  lines(c_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[1]], 2, function(x) {
+    apply(c_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[1]], 2, function(x) {
+    apply(c_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -1941,57 +1941,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)",
+  plot(c_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(C.wv_SB_8_std[[2]], 2, function(x) {
+    apply(c_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_8_std[[2]], 2, function(x) {
+    rev(apply(c_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[2]],
+  lines(c_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[2]], 2, function(x) {
+    apply(c_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[2]], 2, function(x) {
+    apply(c_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2002,57 +2002,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(C.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)",
+  plot(c_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(C.wv_SB_8_std[[3]], 2, function(x) {
+    apply(c_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(C.wv_SB_8_std[[3]], 2, function(x) {
+    rev(apply(c_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(C.wv_std[[3]],
+  lines(c_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[3]], 2, function(x) {
+    apply(c_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_SB_8_std[[3]], 2, function(x) {
+    apply(c_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(C.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(c_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2068,60 +2068,60 @@ col2 <- "lightgrey"
 ## ---- Model D ----
 
 {
-  png(file = file.path(OUTPUT_PATH, "D_wv_std_2.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "D_wv_std_2.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(D.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.12), xaxt = "n",
+  plot(d_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.12), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_SB_2_std[[1]], 2, function(x) {
+    apply(d_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_2_std[[1]], 2, function(x) {
+    rev(apply(d_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(D.wv_std[[1]],
+  lines(d_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[1]], 2, function(x) {
+    apply(d_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[1]], 2, function(x) {
+    apply(d_wv_sb_2_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2132,57 +2132,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)", ylim = c(0, 0.07),
+  plot(d_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)", ylim = c(0, 0.07),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_SB_2_std[[2]], 2, function(x) {
+    apply(d_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_2_std[[2]], 2, function(x) {
+    rev(apply(d_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[2]],
+  lines(d_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[2]], 2, function(x) {
+    apply(d_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[2]], 2, function(x) {
+    apply(d_wv_sb_2_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2193,57 +2193,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)", ylim = c(0, 0.03),
+  plot(d_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)", ylim = c(0, 0.03),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_SB_2_std[[3]], 2, function(x) {
+    apply(d_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_2_std[[3]], 2, function(x) {
+    rev(apply(d_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[3]],
+  lines(d_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[3]], 2, function(x) {
+    apply(d_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_2_std[[3]], 2, function(x) {
+    apply(d_wv_sb_2_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2257,60 +2257,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "D_wv_std_4.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "D_wv_std_4.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(D.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.12), xaxt = "n",
+  plot(d_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.12), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_SB_4_std[[1]], 2, function(x) {
+    apply(d_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_4_std[[1]], 2, function(x) {
+    rev(apply(d_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(D.wv_std[[1]],
+  lines(d_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[1]], 2, function(x) {
+    apply(d_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[1]], 2, function(x) {
+    apply(d_wv_sb_4_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2321,57 +2321,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)", ylim = c(0, 0.07),
+  plot(d_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)", ylim = c(0, 0.07),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_SB_4_std[[2]], 2, function(x) {
+    apply(d_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_4_std[[2]], 2, function(x) {
+    rev(apply(d_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[2]],
+  lines(d_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[2]], 2, function(x) {
+    apply(d_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[2]], 2, function(x) {
+    apply(d_wv_sb_4_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2382,57 +2382,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)", ylim = c(0, 0.03),
+  plot(d_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)", ylim = c(0, 0.03),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_SB_4_std[[3]], 2, function(x) {
+    apply(d_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_4_std[[3]], 2, function(x) {
+    rev(apply(d_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[3]],
+  lines(d_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[3]], 2, function(x) {
+    apply(d_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_4_std[[3]], 2, function(x) {
+    apply(d_wv_sb_4_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2446,60 +2446,60 @@ col2 <- "lightgrey"
 
   #
 
-  png(file = file.path(OUTPUT_PATH, "D_wv_std_8.png"), width = 1800, height = 2100, res = 210)
+  png(file = file.path(output_path, "D_wv_std_8.png"), width = 1800, height = 2100, res = 210)
   par(mfrow = c(3, 1), mar = c(4.1, 6.1, 1.1, 2.1))
-  plot(D.wv_std[[1]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=128)", ylim = c(0, 0.12), xaxt = "n",
+  plot(d_wv_std[[1]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=128)", ylim = c(0, 0.12), xaxt = "n",
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   axis(1, at = 1:4, cex.axis = 1.5)
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_SB_8_std[[1]], 2, function(x) {
+    apply(d_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_8_std[[1]], 2, function(x) {
+    rev(apply(d_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
   polygon(c(1:4, 4:1), c(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
-  lines(D.wv_std[[1]],
+  lines(d_wv_std[[1]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[1]], 2, function(x) {
+    apply(d_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[1]], 2, function(x) {
+    apply(d_wv_sb_8_std[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[1]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[1]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2510,57 +2510,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[2]],
-    type = "l", xlab = "", ylab = "Desvio padrão \n (N=512)", ylim = c(0, 0.07),
+  plot(d_wv_std[[2]],
+    type = "l", xlab = "", ylab = "Desvio padrão \n (n=512)", ylim = c(0, 0.07),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xlim = c(1, 8)
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:6, 6:1), c(
-    apply(D.wv_SB_8_std[[2]], 2, function(x) {
+    apply(d_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_8_std[[2]], 2, function(x) {
+    rev(apply(d_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[2]],
+  lines(d_wv_std[[2]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[2]], 2, function(x) {
+    apply(d_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[2]], 2, function(x) {
+    apply(d_wv_sb_8_std[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[2]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[2]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2571,57 +2571,57 @@ col2 <- "lightgrey"
     fill = c(col1, col2), cex = 1.5
   )
 
-  plot(D.wv_std[[3]],
-    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (N=2048)", ylim = c(0, 0.030),
+  plot(d_wv_std[[3]],
+    type = "l", xlab = "Nível da variância de ondaletas", ylab = "Desvio padrão \n (n=2048)", ylim = c(0, 0.030),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    rev(apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col1, border = "NA"
   )
   polygon(c(1:8, 8:1), c(
-    apply(D.wv_SB_8_std[[3]], 2, function(x) {
+    apply(d_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
-    rev(apply(D.wv_SB_8_std[[3]], 2, function(x) {
+    rev(apply(d_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }))
   ),
   col = col2, border = "NA"
   )
-  lines(D.wv_std[[3]],
+  lines(d_wv_std[[3]],
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[3]], 2, function(x) {
+    apply(d_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_SB_8_std[[3]], 2, function(x) {
+    apply(d_wv_sb_8_std[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "dotted",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[2]]
     }),
     lty = "longdash",
     lwd = 1.5
   )
   lines(
-    apply(D.wv_sd_multitaper[[3]], 2, function(x) {
+    apply(d_wv_sd_multitaper[[3]], 2, function(x) {
       quantile(x)[[4]]
     }),
     lty = "longdash",
@@ -2634,4 +2634,4 @@ col2 <- "lightgrey"
   dev.off()
 }
 
-save.image(file.path(WORKSPACE_DIR, "4_std_error.RData"))
+save.image(file.path(workspace_dir, "4_std_error.RData"))

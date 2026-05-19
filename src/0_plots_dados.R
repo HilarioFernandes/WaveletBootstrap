@@ -3,22 +3,22 @@
 # =============================================================================
 # Purpose  : General data visualization for thesis datasets and methods.
 # Chapter  : Multiple
-# Inputs   : Ocean Shear, SPX, MJO, Arrowhead, INMET (Data files not included).
+# Inputs   : Ocean Shear, SPX, mjo, Arrowhead, inmet (Data files not included).
 # Outputs  : Data overview plots (PNGs).
 # Depends  : 2_Bootstrap_methods.R
 # Author   : Hilário Fernandes de Araujo Júnior
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
 
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 library(grDevices)
 
 # Set and create output directory for plots
-OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_0")
-if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+output_path <- file.path(base_path, "Plots/Plots_0")
+if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 
 ################################################################################
@@ -26,10 +26,10 @@ if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
 # Cisalhamento Oceânico
 
 # Note: Data file is not included in the repository. See thesis for sources.
-ocean_shear <- unname(unlist(as.vector(read.table(file.path(BASE_PATH, "Dados", "Ocean Shear", "Ocean Shear.txt")))))
+ocean_shear <- unname(unlist(as.vector(read.table(file.path(base_path, "Dados", "Ocean Shear", "Ocean Shear.txt")))))
 
 
-png(file = file.path(OUTPUT_PATH, "OceanShear.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "OceanShear.png"), width = 1800, height = 900, res = 210)
 
 par(mfrow = c(1, 1), mar = c(4.1, 4, 1, 1))
 plot(ocean_shear,
@@ -47,7 +47,7 @@ dev.off()
 
 oceanshear_diff <- diff(ocean_shear)
 
-png(file = file.path(OUTPUT_PATH, "OceanShear2.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "OceanShear2.png"), width = 1800, height = 900, res = 210)
 par(mfrow = c(1, 1), mar = c(4.1, 5, 1, 1))
 plot(oceanshear_diff,
   type = "l", xaxt = "n", xlab = "Profundidade (metros)",
@@ -63,60 +63,60 @@ axis(2)
 dev.off()
 
 
-N <- length(oceanshear_diff)
+n <- length(oceanshear_diff)
 
-n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-oceanshear_diff.modwt <- modwt(oceanshear_diff, n.levels = n_levels)[1:n_levels]
+oceanshear_diff_modwt <- modwt(oceanshear_diff, n.levels = n_levels)[1:n_levels]
 
 for (j in 1:n_levels) {
-  L_j <- (2^j - 1) * (8 - 1) + 1
+  l_j <- (2^j - 1) * (8 - 1) + 1
 
-  oceanshear_diff.modwt[[j]] <- c(rep(NA, L_j), oceanshear_diff.modwt[[j]][L_j:length(oceanshear_diff.modwt[[j]])])
+  oceanshear_diff_modwt[[j]] <- c(rep(NA, l_j), oceanshear_diff_modwt[[j]][l_j:length(oceanshear_diff_modwt[[j]])])
 }
 
-png(file = file.path(OUTPUT_PATH, "OceanShear3.png"), width = 1600, height = 1600, res = 280)
+png(file = file.path(output_path, "OceanShear3.png"), width = 1600, height = 1600, res = 280)
 
 par(mar = c(3, 3.5, 0.1, 1))
 par(mfrow = c(6, 1))
 par(oma = c(0, 0, 0, 0))
 
-plot(oceanshear_diff.modwt[[1]],
+plot(oceanshear_diff_modwt[[1]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
 axis(1, labels = FALSE, at = seq(2, 6875, length.out = 10))
 title(ylab = expression(W[list(1, t)]), mgp = c(2, 1, 0))
 
-plot(oceanshear_diff.modwt[[2]],
+plot(oceanshear_diff_modwt[[2]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
 axis(1, labels = FALSE, at = seq(2, 6875, length.out = 10))
 title(ylab = expression(W[list(2, t)]), mgp = c(2, 1, 0))
 
-plot(oceanshear_diff.modwt[[3]],
+plot(oceanshear_diff_modwt[[3]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
 axis(1, labels = FALSE, at = seq(2, 6875, length.out = 10))
 title(ylab = expression(W[list(3, t)]), mgp = c(2, 1, 0))
 
-plot(oceanshear_diff.modwt[[4]],
+plot(oceanshear_diff_modwt[[4]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
 axis(1, labels = FALSE, at = seq(2, 6875, length.out = 10))
 title(ylab = expression(W[list(4, t)]), mgp = c(2, 1, 0))
 
-plot(oceanshear_diff.modwt[[5]],
+plot(oceanshear_diff_modwt[[5]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
 axis(1, labels = FALSE, at = seq(2, 6875, length.out = 10))
 title(ylab = expression(W[list(5, t)]), mgp = c(2, 1, 0))
 
-plot(oceanshear_diff.modwt[[6]],
+plot(oceanshear_diff_modwt[[6]],
   type = "l", xaxt = "n", yaxt = "n", ylab = "",
   lwd = 1.5
 )
@@ -177,26 +177,26 @@ subset_data <- function(interval_type, interval, day_start, day_stop) {
 }
 
 # Note: Data file is not included in the repository. See thesis for sources.
-CBOE <- read.csv(file.path(BASE_PATH, "Dados", "SPX_second", "SPX.csv"), check.names = FALSE)
+cboe <- read.csv(file.path(base_path, "Dados", "SPX_second", "SPX.csv"), check.names = FALSE)
 
 # sampling
 indexes <- subset_data("minutes", 15, 2, 44)
 
-CBOE_selection <- CBOE[indexes[[1]], indexes[[2]]]
+cboe_selection <- cboe[indexes[[1]], indexes[[2]]]
 
-CBOE_selection_temp <- unname(unlist(as.vector(CBOE_selection[, 2:ncol(CBOE_selection)])))
+cboe_selection_temp <- unname(unlist(as.vector(cboe_selection[, 2:ncol(cboe_selection)])))
 
-labels_plot <- substr(colnames(CBOE_selection)[1 + seq(1, 43, by = 7)], 6, 10)
+labels_plot <- substr(colnames(cboe_selection)[1 + seq(1, 43, by = 7)], 6, 10)
 
 labels_plot <- sapply(labels_plot, function(x) {
   paste0(substr(x, 4, 5), ".", substr(x, 1, 2))
 })
 
-png(file = file.path(OUTPUT_PATH, "CBOE.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "cboe.png"), width = 1800, height = 900, res = 210)
 
 par(mar = c(4, 4, 1, 1), mfrow = c(1, 1))
 
-plot(CBOE_selection_temp,
+plot(cboe_selection_temp,
   type = "l", xlab = "Data (dia.mês)",
   ylab = "", xaxt = "n",
   lwd = 1.5
@@ -209,13 +209,13 @@ axis(1,
 title(ylab = "Valor (dólares)", mgp = c(3, 1, 0))
 dev.off()
 
-CBOE_selection_returns <- returns_fun(CBOE_selection)
+cboe_selection_returns <- returns_fun(cboe_selection)
 
-png(file = file.path(OUTPUT_PATH, "CBOE2.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "CBOE2.png"), width = 1800, height = 900, res = 210)
 
 par(mar = c(4, 4, 1, 1))
 
-plot(CBOE_selection_returns,
+plot(cboe_selection_returns,
   type = "l", xlab = "Data (dia.mês)",
   xaxt = "n", ylab = "Retorno",
   lwd = 1.5
@@ -233,30 +233,30 @@ dev.off()
 
 # Note: Data file is not included in the repository. See thesis for sources.
 # Added na.strings="*****" to handle missing values and prevent coercion warnings
-MJO_df <- read.table(file.path(BASE_PATH, "Dados", "MJO", "MJO.txt"),
+mjo_df <- read.table(file.path(base_path, "Dados", "mjo", "mjo.txt"),
   na.strings = c("NA", "*****")
 )
-MJO_labels <- substr(rownames(MJO_df)[2:nrow(MJO_df)], 1, 4)
+mjo_labels <- substr(rownames(mjo_df)[2:nrow(mjo_df)], 1, 4)
 
 # Data is now numeric automatically thanks to na.strings
-MJO <- MJO_df$INDEX_1[2:nrow(MJO_df)]
+mjo <- mjo_df$INDEX_1[2:nrow(mjo_df)]
 
 
-MJO_paper <- MJO[1:2354]
-MJO_labels_paper <- MJO_labels[1:2354]
+mjo_paper <- mjo[1:2354]
+mjo_labels_paper <- mjo_labels[1:2354]
 
 years_plot <- seq(1978, 2010, by = 2)
 indexes_years_plot <- NULL
 
 for (year in years_plot) {
-  indexes_years_plot <- c(indexes_years_plot, which(MJO_labels_paper == year)[1])
+  indexes_years_plot <- c(indexes_years_plot, which(mjo_labels_paper == year)[1])
 }
 
-png(file = file.path(OUTPUT_PATH, "MJO.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "mjo.png"), width = 1800, height = 900, res = 210)
 
 par(mar = c(4.1, 5, 1, 1))
 par(mfrow = c(1, 1))
-plot(MJO_paper,
+plot(mjo_paper,
   type = "l", xaxt = "n", ylim = c(-4, 4), xlab = "Ano",
   ylab = "Potencial de velocidade \n (transformado)",
   lwd = 1.5
@@ -270,12 +270,12 @@ dev.off()
 # Pontas de flechas
 
 # Note: Data file is not included in the repository. See thesis for sources.
-arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Dados", "Arrowhead", "ArrowHead.txt"))))
+arrowhead <- unname(unlist(read.table(file.path(base_path, "Dados", "Arrowhead", "ArrowHead.txt"))))
 
 indexes_min <- c(1, 64, 126, 189, 251, 314, 377, 439, 503, 565, 629, 691, 753, 816, 878, 942, 1005, 1068, 1130, 1192, 1255, 1319, 1381, 1443, 1506)
 
 png(
-  file = file.path(OUTPUT_PATH, "arrowhead.png"),
+  file = file.path(output_path, "arrowhead.png"),
   width = 1200, height = 600, res = 140
 )
 
@@ -308,32 +308,32 @@ dev.off()
 # Temperaturas em cidades Brasileiras
 
 # Note: Data file is not included in the repository. See thesis for sources.
-INMET <- read.csv(file.path(BASE_PATH, "Dados", "Selecao", "dados_INMET_processados.csv"))
+inmet <- read.csv(file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv"))
 
-INMET_selec <- INMET[seq(1, 8760, by = 12), ]
+inmet_selec <- inmet[seq(1, 8760, by = 12), ]
 
 first_days <- NULL
 
-for (i in unique(substr(INMET_selec[, 1], 1, 2))) {
-  first_days <- c(first_days, which(substr(INMET_selec[, 1], 1, 2) == i)[1])
+for (i in unique(substr(inmet_selec[, 1], 1, 2))) {
+  first_days <- c(first_days, which(substr(inmet_selec[, 1], 1, 2) == i)[1])
 }
 
 png(
-  file = file.path(OUTPUT_PATH, "Temperaturas.png"),
+  file = file.path(output_path, "Temperaturas.png"),
   width = 1800, height = 1200, res = 210
 )
 
 par(mar = c(4.1, 4.1, 1, 1))
 par(mfrow = c(1, 1))
-plot(INMET_selec[, 3],
+plot(inmet_selec[, 3],
   type = "l", ylim = c(9, 35),
   xlab = "Mês", ylab = "Temperatura (°C)",
   xaxt = "n",
   lwd = 1.5
 )
-lines(INMET_selec[, 10], col = "grey")
+lines(inmet_selec[, 10], col = "grey")
 # axis(1,at = seq(0,609, length.out = 6), labels = c("Jan", "Mar", "Mai", "Jul", "Set", "Nov"))
-axis(1, at = c(first_days, length(INMET_selec[, 3] + 1)), labels = c(
+axis(1, at = c(first_days, length(inmet_selec[, 3] + 1)), labels = c(
   "Jan", "Fev", "Mar",
   "Abr", "Mai", "Jun",
   "Jul", "Ago", "Set",
@@ -348,30 +348,30 @@ legend("bottomleft",
 
 dev.off()
 
-INMET_selec_diff <- apply(INMET_selec[-(1:2)], 2, diff)
+inmet_selec_diff <- apply(inmet_selec[-(1:2)], 2, diff)
 
 png(
-  file = file.path(OUTPUT_PATH, "Temperaturas2.png"),
+  file = file.path(output_path, "Temperaturas2.png"),
   width = 1800, height = 1200, res = 210
 )
 
 par(mfrow = c(2, 1))
 par(mar = c(3, 5, 1, 1))
-plot(INMET_selec_diff[, 1],
+plot(inmet_selec_diff[, 1],
   type = "l", ylim = c(-14, 14),
   xlab = "", ylab = "Temperatura diferenciada \n (Altamira)",
   xaxt = "n",
   lwd = 1.5
 )
-axis(1, at = c(first_days, length(INMET_selec[, 3] + 1)), labels = FALSE)
+axis(1, at = c(first_days, length(inmet_selec[, 3] + 1)), labels = FALSE)
 
-plot(INMET_selec_diff[, 8],
+plot(inmet_selec_diff[, 8],
   type = "l", ylim = c(-14, 14),
   xlab = "", ylab = "Temperatura diferenciada \n (Maringá)", col = "grey",
   xaxt = "n",
   lwd = 1.5
 )
-axis(1, at = c(first_days, length(INMET_selec[, 3] + 1)), labels = c(
+axis(1, at = c(first_days, length(inmet_selec[, 3] + 1)), labels = c(
   "Jan", "Fev", "Mar",
   "Abr", "Mai", "Jun",
   "Jul", "Ago", "Set",
@@ -403,7 +403,7 @@ boot_example_bootstrap <- c(
   boot_example_extended[block_start_points[6]:(block_start_points[6] + block_lengths[6] - 1)]
 )
 
-png(file = file.path(OUTPUT_PATH, "boot_example_1.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "boot_example_1.png"), width = 1800, height = 900, res = 210)
 
 par(mar = c(3.1, 3, 1, 1))
 par(mfrow = c(1, 1))
@@ -411,7 +411,7 @@ plot(boot_example, type = "p", pch = 1, xlab = "", ylab = "", lwd = 1.5)
 lines(boot_example, lwd = 1.5)
 dev.off()
 
-png(file = file.path(OUTPUT_PATH, "boot_example_2.png"), width = 1800, height = 900, res = 210)
+png(file = file.path(output_path, "boot_example_2.png"), width = 1800, height = 900, res = 210)
 
 par(mar = c(3.1, 3, 1, 1))
 par(mfrow = c(1, 1))

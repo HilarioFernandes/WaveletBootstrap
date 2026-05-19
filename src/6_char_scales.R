@@ -2,7 +2,7 @@
 # 6_char_scales.R
 # =============================================================================
 # Purpose  : Characteristic scales study (scales where wavelet variance is maximised).
-# Chapter  : Chapter 3, Appendix B.3
+# Chapter  : Chapter 3, Appendix b.3
 # Inputs   : None
 # Outputs  : Characteristic scale estimates and CIs.
 # Depends  : 1_Simulation_functions.R, 2_Bootstrap_methods.R
@@ -10,20 +10,20 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 # Set and create output directory for plots
-OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")
-if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+output_path <- file.path(base_path, "Plots/Plots_6")
+if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 ################################################################################
 
@@ -38,9 +38,9 @@ max_char_scale <- function(wv_est) {
 }
 
 if (FALSE) {
-  # N <- 2048
-  # Y <- Model_A_sim(N)
-  # wv_est <- wv_estimates(Y)
+  # n <- 2048
+  # y <- model_a_sim(n)
+  # wv_est <- wv_estimates(y)
   # plot(log2(wv_est))
   #
   # max_char_scale(wv_est)
@@ -52,7 +52,7 @@ if (FALSE) {
 #' @param wv_est Vector of wavelet variance estimates
 #' @param j_0 Target level index
 #' @return Quadratic interpolation of the characteristic scale
-Char_scale_est <- function(wv_est, j_0) {
+char_scale_est <- function(wv_est, j_0) {
   log_wv_est <- log2(wv_est)
 
   if (j_0 == 1 || j_0 == length(wv_est)) {
@@ -71,12 +71,12 @@ Char_scale_est <- function(wv_est, j_0) {
 }
 
 if (FALSE) {
-  # N <- 2048
-  # Y <- Model_A_sim(N)
-  # wv_est <- wv_estimates(Y)
+  # n <- 2048
+  # y <- model_a_sim(n)
+  # wv_est <- wv_estimates(y)
   # plot(log2(wv_est))
   #
-  # Char_scale_est(wv_est,max_char_scale(wv_est))
+  # char_scale_est(wv_est,max_char_scale(wv_est))
 }
 
 
@@ -92,15 +92,15 @@ beta_hat_est <- function(wv_est, j_0) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_A_sim(N)
+  # y <- model_a_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
-  # wv_est <- wv_estimates(Y)
+  # wv_est <- wv_estimates(y)
   #
   # beta_hat_est(wv_est, 7)
 }
@@ -108,25 +108,25 @@ if (FALSE) {
 #' Function that calculates the terms \hat{s}
 #'
 #' @param W List with all wavelet coefficients
-#' @param N Time series length
-#' @param L Array with the filter lengths
+#' @param n Time series length
+#' @param l Array with the filter lengths
 #' @return A list with biased autocovariance estimates for each scale
-biased_est_acvs <- function(W, N, L) {
-  n_levels <- length(L)
+biased_est_acvs <- function(W, n, l) {
+  n_levels <- length(l)
 
   output <- vector(mode = "list", length = n_levels)
 
   for (j in 1:n_levels) {
     temp <- NULL
 
-    for (tau in 0:(N - L[j])) {
+    for (tau in 0:(n - l[j])) {
       sum <- 0
 
-      for (t in (L[j] - 1):(N - tau - 1)) {
+      for (t in (l[j] - 1):(n - tau - 1)) {
         sum <- sum + W[[j]][t] * W[[j]][t + tau]
       }
 
-      temp <- c(temp, sum / (N - L[j] + 1))
+      temp <- c(temp, sum / (n - l[j] + 1))
     }
 
     output[[j]] <- temp
@@ -136,35 +136,35 @@ biased_est_acvs <- function(W, N, L) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_A_sim(N)
+  # y <- model_a_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
-  # coeffs <- modwt(Y, n.levels = n_levels)[1:n_levels]
+  # coeffs <- modwt(y, n.levels = n_levels)[1:n_levels]
   #
-  # biased_est_acvs(coeffs, N, L)
+  # biased_est_acvs(coeffs, n, l)
 }
 
-#' Function that calculates the matrix \Sigma_1 from eq (8)
+#' Function that calculates the matrix \sigma_1 from eq (8)
 #'
 #' @param s_est List of biased acvs estimates
 #' @param wv_est Vector of wavelet variance estimates
-#' @param N Time series length
-#' @param L Array of filter lengths
+#' @param n Time series length
+#' @param l Array of filter lengths
 #' @param j_0 Target level index
-#' @return The Sigma1 matrix estimate
-Sigma1_est <- function(s_est, wv_est, N, L, j_0) {
+#' @return The sigma1 matrix estimate
+sigma1_est <- function(s_est, wv_est, n, l, j_0) {
   temp <- matrix(NA, nrow = 3, ncol = 3)
 
   for (k_1 in 1:3) {
     for (k_2 in k_1:3) {
       sum <- 0
 
-      for (tau in 1:(N - L[j_0 + (k_2 - 2)])) {
+      for (tau in 1:(n - l[j_0 + (k_2 - 2)])) {
         # the lag window chosen is the same as in the paper
 
         sum <- sum + s_est[[j_0 + (k_1 - 2)]][tau] * s_est[[j_0 + (k_2 - 2)]][tau]
@@ -172,7 +172,7 @@ Sigma1_est <- function(s_est, wv_est, N, L, j_0) {
 
       sum <- (2 * sum + wv_est[j_0 + (k_1 - 2)] * wv_est[j_0 + (k_2 - 2)]) / 2
 
-      temp[k_2, k_1] <- 2 * sum / (N - L[k_1] + 1)
+      temp[k_2, k_1] <- 2 * sum / (n - l[k_1] + 1)
     }
   }
 
@@ -180,33 +180,33 @@ Sigma1_est <- function(s_est, wv_est, N, L, j_0) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_C_sim(N)
+  # y <- model_c_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
   # j_0 <- 3
   #
-  # coeffs <- modwt(Y, n.levels = n_levels)[1:n_levels]
+  # coeffs <- modwt(y, n.levels = n_levels)[1:n_levels]
   #
-  # s_est <- biased_est_acvs(coeffs, N, L)
+  # s_est <- biased_est_acvs(coeffs, n, l)
   #
-  # wv_est <- wv_estimates(Y)
+  # wv_est <- wv_estimates(y)
   #
-  # Sigma1_est(s_est, wv_est, N, L, j_0)
+  # sigma1_est(s_est, wv_est, n, l, j_0)
 }
 
 
-#' Function that calculates \Sigma_2 from eq (9)
+#' Function that calculates \sigma_2 from eq (9)
 #'
-#' @param sigma1_est The Sigma1 matrix estimate
+#' @param sigma1_est The sigma1 matrix estimate
 #' @param wv_est Vector of wavelet variance estimates
 #' @param j_0 Target level index
-#' @return The Sigma2 matrix estimate
-Sigma2_est <- function(sigma1_est, wv_est, j_0) {
+#' @return The sigma2 matrix estimate
+sigma2_est <- function(sigma1_est, wv_est, j_0) {
   temp <- matrix(NA, nrow = 3, ncol = 3)
 
   for (k_1 in 1:3) {
@@ -228,60 +228,60 @@ Sigma2_est <- function(sigma1_est, wv_est, j_0) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_C_sim(N)
+  # y <- model_c_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
   # j_0 <- 3
   #
-  # coeffs <- modwt(Y, n.levels = n_levels)[1:n_levels]
+  # coeffs <- modwt(y, n.levels = n_levels)[1:n_levels]
   #
-  # s_est <- biased_est_acvs(coeffs, N, L)
+  # s_est <- biased_est_acvs(coeffs, n, l)
   #
-  # wv_est <- wv_estimates(Y)
+  # wv_est <- wv_estimates(y)
   #
-  # sigma1_est <- Sigma1_est(s_est, wv_est, N, L, j_0)
+  # sigma1_est <- sigma1_est(s_est, wv_est, n, l, j_0)
   #
-  # Sigma2_est(sigma1_est, wv_est, j_0)
+  # sigma2_est(sigma1_est, wv_est, j_0)
 }
 
 
 #' Function that calculates the var-cov matrix associated to \hat{\beta}
 #'
-#' @param sigma2_est The Sigma2 matrix estimate
+#' @param sigma2_est The sigma2 matrix estimate
 #' @return The variance-covariance matrix for beta coefficients
-Var_beta_est <- function(sigma2_est) {
+var_beta_est <- function(sigma2_est) {
   H <- rbind(c(-1 / 2, 0, 1 / 2), c(1, -2, 1))
 
   return(H %*% sigma2_est %*% t(H))
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_C_sim(N)
+  # y <- model_c_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
   # j_0 <- 3
   #
-  # coeffs <- modwt(Y, n.levels = n_levels)[1:n_levels]
+  # coeffs <- modwt(y, n.levels = n_levels)[1:n_levels]
   #
-  # s_est <- biased_est_acvs(coeffs, N, L)
+  # s_est <- biased_est_acvs(coeffs, n, l)
   #
-  # wv_est <- wv_estimates(Y)
+  # wv_est <- wv_estimates(y)
   #
-  # sigma1_est <- Sigma1_est(s_est, wv_est, N, L, j_0)
+  # sigma1_est <- sigma1_est(s_est, wv_est, n, l, j_0)
   #
-  # sigma2_est <- Sigma2_est(sigma1_est, wv_est, j_0)
+  # sigma2_est <- sigma2_est(sigma1_est, wv_est, j_0)
   #
-  # Var_beta_est(sigma2_est)
+  # var_beta_est(sigma2_est)
 }
 
 
@@ -290,7 +290,7 @@ if (FALSE) {
 #' @param var_beta_est Variance-covariance matrix of beta
 #' @param beta_hat Vector of beta coefficient estimates
 #' @return Variance of the characteristic scale estimate
-Var_kappa <- function(var_beta_est, beta_hat) {
+var_kappa <- function(var_beta_est, beta_hat) {
   sum <- var_beta_est[1, 1] / beta_hat[2]^2 + (beta_hat[1]^2 * var_beta_est[2, 2]) / beta_hat[2]^4
 
   sum <- sum + (var_beta_est[1, 1] * var_beta_est[2, 2] + 2 * var_beta_est[1, 2]) / beta_hat[2]^4
@@ -303,33 +303,33 @@ Var_kappa <- function(var_beta_est, beta_hat) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_A_sim(N)
+  # y <- model_a_sim(n)
   #
-  # n_levels <- floor(log2(1+(N-1)/(8-1)))
+  # n_levels <- floor(log2(1+(n-1)/(8-1)))
   #
-  # L <- (2^(1:n_levels)-1)*(8-1)+1
+  # l <- (2^(1:n_levels)-1)*(8-1)+1
   #
-  # coeffs <- modwt(Y, n.levels = n_levels)[1:n_levels]
+  # coeffs <- modwt(y, n.levels = n_levels)[1:n_levels]
   #
-  # s_est <- biased_est_acvs(coeffs, N, L)
+  # s_est <- biased_est_acvs(coeffs, n, l)
   #
-  # wv_est <- wv_estimates(Y)
+  # wv_est <- wv_estimates(y)
   #
   # j_0 <- max_char_scale(wv_est)
   #
   # plot(log2(wv_est))
   #
-  # sigma1_est <- Sigma1_est(s_est, wv_est, N, L, j_0)
+  # sigma1_est <- sigma1_est(s_est, wv_est, n, l, j_0)
   #
-  # sigma2_est <- Sigma2_est(sigma1_est, wv_est, j_0)
+  # sigma2_est <- sigma2_est(sigma1_est, wv_est, j_0)
   #
-  # var_beta_est <- Var_beta_est(sigma2_est)
+  # var_beta_est <- var_beta_est(sigma2_est)
   #
   # beta_hat <- beta_hat_est(wv_est, max_char_scale(wv_est))
   #
-  # Var_kappa(var_beta_est, beta_hat)
+  # var_kappa(var_beta_est, beta_hat)
 }
 
 #' Calculate confidence intervals for characteristic scales
@@ -337,16 +337,16 @@ if (FALSE) {
 #' @param data Time series data vector
 #' @param alpha Significance level
 #' @return A vector with [lower, upper] limits
-CI_calc <- function(data, alpha) {
-  N <- length(data)
+ci_calc <- function(data, alpha) {
+  n <- length(data)
 
-  n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+  n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-  L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+  l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
   coeffs <- modwt(data, n.levels = n_levels)[1:n_levels]
 
-  s_est <- biased_est_acvs(coeffs, N, L)
+  s_est <- biased_est_acvs(coeffs, n, l)
 
   wv_est <- wv_estimates(data)
 
@@ -356,17 +356,17 @@ CI_calc <- function(data, alpha) {
     return(c(-1, -1))
   }
 
-  sigma1_est <- Sigma1_est(s_est, wv_est, N, L, j_0)
+  sigma1_est <- sigma1_est(s_est, wv_est, n, l, j_0)
 
-  sigma2_est <- Sigma2_est(sigma1_est, wv_est, j_0)
+  sigma2_est <- sigma2_est(sigma1_est, wv_est, j_0)
 
-  var_beta_est <- Var_beta_est(sigma2_est)
+  var_beta_est <- var_beta_est(sigma2_est)
 
   beta_hat <- beta_hat_est(wv_est, j_0)
 
-  var_kappa <- Var_kappa(var_beta_est, beta_hat)
+  var_kappa <- var_kappa(var_beta_est, beta_hat)
 
-  char_scale_est <- Char_scale_est(wv_est, j_0)
+  char_scale_est <- char_scale_est(wv_est, j_0)
 
   if (is.nan(sqrt(var_kappa))) {
     return(c(-1, -1))
@@ -379,11 +379,11 @@ CI_calc <- function(data, alpha) {
 }
 
 if (FALSE) {
-  # N <- 2048
+  # n <- 2048
   #
-  # Y <- Model_A_sim(N)
+  # y <- model_a_sim(n)
   #
-  # CI_calc(Y, 0.05)
+  # ci_calc(y, 0.05)
 }
 
 ################################################################################
@@ -392,31 +392,31 @@ if (FALSE) {
 
 set.seed(45)
 
-B <- if (TEST_MODE) 5 else 100
-iterations <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 5 else 100
+iterations <- if (test_mode) 2 else 100
 
-char_scale_est_A <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-char_scale_est_B <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-char_scale_est_C <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-char_scale_est_D <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+char_scale_est_a <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+char_scale_est_b <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+char_scale_est_c <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+char_scale_est_d <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
 {
-  A.wv_cs_CI <- list(
+  a_wv_cs_ci <- list(
     "128" = c(NULL, NULL),
     "512" = c(NULL, NULL),
     "2048" = c(NULL, NULL)
   )
-  B.wv_cs_CI <- list(
+  b_wv_cs_ci <- list(
     "128" = c(NULL, NULL),
     "512" = c(NULL, NULL),
     "2048" = c(NULL, NULL)
   )
-  C.wv_cs_CI <- list(
+  c_wv_cs_ci <- list(
     "128" = c(NULL, NULL),
     "512" = c(NULL, NULL),
     "2048" = c(NULL, NULL)
   )
-  D.wv_cs_CI <- list(
+  d_wv_cs_ci <- list(
     "128" = c(NULL, NULL),
     "512" = c(NULL, NULL),
     "2048" = c(NULL, NULL)
@@ -424,73 +424,73 @@ char_scale_est_D <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 }
 
 {
-  A.wv_SB_2 <- list(
+  a_wv_sb_2 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  A.wv_SB_4 <- list(
+  a_wv_sb_4 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  A.wv_SB_8 <- list(
+  a_wv_sb_8 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  B.wv_SB_2 <- list(
+  b_wv_sb_2 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  B.wv_SB_4 <- list(
+  b_wv_sb_4 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  B.wv_SB_8 <- list(
+  b_wv_sb_8 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  C.wv_SB_2 <- list(
+  c_wv_sb_2 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  C.wv_SB_4 <- list(
+  c_wv_sb_4 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  C.wv_SB_8 <- list(
+  c_wv_sb_8 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  D.wv_SB_2 <- list(
+  d_wv_sb_2 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  D.wv_SB_4 <- list(
+  d_wv_sb_4 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
   )
 
-  D.wv_SB_8 <- list(
+  d_wv_sb_8 <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
     "2048" = vector("list", length = iterations)
@@ -504,82 +504,82 @@ for (iter in 1:iterations) {
   for (i in 1:3) {
     # print(c(iter,i))
 
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
-    n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+    n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
     # simulating from each model
-    YA <- Model_A_sim(N)
-    YB <- Model_B_sim(N)
-    YC <- Model_C_sim(N)
-    YD <- Model_D_sim(N)
+    ya <- model_a_sim(n)
+    yb <- model_b_sim(n)
+    yc <- model_c_sim(n)
+    yd <- model_d_sim(n)
 
     # calculating the point estimates of the characteristic scales
-    wv_est_A <- wv_estimates(YA)
-    wv_est_B <- wv_estimates(YB)
-    wv_est_C <- wv_estimates(YC)
-    wv_est_D <- wv_estimates(YD)
+    wv_est_a <- wv_estimates(ya)
+    wv_est_b <- wv_estimates(yb)
+    wv_est_c <- wv_estimates(yc)
+    wv_est_d <- wv_estimates(yd)
 
-    char_scale_est_A[[i]] <- c(char_scale_est_A[[i]], Char_scale_est(wv_est_A, max_char_scale(wv_est_A)))
-    char_scale_est_B[[i]] <- c(char_scale_est_B[[i]], Char_scale_est(wv_est_B, max_char_scale(wv_est_B)))
-    char_scale_est_C[[i]] <- c(char_scale_est_C[[i]], Char_scale_est(wv_est_C, max_char_scale(wv_est_C)))
-    char_scale_est_D[[i]] <- c(char_scale_est_D[[i]], Char_scale_est(wv_est_D, max_char_scale(wv_est_D)))
+    char_scale_est_a[[i]] <- c(char_scale_est_a[[i]], char_scale_est(wv_est_a, max_char_scale(wv_est_a)))
+    char_scale_est_b[[i]] <- c(char_scale_est_b[[i]], char_scale_est(wv_est_b, max_char_scale(wv_est_b)))
+    char_scale_est_c[[i]] <- c(char_scale_est_c[[i]], char_scale_est(wv_est_c, max_char_scale(wv_est_c)))
+    char_scale_est_d[[i]] <- c(char_scale_est_d[[i]], char_scale_est(wv_est_d, max_char_scale(wv_est_d)))
 
     # calculating the confidence intervals via the normal approximation
-    A.wv_cs_CI[[i]] <- rbind(A.wv_cs_CI[[i]], CI_calc(YA, 0.05))
-    B.wv_cs_CI[[i]] <- rbind(B.wv_cs_CI[[i]], CI_calc(YB, 0.05))
-    C.wv_cs_CI[[i]] <- rbind(C.wv_cs_CI[[i]], CI_calc(YC, 0.05))
-    D.wv_cs_CI[[i]] <- rbind(D.wv_cs_CI[[i]], CI_calc(YD, 0.05))
+    a_wv_cs_ci[[i]] <- rbind(a_wv_cs_ci[[i]], ci_calc(ya, 0.05))
+    b_wv_cs_ci[[i]] <- rbind(b_wv_cs_ci[[i]], ci_calc(yb, 0.05))
+    c_wv_cs_ci[[i]] <- rbind(c_wv_cs_ci[[i]], ci_calc(yc, 0.05))
+    d_wv_cs_ci[[i]] <- rbind(d_wv_cs_ci[[i]], ci_calc(yd, 0.05))
 
     # bootstrap wavelet estimates
 
-    A.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    a_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    A.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    a_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    A.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    a_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(ya, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    B.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    b_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    B.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    b_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    B.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    b_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yb, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    C.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    c_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    C.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    c_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    C.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    c_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yc, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
 
-    D.wv_SB_2[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (2 * log2(N))
-    }, B)
+    d_wv_sb_2[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (2 * log2(n))
+    }, b)
 
-    D.wv_SB_4[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    d_wv_sb_4[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    D.wv_SB_8[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (8 * log2(N))
-    }, B)
+    d_wv_sb_8[[i]][[iter]] <- bootstrap_wavelet(yd, "bw", TRUE, "SB", function(n) {
+      1 / (8 * log2(n))
+    }, b)
   }
 }
 
@@ -601,13 +601,13 @@ true_char_scales <- function(list1) {
   return(output)
 }
 
-char_scale_A <- true_char_scales(char_scale_est_A)
-char_scale_B <- true_char_scales(char_scale_est_B)
-char_scale_C <- true_char_scales(char_scale_est_C)
-char_scale_D <- true_char_scales(char_scale_est_D)
+char_scale_a <- true_char_scales(char_scale_est_a)
+char_scale_b <- true_char_scales(char_scale_est_b)
+char_scale_c <- true_char_scales(char_scale_est_c)
+char_scale_d <- true_char_scales(char_scale_est_d)
 
 
-Char_scale_est_boot <- function(list1) {
+char_scale_est_boot <- function(list1) {
   temp <- list(
     "128" = vector("list", length = iterations),
     "512" = vector("list", length = iterations),
@@ -615,7 +615,7 @@ Char_scale_est_boot <- function(list1) {
   )
 
   temp_fun <- function(x) {
-    Char_scale_est(x, max_char_scale(x))
+    char_scale_est(x, max_char_scale(x))
   }
 
   for (i in 1:3) {
@@ -627,28 +627,28 @@ Char_scale_est_boot <- function(list1) {
   return(temp)
 }
 
-char_scale_est_A_SB_2_boot <- Char_scale_est_boot(A.wv_SB_2)
-char_scale_est_A_SB_4_boot <- Char_scale_est_boot(A.wv_SB_4)
-char_scale_est_A_SB_8_boot <- Char_scale_est_boot(A.wv_SB_8)
+char_scale_est_a_sb_2_boot <- char_scale_est_boot(a_wv_sb_2)
+char_scale_est_a_sb_4_boot <- char_scale_est_boot(a_wv_sb_4)
+char_scale_est_a_sb_8_boot <- char_scale_est_boot(a_wv_sb_8)
 
-char_scale_est_B_SB_2_boot <- Char_scale_est_boot(B.wv_SB_2)
-char_scale_est_B_SB_4_boot <- Char_scale_est_boot(B.wv_SB_4)
-char_scale_est_B_SB_8_boot <- Char_scale_est_boot(B.wv_SB_8)
+char_scale_est_b_sb_2_boot <- char_scale_est_boot(b_wv_sb_2)
+char_scale_est_b_sb_4_boot <- char_scale_est_boot(b_wv_sb_4)
+char_scale_est_b_sb_8_boot <- char_scale_est_boot(b_wv_sb_8)
 
-char_scale_est_C_SB_2_boot <- Char_scale_est_boot(C.wv_SB_2)
-char_scale_est_C_SB_4_boot <- Char_scale_est_boot(C.wv_SB_4)
-char_scale_est_C_SB_8_boot <- Char_scale_est_boot(C.wv_SB_8)
+char_scale_est_c_sb_2_boot <- char_scale_est_boot(c_wv_sb_2)
+char_scale_est_c_sb_4_boot <- char_scale_est_boot(c_wv_sb_4)
+char_scale_est_c_sb_8_boot <- char_scale_est_boot(c_wv_sb_8)
 
-char_scale_est_D_SB_2_boot <- Char_scale_est_boot(D.wv_SB_2)
-char_scale_est_D_SB_4_boot <- Char_scale_est_boot(D.wv_SB_4)
-char_scale_est_D_SB_8_boot <- Char_scale_est_boot(D.wv_SB_8)
+char_scale_est_d_sb_2_boot <- char_scale_est_boot(d_wv_sb_2)
+char_scale_est_d_sb_4_boot <- char_scale_est_boot(d_wv_sb_4)
+char_scale_est_d_sb_8_boot <- char_scale_est_boot(d_wv_sb_8)
 
-CI_calc_boot <- function(list1, alpha) {
+ci_calc_boot <- function(list1, alpha) {
   output <- list(c(NULL, NULL), c(NULL, NULL), c(NULL, NULL))
 
   for (i in 1:3) {
     for (iter in 1:iterations) {
-      if (length(which(list1[[i]][[iter]] == -1)) > B / 2) {
+      if (length(which(list1[[i]][[iter]] == -1)) > b / 2) {
         output[[i]] <- rbind(output[[i]], c(-1, -1))
       } else {
         temp <- list1[[i]][[iter]]
@@ -662,24 +662,24 @@ CI_calc_boot <- function(list1, alpha) {
 }
 
 
-A.SB_2_CI_boot <- CI_calc_boot(char_scale_est_A_SB_2_boot, 0.05)
-A.SB_4_CI_boot <- CI_calc_boot(char_scale_est_A_SB_4_boot, 0.05)
-A.SB_8_CI_boot <- CI_calc_boot(char_scale_est_A_SB_8_boot, 0.05)
+a_sb_2_ci_boot <- ci_calc_boot(char_scale_est_a_sb_2_boot, 0.05)
+a_sb_4_ci_boot <- ci_calc_boot(char_scale_est_a_sb_4_boot, 0.05)
+a_sb_8_ci_boot <- ci_calc_boot(char_scale_est_a_sb_8_boot, 0.05)
 
-B.SB_2_CI_boot <- CI_calc_boot(char_scale_est_B_SB_2_boot, 0.05)
-B.SB_4_CI_boot <- CI_calc_boot(char_scale_est_B_SB_4_boot, 0.05)
-B.SB_8_CI_boot <- CI_calc_boot(char_scale_est_B_SB_8_boot, 0.05)
+b_sb_2_ci_boot <- ci_calc_boot(char_scale_est_b_sb_2_boot, 0.05)
+b_sb_4_ci_boot <- ci_calc_boot(char_scale_est_b_sb_4_boot, 0.05)
+b_sb_8_ci_boot <- ci_calc_boot(char_scale_est_b_sb_8_boot, 0.05)
 
-C.SB_2_CI_boot <- CI_calc_boot(char_scale_est_C_SB_2_boot, 0.05)
-C.SB_4_CI_boot <- CI_calc_boot(char_scale_est_C_SB_4_boot, 0.05)
-C.SB_8_CI_boot <- CI_calc_boot(char_scale_est_C_SB_8_boot, 0.05)
+c_sb_2_ci_boot <- ci_calc_boot(char_scale_est_c_sb_2_boot, 0.05)
+c_sb_4_ci_boot <- ci_calc_boot(char_scale_est_c_sb_4_boot, 0.05)
+c_sb_8_ci_boot <- ci_calc_boot(char_scale_est_c_sb_8_boot, 0.05)
 
-D.SB_2_CI_boot <- CI_calc_boot(char_scale_est_D_SB_2_boot, 0.05)
-D.SB_4_CI_boot <- CI_calc_boot(char_scale_est_D_SB_4_boot, 0.05)
-D.SB_8_CI_boot <- CI_calc_boot(char_scale_est_D_SB_8_boot, 0.05)
+d_sb_2_ci_boot <- ci_calc_boot(char_scale_est_d_sb_2_boot, 0.05)
+d_sb_4_ci_boot <- ci_calc_boot(char_scale_est_d_sb_4_boot, 0.05)
+d_sb_8_ci_boot <- ci_calc_boot(char_scale_est_d_sb_8_boot, 0.05)
 
 
-CI_calc_boot_perc <- function(list1, array2) {
+ci_calc_boot_perc <- function(list1, array2) {
   output <- NULL
 
   for (i in 1:3) {
@@ -693,44 +693,44 @@ CI_calc_boot_perc <- function(list1, array2) {
   return(output)
 }
 
-A.SB_2_CI_boot_perc <- CI_calc_boot_perc(A.SB_2_CI_boot, char_scale_A)
-A.SB_4_CI_boot_perc <- CI_calc_boot_perc(A.SB_4_CI_boot, char_scale_A)
-A.SB_8_CI_boot_perc <- CI_calc_boot_perc(A.SB_8_CI_boot, char_scale_A)
+a_sb_2_ci_boot_perc <- ci_calc_boot_perc(a_sb_2_ci_boot, char_scale_a)
+a_sb_4_ci_boot_perc <- ci_calc_boot_perc(a_sb_4_ci_boot, char_scale_a)
+a_sb_8_ci_boot_perc <- ci_calc_boot_perc(a_sb_8_ci_boot, char_scale_a)
 
-B.SB_2_CI_boot_perc <- CI_calc_boot_perc(B.SB_2_CI_boot, char_scale_B)
-B.SB_4_CI_boot_perc <- CI_calc_boot_perc(B.SB_4_CI_boot, char_scale_B)
-B.SB_8_CI_boot_perc <- CI_calc_boot_perc(B.SB_8_CI_boot, char_scale_B)
+b_sb_2_ci_boot_perc <- ci_calc_boot_perc(b_sb_2_ci_boot, char_scale_b)
+b_sb_4_ci_boot_perc <- ci_calc_boot_perc(b_sb_4_ci_boot, char_scale_b)
+b_sb_8_ci_boot_perc <- ci_calc_boot_perc(b_sb_8_ci_boot, char_scale_b)
 
-C.SB_2_CI_boot_perc <- CI_calc_boot_perc(C.SB_2_CI_boot, char_scale_C)
-C.SB_4_CI_boot_perc <- CI_calc_boot_perc(C.SB_4_CI_boot, char_scale_C)
-C.SB_8_CI_boot_perc <- CI_calc_boot_perc(C.SB_8_CI_boot, char_scale_C)
+c_sb_2_ci_boot_perc <- ci_calc_boot_perc(c_sb_2_ci_boot, char_scale_c)
+c_sb_4_ci_boot_perc <- ci_calc_boot_perc(c_sb_4_ci_boot, char_scale_c)
+c_sb_8_ci_boot_perc <- ci_calc_boot_perc(c_sb_8_ci_boot, char_scale_c)
 
-D.SB_2_CI_boot_perc <- CI_calc_boot_perc(D.SB_2_CI_boot, char_scale_D)
-D.SB_4_CI_boot_perc <- CI_calc_boot_perc(D.SB_4_CI_boot, char_scale_D)
-D.SB_8_CI_boot_perc <- CI_calc_boot_perc(D.SB_8_CI_boot, char_scale_D)
+d_sb_2_ci_boot_perc <- ci_calc_boot_perc(d_sb_2_ci_boot, char_scale_d)
+d_sb_4_ci_boot_perc <- ci_calc_boot_perc(d_sb_4_ci_boot, char_scale_d)
+d_sb_8_ci_boot_perc <- ci_calc_boot_perc(d_sb_8_ci_boot, char_scale_d)
 
-A.wv_cs_CI_perc <- CI_calc_boot_perc(A.wv_cs_CI, char_scale_A)
-B.wv_cs_CI_perc <- CI_calc_boot_perc(B.wv_cs_CI, char_scale_B)
-C.wv_cs_CI_perc <- CI_calc_boot_perc(C.wv_cs_CI, char_scale_C)
-D.wv_cs_CI_perc <- CI_calc_boot_perc(D.wv_cs_CI, char_scale_D)
+a_wv_cs_ci_perc <- ci_calc_boot_perc(a_wv_cs_ci, char_scale_a)
+b_wv_cs_ci_perc <- ci_calc_boot_perc(b_wv_cs_ci, char_scale_b)
+c_wv_cs_ci_perc <- ci_calc_boot_perc(c_wv_cs_ci, char_scale_c)
+d_wv_cs_ci_perc <- ci_calc_boot_perc(d_wv_cs_ci, char_scale_d)
 
 results <- rbind(
-  A.wv_cs_CI_perc,
-  A.SB_2_CI_boot_perc,
-  A.SB_4_CI_boot_perc,
-  A.SB_8_CI_boot_perc,
-  B.wv_cs_CI_perc,
-  B.SB_2_CI_boot_perc,
-  B.SB_4_CI_boot_perc,
-  B.SB_8_CI_boot_perc,
-  C.wv_cs_CI_perc,
-  C.SB_2_CI_boot_perc,
-  C.SB_4_CI_boot_perc,
-  C.SB_8_CI_boot_perc,
-  D.wv_cs_CI_perc,
-  D.SB_2_CI_boot_perc,
-  D.SB_4_CI_boot_perc,
-  D.SB_8_CI_boot_perc
+  a_wv_cs_ci_perc,
+  a_sb_2_ci_boot_perc,
+  a_sb_4_ci_boot_perc,
+  a_sb_8_ci_boot_perc,
+  b_wv_cs_ci_perc,
+  b_sb_2_ci_boot_perc,
+  b_sb_4_ci_boot_perc,
+  b_sb_8_ci_boot_perc,
+  c_wv_cs_ci_perc,
+  c_sb_2_ci_boot_perc,
+  c_sb_4_ci_boot_perc,
+  c_sb_8_ci_boot_perc,
+  d_wv_cs_ci_perc,
+  d_sb_2_ci_boot_perc,
+  d_sb_4_ci_boot_perc,
+  d_sb_8_ci_boot_perc
 )
 
 
@@ -743,8 +743,8 @@ for (i in 1:nrow(results)) {
 
   cat(paste(
     c(str_temp, c(
-      "Apr. Normal", "$(2\\log_2(N))^{-1}$ ", "$(4\\log_2(N))^{-1}$ ",
-      "$(8\\log_2(N))^{-1}$ "
+      "Apr. Normal", "$(2\\log_2(n))^{-1}$ ", "$(4\\log_2(n))^{-1}$ ",
+      "$(8\\log_2(n))^{-1}$ "
     )[((i - 1) %% 4) + 1], results[i, ]),
     collapse = " & "
   ))
@@ -766,23 +766,23 @@ for (i in 1:nrow(results)) {
 
 set.seed(1)
 
-YA <- Model_A_sim(2048)
-YB <- Model_B_sim(2048)
-YC <- Model_C_sim(2048)
-YD <- Model_D_sim(2048)
+ya <- model_a_sim(2048)
+yb <- model_b_sim(2048)
+yc <- model_c_sim(2048)
+yd <- model_d_sim(2048)
 
-wv_est_A <- wv_estimates(YA)
-wv_est_B <- wv_estimates(YB)
-wv_est_C <- wv_estimates(YC)
-wv_est_D <- wv_estimates(YD)
+wv_est_a <- wv_estimates(ya)
+wv_est_b <- wv_estimates(yb)
+wv_est_c <- wv_estimates(yc)
+wv_est_d <- wv_estimates(yd)
 
 
 {
-  png(file = file.path(OUTPUT_PATH, "Realizations.png"), width = 1200, height = 800, res = 150)
+  png(file = file.path(output_path, "Realizations.png"), width = 1200, height = 800, res = 150)
 
   par(mfrow = c(2, 2), mar = c(4.1, 4.1, 1.1, 2.1))
 
-  plot(log2(wv_est_A),
+  plot(log2(wv_est_a),
     xlab = "", ylab = "Var. de ondaletas (log)", pch = 19,
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xaxt = "n"
@@ -790,12 +790,12 @@ wv_est_D <- wv_estimates(YD)
   axis(1, labels = FALSE)
 
   abline(
-    v = char_scale_A[[3]], lty = 2,
+    v = char_scale_a[[3]], lty = 2,
     lwd = 1.5
   )
 
   x <- 5:7
-  y <- log2(wv_est_A)[5:7]
+  y <- log2(wv_est_a)[5:7]
   quadratic <- solve(cbind(1, x, x^2), y)
 
   quadratic_fun <- function(x) {
@@ -806,7 +806,7 @@ wv_est_D <- wv_estimates(YD)
     lwd = 1.5
   )
 
-  plot(log2(wv_est_B),
+  plot(log2(wv_est_b),
     xlab = "", ylab = "", pch = 19,
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5, xaxt = "n"
@@ -814,38 +814,38 @@ wv_est_D <- wv_estimates(YD)
   axis(1, labels = FALSE)
 
   abline(
-    v = char_scale_B[[3]], lty = 2,
+    v = char_scale_b[[3]], lty = 2,
     lwd = 1.5
   )
 
   x <- 3:5
-  y <- log2(wv_est_B)[3:5]
+  y <- log2(wv_est_b)[3:5]
   quadratic <- solve(cbind(1, x, x^2), y)
 
   lines(seq(3, 5, length.out = 50), quadratic_fun(seq(3, 5, length.out = 50)),
     lwd = 1.5
   )
 
-  plot(log2(wv_est_C),
+  plot(log2(wv_est_c),
     xlab = "Nível", ylab = "Var. de ondaletas (log)", pch = 19,
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
   )
 
   abline(
-    v = char_scale_C[[3]], lty = 2,
+    v = char_scale_c[[3]], lty = 2,
     lwd = 1.5
   )
 
   x <- 4:6
-  y <- log2(wv_est_C[4:6])
+  y <- log2(wv_est_c[4:6])
   quadratic <- solve(cbind(1, x, x^2), y)
 
   lines(seq(4, 6, length.out = 50), quadratic_fun(seq(4, 6, length.out = 50)),
     lwd = 1.5
   )
 
-  plot(log2(wv_est_D),
+  plot(log2(wv_est_d),
     xlab = "Nível", ylab = "", pch = 19,
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5,
     lwd = 1.5
@@ -854,6 +854,6 @@ wv_est_D <- wv_estimates(YD)
   dev.off()
 }
 
-save.image(file.path(WORKSPACE_DIR, "6_char_scales.RData"))
+save.image(file.path(workspace_dir, "6_char_scales.RData"))
 
 ################################################################################

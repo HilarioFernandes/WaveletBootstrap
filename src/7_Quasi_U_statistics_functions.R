@@ -1,10 +1,10 @@
 # =============================================================================
 # 7_Quasi_U_statistics_functions.R
 # =============================================================================
-# Purpose  : Bn quasi U-statistic machinery for two-sample comparison.
+# Purpose  : Bn quasi u-statistic machinery for two-sample comparison.
 # Chapter  : Chapter 4
 # Inputs   : User-supplied symmetric kernel.
-# Outputs  : Quasi U-statistic calculations and bootstrap/CI logic.
+# Outputs  : Quasi u-statistic calculations and bootstrap/CI logic.
 # Author   : Hilário Fernandes de Araujo Júnior
 # Date     : 2024
 # =============================================================================
@@ -15,14 +15,14 @@
 #
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
 
-#' Calculate U-statistic for a single group
+#' Calculate u-statistic for a single group
 #'
 #' @param data Group data vector
 #' @param kernel Symmetric kernel function
-#' @return The U-statistic estimate
-U_ng <- function(data, kernel) {
+#' @return The u-statistic estimate
+u_ng <- function(data, kernel) {
   n <- length(data)
 
   temp <- NULL
@@ -44,17 +44,17 @@ if (FALSE) {
   #
   # }
   #
-  # U_ng(data, kernel)
+  # u_ng(data, kernel)
 }
 
 
-#' Calculate cross-group U-statistic
+#' Calculate cross-group u-statistic
 #'
 #' @param data1 Group 1 data vector
 #' @param data2 Group 2 data vector
 #' @param kernel Symmetric kernel function
-#' @return The cross-group U-statistic estimate
-U_ngg <- function(data1, data2, kernel) {
+#' @return The cross-group u-statistic estimate
+u_ngg <- function(data1, data2, kernel) {
   n1 <- length(data1)
   n2 <- length(data2)
 
@@ -79,22 +79,22 @@ if (FALSE) {
   #
   # }
   #
-  # U_ngg(data1, data2, kernel)
+  # u_ngg(data1, data2, kernel)
 }
 
 
-#' Calculate the Bn quasi U-statistic for two-sample comparison
+#' Calculate the Bn quasi u-statistic for two-sample comparison
 #'
 #' @param data1 Group 1 data vector
 #' @param data2 Group 2 data vector
 #' @param kernel Symmetric kernel function
-#' @return The Bn statistic estimate (n1*n2*(2*U_ngg - U_ng1 - U_ng2)/(n*(n-1)))
-B_n <- function(data1, data2, kernel) {
+#' @return The Bn statistic estimate (n1*n2*(2*u_ngg - u_ng1 - u_ng2)/(n*(n-1)))
+b_n <- function(data1, data2, kernel) {
   n1 <- length(data1)
   n2 <- length(data2)
   n <- n1 + n2
 
-  return(n1 * n2 * (2 * U_ngg(data1, data2, kernel) - U_ng(data1, kernel) - U_ng(data2, kernel)) / (n * (n - 1)))
+  return(n1 * n2 * (2 * u_ngg(data1, data2, kernel) - u_ng(data1, kernel) - u_ng(data2, kernel)) / (n * (n - 1)))
 }
 
 if (FALSE) {
@@ -107,7 +107,7 @@ if (FALSE) {
   #
   # }
   #
-  # B_n(data1, data2, kernel)
+  # b_n(data1, data2, kernel)
 }
 
 
@@ -117,7 +117,7 @@ if (FALSE) {
 #' @param discrimination Logical. If TRUE, resamples groups separately.
 #'        If FALSE, resamples from the pooled data (under H0).
 #' @return A list with resampled data1_temp and data2_temp
-bootstrap_Bn <- function(data_list, discrimination) {
+bootstrap_bn <- function(data_list, discrimination) {
   data1 <- data_list[[1]]
   data2 <- data_list[[2]]
 
@@ -149,8 +149,8 @@ if (FALSE) {
   # data1 <- runif(20, 0,1)
   # data2 <- rnorm(25,-1,1)
   #
-  # bootstrap_Bn(list(data1, data2), TRUE)
-  # bootstrap_Bn(list(data1, data2), FALSE)
+  # bootstrap_bn(list(data1, data2), TRUE)
+  # bootstrap_bn(list(data1, data2), FALSE)
 }
 
 
@@ -161,7 +161,7 @@ if (FALSE) {
 #' @param statistics_resampling Matrix of bootstrap statistics
 #' @param alpha Significance level
 #' @return Matrix of quantile CI limits
-quantile_CI <- function(statistics_resampling, alpha) {
+quantile_ci <- function(statistics_resampling, alpha) {
   temp <- apply(statistics_resampling, 1, function(x) {
     quantile(x, 1 - alpha)
   })
@@ -176,18 +176,18 @@ quantile_CI <- function(statistics_resampling, alpha) {
 #' @param alpha Significance level
 #' @return Matrix of CI limits
 #' @note For jackknife, variable 'n' must be in calling environment.
-approx_CI <- function(statistics_resampling, type, alpha) {
+approx_ci <- function(statistics_resampling, type, alpha) {
   if (type == "boot") {
-    std.errors <- apply(statistics_resampling, 1, function(x) {
+    std_errors <- apply(statistics_resampling, 1, function(x) {
       sd(x)
     })
   } else {
-    std.errors <- apply(statistics_resampling, 1, function(x) {
+    std_errors <- apply(statistics_resampling, 1, function(x) {
       sd(x) * (2 * n - 1) / (sqrt(2 * n))
     })
   }
 
-  return(t(sapply(std.errors, function(x) {
+  return(t(sapply(std_errors, function(x) {
     qnorm(1 - alpha, mean = 0, sd = x)
   })))
 }
@@ -197,7 +197,7 @@ approx_CI <- function(statistics_resampling, type, alpha) {
 #' @param statistics Vector of observed statistics
 #' @param CI Matrix of CI limits
 #' @return Rejection rate (1 means rejected, 0 not rejected)
-coverage_CI <- function(statistics, CI) {
+coverage_ci <- function(statistics, CI) {
   interval_check <- function(x) {
     if (x[1] <= x[2]) {
       return(0)

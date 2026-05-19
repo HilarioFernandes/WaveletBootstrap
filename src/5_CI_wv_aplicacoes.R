@@ -1,7 +1,7 @@
 # =============================================================================
 # 5_CI_wv_aplicacoes.R
 # =============================================================================
-# Purpose  : Real-data CI applications for wavelet variance. (Ocean Shear, SPX/CBOE)
+# Purpose  : Real-data CI applications for wavelet variance. (Ocean Shear, SPX/cboe)
 # Chapter  : Chapter 3
 # Inputs   : Ocean Shear.txt, SPX.csv (Data files not included in repository).
 # Outputs  : Real-data CI plots (PNGs).
@@ -10,34 +10,34 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 library(multitaper)
-B <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 2 else 100
 
 # Set and create output directory for plots
-OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_5")
-if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+output_path <- file.path(base_path, "Plots/Plots_5")
+if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 ################################################################################
 
 # this function calculates the wavelet variance standard deviation estimates
-# Z is the list with all squared wavelet coefficients (each list element corresponds to a scale)
+# z is the list with all squared wavelet coefficients (each list element corresponds to a scale)
 # v is the list with all tapers (each list element corresponds to a scale)
-sd_estimate_multitaper <- function(Z, v) {
-  n_levels <- length(Z)
+sd_estimate_multitaper <- function(z, v) {
+  n_levels <- length(z)
 
-  N <- nrow(v[[1]])
+  n <- nrow(v[[1]])
 
-  L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+  l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
   # now we calculate the computable quantity J(0) and V(0)
 
@@ -48,11 +48,11 @@ sd_estimate_multitaper <- function(Z, v) {
     for (j in 1:n_levels) {
       # using non-boundary coeffs and the corresponding tapers
       # must set remove_boundary_coeffs <- TRUE
-      J[k, j] <- Z[[j]] %*% v[[j]][L[j]:N, k]
+      J[k, j] <- z[[j]] %*% v[[j]][l[j]:n, k]
 
 
-      # V[k,j] <- sum(v[[j]][L[j]:N,k])
-      # V[k,j] <- sum(v[[j]][1:(N-L[j]+1),k])
+      # V[k,j] <- sum(v[[j]][l[j]:n,k])
+      # V[k,j] <- sum(v[[j]][1:(n-l[j]+1),k])
       V[k, j] <- sum(v[[j]][, k])
     }
   }
@@ -71,7 +71,7 @@ sd_estimate_multitaper <- function(Z, v) {
     sum <- 0
 
     for (k in 1:5) {
-      sum <- sum + ((J[k, j] - temp * V[k, j])^2) / (N - L[j] + 1)
+      sum <- sum + ((J[k, j] - temp * V[k, j])^2) / (n - l[j] + 1)
     }
 
     sum <- sum / 5
@@ -82,12 +82,12 @@ sd_estimate_multitaper <- function(Z, v) {
   return(sqrt(estimates))
 }
 
-taper_fun <- function(N, L) {
-  # return(dpss(N,5,3.5/(N-L+1))$v)
+taper_fun <- function(n, l) {
+  # return(dpss(n,5,3.5/(n-l+1))$v)
 
-  # return(dpss(N,5,7/(N-L+1))$v)
+  # return(dpss(n,5,7/(n-l+1))$v)
 
-  return(dpss(N, 5, 7)$v)
+  return(dpss(n, 5, 7)$v)
 }
 
 
@@ -96,7 +96,7 @@ taper_fun <- function(N, L) {
 # Ocean Shear
 
 # Note: Data file is not included in the repository. See thesis for sources.
-ocean_shear <- read.table(file.path(BASE_PATH, "Dados", "Ocean Shear", "Ocean Shear.txt"))
+ocean_shear <- read.table(file.path(base_path, "Dados", "Ocean Shear", "Ocean Shear.txt"))
 
 ocean_shear <- cbind(1:nrow(ocean_shear), ocean_shear)
 
@@ -106,12 +106,12 @@ plot(diff(ocean_shear[, 2]), type = "l")
 
 ################################################################################
 
-CI_wv_fun_global <- function(data, alpha, B) {
-  N <- length(data)
+ci_wv_fun_global <- function(data, alpha, b) {
+  n <- length(data)
 
-  n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+  n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-  L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+  l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
   wv_est <- wv_estimates(data)
 
@@ -121,9 +121,9 @@ CI_wv_fun_global <- function(data, alpha, B) {
     p = alpha / 2, type = "nongaussian"
   )[1:n_levels, ]
 
-  wv_boot <- bootstrap_wavelet(data, "bw", TRUE, "SB", function(N) {
-    1 / (4 * log2(N))
-  }, B)
+  wv_boot <- bootstrap_wavelet(data, "bw", TRUE, "SB", function(n) {
+    1 / (4 * log2(n))
+  }, b)
 
   # bootstrap variances estimates and point estimates for wavelet variances
 
@@ -143,13 +143,13 @@ CI_wv_fun_global <- function(data, alpha, B) {
 
   # multitaper confidence intervals (manually implemented)
 
-  taper_fun_temp <- function(L) {
-    return(taper_fun(N, L))
+  taper_fun_temp <- function(l) {
+    return(taper_fun(n, l))
   }
 
-  v <- lapply(L, taper_fun_temp)
+  v <- lapply(l, taper_fun_temp)
 
-  sd_multitaper <- sd_estimate_multitaper(nonboundary_squared_MODWT_coeffs(data), v)
+  sd_multitaper <- sd_estimate_multitaper(nonbnd_sq_modwt_coeffs(data), v)
 
   a_multitaper <- sd_multitaper^2 / (2 * wv_est)
   eta_multitaper <- (2 * wv_est^2) / sd_multitaper^2
@@ -175,28 +175,28 @@ CI_wv_fun_global <- function(data, alpha, B) {
   return(output)
 }
 
-CI_wv_fun_global(ocean_shear[, 2], 0.05, 100)
+ci_wv_fun_global(ocean_shear[, 2], 0.05, 100)
 
-CI_wv_fun_local <- function(data, windowsize, alpha, B) {
-  N <- length(data)
+ci_wv_fun_local <- function(data, windowsize, alpha, b) {
+  n <- length(data)
 
-  output <- vector(mode = "list", length = N - windowsize + 1)
+  output <- vector(mode = "list", length = n - windowsize + 1)
 
-  for (i in 1:(N - windowsize + 1)) {
-    message(round(i / (N - windowsize + 1), 3), "\r", appendLF = FALSE)
+  for (i in 1:(n - windowsize + 1)) {
+    message(round(i / (n - windowsize + 1), 3), "\r", appendLF = FALSE)
     flush.console()
     Sys.sleep(0.1)
 
     data_window <- data[i:(i + windowsize - 1)]
 
-    output[[i]] <- CI_wv_fun_global(data_window, alpha, B)
+    output[[i]] <- ci_wv_fun_global(data_window, alpha, b)
   }
 
   return(output)
 }
 
 set.seed(0)
-results_ocean_shear <- CI_wv_fun_local(diff(ocean_shear[150:2250, 2]), 512, 0.05, B)
+results_ocean_shear <- ci_wv_fun_local(diff(ocean_shear[150:2250, 2]), 512, 0.05, b)
 
 col1 <- "grey"
 col2 <- "black"
@@ -206,7 +206,7 @@ lty2 <- "dotted"
 
 {
   png(
-    file = file.path(OUTPUT_PATH, "5_OceanShear.png"),
+    file = file.path(output_path, "5_OceanShear.png"),
     width = 1500, height = 1000, res = 150
   )
 
@@ -263,8 +263,8 @@ lty2 <- "dotted"
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[1,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[1,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[1,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[1,3]})), lty = "dashed")
   }
 
   {
@@ -316,8 +316,8 @@ lty2 <- "dotted"
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[2,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[2,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[2,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[2,3]})), lty = "dashed")
   }
 
   {
@@ -369,8 +369,8 @@ lty2 <- "dotted"
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[3,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[3,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[3,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[3,3]})), lty = "dashed")
   }
 
   {
@@ -422,8 +422,8 @@ lty2 <- "dotted"
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[4,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[4,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[4,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[4,3]})), lty = "dashed")
   }
 
   dev.off()
@@ -431,7 +431,7 @@ lty2 <- "dotted"
 
 ################################################################################
 
-# CBOE
+# cboe
 
 # Function to calculate returns
 returns_fun <- function(data) {
@@ -466,23 +466,23 @@ subset_data <- function(interval_type, interval, day_start, day_stop) {
 
 
 # Note: Data file is not included in the repository. See thesis for sources.
-CBOE <- read.csv(file.path(BASE_PATH, "Dados", "SPX_second", "SPX.csv"), check.names = FALSE)
+cboe <- read.csv(file.path(base_path, "Dados", "SPX_second", "SPX.csv"), check.names = FALSE)
 
 # sampling
 indexes <- subset_data("minutes", 5, 12, 26)
 
-CBOE_selection <- CBOE[indexes[[1]], indexes[[2]]]
+cboe_selection <- cboe[indexes[[1]], indexes[[2]]]
 
-CBOE_selection_returns <- returns_fun(CBOE_selection)
+cboe_selection_returns <- returns_fun(cboe_selection)
 
-plot(CBOE_selection_returns, type = "l")
+plot(cboe_selection_returns, type = "l")
 
-save.image(file.path(WORKSPACE_DIR, "5_CI_wv_aplicacoes_part_1.RData"))
+save.image(file.path(workspace_dir, "5_CI_wv_aplicacoes_part_1.RData"))
 set.seed(0)
 
-results_CBOE <- CI_wv_fun_local(CBOE_selection_returns, 512, 0.05, B)
+results_cboe <- ci_wv_fun_local(cboe_selection_returns, 512, 0.05, b)
 
-labels_plot <- rep(substr(colnames(CBOE_selection)[seq(2, ncol(CBOE_selection), by = 1)], 9, 10), each = 82)
+labels_plot <- rep(substr(colnames(cboe_selection)[seq(2, ncol(cboe_selection), by = 1)], 9, 10), each = 82)
 # labels_plot <- as.integer(labels_plot[513:1230])
 labels_plot <- as.integer(labels_plot[1:718])
 
@@ -494,7 +494,7 @@ for (i in unique(labels_plot)) {
 
 {
   png(
-    file = file.path(OUTPUT_PATH, "5_CBOE.png"),
+    file = file.path(output_path, "5_CBOE.png"),
     width = 1500, height = 1000, res = 150
   )
 
@@ -503,7 +503,7 @@ for (i in unique(labels_plot)) {
 
   {
     plot(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[1, 1]
       })),
       type = "l", ylim = c(0, 0.00006),
@@ -518,14 +518,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[1, 5]
       })),
       col = col1, lty = lty1,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[1, 6]
       })),
       col = col1, lty = lty1,
@@ -533,14 +533,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[1, 7]
       })),
       col = col2, lty = lty2,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[1, 8]
       })),
       col = col2, lty = lty2,
@@ -553,13 +553,13 @@ for (i in unique(labels_plot)) {
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[1,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[1,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[1,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[1,3]})), lty = "dashed")
   }
 
   {
     plot(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[2, 1]
       })),
       type = "l", ylim = c(0, 0.00003),
@@ -574,14 +574,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[2, 5]
       })),
       col = col1, lty = lty1,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[2, 6]
       })),
       col = col1, lty = lty1,
@@ -589,14 +589,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[2, 7]
       })),
       col = col2, lty = lty2,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[2, 8]
       })),
       col = col2, lty = lty2,
@@ -609,13 +609,13 @@ for (i in unique(labels_plot)) {
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[2,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[2,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[2,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[2,3]})), lty = "dashed")
   }
 
   {
     plot(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[3, 1]
       })),
       type = "l", ylim = c(0, 0.00002),
@@ -630,14 +630,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[3, 5]
       })),
       col = col1, lty = lty1,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[3, 6]
       })),
       col = col1, lty = lty1,
@@ -645,14 +645,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[3, 7]
       })),
       col = col2, lty = lty2,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[3, 8]
       })),
       col = col2, lty = lty2,
@@ -665,13 +665,13 @@ for (i in unique(labels_plot)) {
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[3,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[3,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[3,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[3,3]})), lty = "dashed")
   }
 
   {
     plot(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[4, 1]
       })),
       type = "l", ylim = c(0, 0.000012),
@@ -686,14 +686,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[4, 5]
       })),
       col = col1, lty = lty1,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[4, 6]
       })),
       col = col1, lty = lty1,
@@ -701,14 +701,14 @@ for (i in unique(labels_plot)) {
     )
 
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[4, 7]
       })),
       col = col2, lty = lty2,
       lwd = 1.5
     )
     lines(
-      unlist(lapply(results_CBOE, function(x) {
+      unlist(lapply(results_cboe, function(x) {
         x[4, 8]
       })),
       col = col2, lty = lty2,
@@ -721,10 +721,10 @@ for (i in unique(labels_plot)) {
       lwd = 1.5
     )
 
-    # lines(unlist(lapply(results_CBOE, function(x){x[4,2]})), lty = "dashed")
-    # lines(unlist(lapply(results_CBOE, function(x){x[4,3]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[4,2]})), lty = "dashed")
+    # lines(unlist(lapply(results_cboe, function(x){x[4,3]})), lty = "dashed")
   }
   dev.off()
 }
 
-save.image(file.path(WORKSPACE_DIR, "5_CI_wv_aplicacoes_final.RData"))
+save.image(file.path(workspace_dir, "5_CI_wv_aplicacoes_final.RData"))

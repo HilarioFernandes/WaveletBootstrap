@@ -1,32 +1,32 @@
 # =============================================================================
 # 6_char_scales_aplicacoes.R
 # =============================================================================
-# Purpose  : Real-data characteristic scales applications (MJO, INMET datasets).
+# Purpose  : Real-data characteristic scales applications (mjo, inmet datasets).
 # Chapter  : Chapter 3
-# Inputs   : MJO.txt, dados_INMET_processados.csv (Data files not included).
+# Inputs   : mjo.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : Characteristic scale estimates and application plots.
 # Depends  : 2_Bootstrap_methods.R
 # Author   : Hilário Fernandes de Araujo Júnior
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
 library(imputeTS)
 
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
-B <- if (TEST_MODE) 5 else 100
+b <- if (test_mode) 5 else 100
 
 # Set and create output directory for plots
-OUTPUT_PATH <- file.path(BASE_PATH, "Plots/Plots_6")
-if (!dir.exists(OUTPUT_PATH)) dir.create(OUTPUT_PATH, recursive = TRUE)
+output_path <- file.path(base_path, "Plots/Plots_6")
+if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 
 ################################################################################
 
@@ -45,7 +45,7 @@ max_char_scale <- function(wv_est) {
 #' @param wv_est Vector of wavelet variance estimates
 #' @param j_0 Target level index
 #' @return Quadratic interpolation of the characteristic scale
-Char_scale_est <- function(wv_est, j_0) {
+char_scale_est <- function(wv_est, j_0) {
   log_wv_est <- log2(wv_est)
 
   if (j_0 == 1 || j_0 == length(wv_est)) {
@@ -77,25 +77,25 @@ beta_hat_est <- function(wv_est, j_0) {
 #' Function that calculates the terms \hat{s}
 #'
 #' @param W List with all wavelet coefficients
-#' @param N Time series length
-#' @param L Array with the filter lengths
+#' @param n Time series length
+#' @param l Array with the filter lengths
 #' @return A list with biased autocovariance estimates for each scale
-biased_est_acvs <- function(W, N, L) {
-  n_levels <- length(L)
+biased_est_acvs <- function(W, n, l) {
+  n_levels <- length(l)
 
   output <- vector(mode = "list", length = n_levels)
 
   for (j in 1:n_levels) {
     temp <- NULL
 
-    for (tau in 0:(N - L[j])) {
+    for (tau in 0:(n - l[j])) {
       sum <- 0
 
-      for (t in (L[j] - 1):(N - tau - 1)) {
+      for (t in (l[j] - 1):(n - tau - 1)) {
         sum <- sum + W[[j]][t] * W[[j]][t + tau]
       }
 
-      temp <- c(temp, sum / (N - L[j] + 1))
+      temp <- c(temp, sum / (n - l[j] + 1))
     }
 
     output[[j]] <- temp
@@ -104,22 +104,22 @@ biased_est_acvs <- function(W, N, L) {
   return(output)
 }
 
-#' Function that calculates the matrix \Sigma_1 from eq (8)
+#' Function that calculates the matrix \sigma_1 from eq (8)
 #'
 #' @param s_est List of biased acvs estimates
 #' @param wv_est Vector of wavelet variance estimates
-#' @param N Time series length
-#' @param L Array of filter lengths
+#' @param n Time series length
+#' @param l Array of filter lengths
 #' @param j_0 Target level index
-#' @return The Sigma1 matrix estimate
-Sigma1_est <- function(s_est, wv_est, N, L, j_0) {
+#' @return The sigma1 matrix estimate
+sigma1_est <- function(s_est, wv_est, n, l, j_0) {
   temp <- matrix(NA, nrow = 3, ncol = 3)
 
   for (k_1 in 1:3) {
     for (k_2 in k_1:3) {
       sum <- 0
 
-      for (tau in 1:(N - L[j_0 + (k_2 - 2)])) {
+      for (tau in 1:(n - l[j_0 + (k_2 - 2)])) {
         # the lag window chosen is the same as in the paper
 
         sum <- sum + s_est[[j_0 + (k_1 - 2)]][tau] * s_est[[j_0 + (k_2 - 2)]][tau]
@@ -127,20 +127,20 @@ Sigma1_est <- function(s_est, wv_est, N, L, j_0) {
 
       sum <- (2 * sum + wv_est[j_0 + (k_1 - 2)] * wv_est[j_0 + (k_2 - 2)]) / 2
 
-      temp[k_2, k_1] <- 2 * sum / (N - L[k_1] + 1)
+      temp[k_2, k_1] <- 2 * sum / (n - l[k_1] + 1)
     }
   }
 
   return(temp)
 }
 
-#' Function that calculates \Sigma_2 from eq (9)
+#' Function that calculates \sigma_2 from eq (9)
 #'
-#' @param sigma1_est The Sigma1 matrix estimate
+#' @param sigma1_est The sigma1 matrix estimate
 #' @param wv_est Vector of wavelet variance estimates
 #' @param j_0 Target level index
-#' @return The Sigma2 matrix estimate
-Sigma2_est <- function(sigma1_est, wv_est, j_0) {
+#' @return The sigma2 matrix estimate
+sigma2_est <- function(sigma1_est, wv_est, j_0) {
   temp <- matrix(NA, nrow = 3, ncol = 3)
 
   for (k_1 in 1:3) {
@@ -163,9 +163,9 @@ Sigma2_est <- function(sigma1_est, wv_est, j_0) {
 
 #' Function that calculates the var-cov matrix associated to \hat{\beta}
 #'
-#' @param sigma2_est The Sigma2 matrix estimate
+#' @param sigma2_est The sigma2 matrix estimate
 #' @return The variance-covariance matrix for beta coefficients
-Var_beta_est <- function(sigma2_est) {
+var_beta_est <- function(sigma2_est) {
   H <- rbind(c(-1 / 2, 0, 1 / 2), c(1, -2, 1))
 
   return(H %*% sigma2_est %*% t(H))
@@ -176,7 +176,7 @@ Var_beta_est <- function(sigma2_est) {
 #' @param var_beta_est Variance-covariance matrix of beta
 #' @param beta_hat Vector of beta coefficient estimates
 #' @return Variance of the characteristic scale estimate
-Var_kappa <- function(var_beta_est, beta_hat) {
+var_kappa <- function(var_beta_est, beta_hat) {
   sum <- var_beta_est[1, 1] / beta_hat[2]^2 + (beta_hat[1]^2 * var_beta_est[2, 2]) / beta_hat[2]^4
 
   sum <- sum + (var_beta_est[1, 1] * var_beta_est[2, 2] + 2 * var_beta_est[1, 2]) / beta_hat[2]^4
@@ -193,16 +193,16 @@ Var_kappa <- function(var_beta_est, beta_hat) {
 #' @param data Time series data vector
 #' @param alpha Significance level
 #' @return A vector with [lower, upper] limits
-CI_calc <- function(data, alpha) {
-  N <- length(data)
+ci_calc <- function(data, alpha) {
+  n <- length(data)
 
-  n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+  n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-  L <- (2^(1:n_levels) - 1) * (8 - 1) + 1
+  l <- (2^(1:n_levels) - 1) * (8 - 1) + 1
 
   coeffs <- modwt(data, n.levels = n_levels)[1:n_levels]
 
-  s_est <- biased_est_acvs(coeffs, N, L)
+  s_est <- biased_est_acvs(coeffs, n, l)
 
   wv_est <- wv_estimates(data)
 
@@ -212,17 +212,17 @@ CI_calc <- function(data, alpha) {
     return(c(-1, -1))
   }
 
-  sigma1_est <- Sigma1_est(s_est, wv_est, N, L, j_0)
+  sigma1_est <- sigma1_est(s_est, wv_est, n, l, j_0)
 
-  sigma2_est <- Sigma2_est(sigma1_est, wv_est, j_0)
+  sigma2_est <- sigma2_est(sigma1_est, wv_est, j_0)
 
-  var_beta_est <- Var_beta_est(sigma2_est)
+  var_beta_est <- var_beta_est(sigma2_est)
 
   beta_hat <- beta_hat_est(wv_est, j_0)
 
-  var_kappa <- Var_kappa(var_beta_est, beta_hat)
+  var_kappa <- var_kappa(var_beta_est, beta_hat)
 
-  char_scale_est <- Char_scale_est(wv_est, j_0)
+  char_scale_est <- char_scale_est(wv_est, j_0)
 
   if (is.nan(sqrt(var_kappa))) {
     return(c(-1, -1))
@@ -238,12 +238,12 @@ CI_calc <- function(data, alpha) {
 #'
 #' @param char_scale_est_boot Vector of bootstrap characteristic scale estimates
 #' @param alpha Significance level
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return A vector with [lower, upper] limits
-CI_calc_boot <- function(char_scale_est_boot, alpha, B) {
+ci_calc_boot <- function(char_scale_est_boot, alpha, b) {
   output <- list(c(NULL, NULL), c(NULL, NULL), c(NULL, NULL))
 
-  if (length(which(char_scale_est_boot == -1)) > B / 2) {
+  if (length(which(char_scale_est_boot == -1)) > b / 2) {
     return(c(-1, -1))
   } else {
     x <- char_scale_est_boot
@@ -258,74 +258,74 @@ CI_calc_boot <- function(char_scale_est_boot, alpha, B) {
 #'
 #' @param data Time series data vector
 #' @param alpha Significance level
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return A list containing point estimate, literature CI and bootstrap CI
-char_scale_fun <- function(data, alpha, B) {
+char_scale_fun <- function(data, alpha, b) {
   wv_est <- wv_estimates(data)
 
   wv_boot <- NULL
 
-  N <- length(data)
+  n <- length(data)
 
-  n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+  n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
   wv_est <- wv_estimates(data)
 
-  char_scale_est <- Char_scale_est(wv_est, max_char_scale(wv_est))
+  char_scale_est <- char_scale_est(wv_est, max_char_scale(wv_est))
 
-  wv_cs_CI <- CI_calc(data, alpha)
+  wv_cs_ci <- ci_calc(data, alpha)
 
-  wv_boot <- bootstrap_wavelet(data, "bw", TRUE, "SB", function(N) {
-    1 / (4 * log2(N))
-  }, B)
+  wv_boot <- bootstrap_wavelet(data, "bw", TRUE, "SB", function(n) {
+    1 / (4 * log2(n))
+  }, b)
 
   char_scale_est_boot <- NULL
 
-  for (i in 1:B) {
+  for (i in 1:b) {
     x <- wv_boot[i, ]
 
-    char_scale_est_boot <- c(char_scale_est_boot, Char_scale_est(x, max_char_scale(x)))
+    char_scale_est_boot <- c(char_scale_est_boot, char_scale_est(x, max_char_scale(x)))
   }
 
-  wv_cs_CI_boot <- CI_calc_boot(char_scale_est_boot, 0.05, B)
+  wv_cs_ci_boot <- ci_calc_boot(char_scale_est_boot, 0.05, b)
 
-  names(wv_cs_CI) <- c("2.5%", "97.5%")
+  names(wv_cs_ci) <- c("2.5%", "97.5%")
 
   return(list(
-    "Point_estimate" = unname(char_scale_est),
-    "Literature" = wv_cs_CI,
-    "Bootstrap" = wv_cs_CI_boot
+    "point_estimate" = unname(char_scale_est),
+    "Literature" = wv_cs_ci,
+    "Bootstrap" = wv_cs_ci_boot
   ))
 }
 
 ################################################################################
 
-# MJO
+# mjo
 
 # Note: Data file is not included in the repository. See thesis for sources.
-MJO <- read.table(file.path(BASE_PATH, "Dados", "MJO", "MJO.txt"))
+mjo <- read.table(file.path(base_path, "Dados", "mjo", "mjo.txt"))
 
-MJO <- as.numeric(MJO$INDEX_1[2:nrow(MJO)])
+mjo <- as.numeric(mjo$INDEX_1[2:nrow(mjo)])
 
-MJO <- na_interpolation(MJO)
+mjo <- na_interpolation(mjo)
 
-plot(MJO, type = "l")
+plot(mjo, type = "l")
 
-MJO_paper <- MJO[1:2354]
+mjo_paper <- mjo[1:2354]
 
-plot(MJO_paper, type = "l")
+plot(mjo_paper, type = "l")
 
 set.seed(0)
 
-results_MJO <- char_scale_fun(MJO_paper, 0.05, 100)
+results_mjo <- char_scale_fun(mjo_paper, 0.05, 100)
 
 {
-  png(file = file.path(OUTPUT_PATH, "plot_aplicacao.png"), width = 1800, height = 900, res = 210)
+  png(file = file.path(output_path, "plot_aplicacao.png"), width = 1800, height = 900, res = 210)
 
   par(mfrow = c(1, 1))
   par(mar = c(4.1, 4.1, 1, 2.1))
 
-  wv_est <- wv_estimates(MJO_paper)
+  wv_est <- wv_estimates(mjo_paper)
 
   plot(log2(wv_est),
     xlab = "Nível", ylab = "Var. de ondaletas (log)", pch = 19,
@@ -345,7 +345,7 @@ results_MJO <- char_scale_fun(MJO_paper, 0.05, 100)
   )
 
   abline(
-    v = results_MJO[[1]], lty = "dashed",
+    v = results_mjo[[1]], lty = "dashed",
     lwd = 1.5
   )
 
@@ -354,33 +354,33 @@ results_MJO <- char_scale_fun(MJO_paper, 0.05, 100)
 
 ################################################################################
 
-# INMET data
+# inmet data
 
 # Note: Data file is not included in the repository. See thesis for sources.
-INMET <- read.csv(file.path(BASE_PATH, "Dados", "Selecao", "dados_INMET_processados.csv"))
+inmet <- read.csv(file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv"))
 
-results_INMET <- matrix(NA, nrow = 10, ncol = 6)
+results_inmet <- matrix(NA, nrow = 10, ncol = 6)
 
-save.image(file.path(WORKSPACE_DIR, "6_char_scales_aplicacoes_part_1.RData"))
+save.image(file.path(workspace_dir, "6_char_scales_aplicacoes_part_1.RData"))
 set.seed(0)
 
 for (i in 1:10) {
   print(i)
 
-  temp <- char_scale_fun(INMET[, i + 2], 0.05, B)
+  temp <- char_scale_fun(inmet[, i + 2], 0.05, b)
 
-  results_INMET[i, 1] <- colnames(INMET)[i + 2]
-  results_INMET[i, -1] <- unlist(temp)
+  results_inmet[i, 1] <- colnames(inmet)[i + 2]
+  results_inmet[i, -1] <- unlist(temp)
 }
 
 
 {
-  png(file = file.path(OUTPUT_PATH, "plot_aplicacao_INMET.png"), width = 1800, height = 1200, res = 210)
+  png(file = file.path(output_path, "plot_aplicacao_INMET.png"), width = 1800, height = 1200, res = 210)
 
   par(mfrow = c(2, 2))
   par(mar = c(4, 5, 1, 1))
 
-  wv_est <- wv_estimates(INMET[, 3])
+  wv_est <- wv_estimates(inmet[, 3])
   plot(log2(wv_est),
     xlab = "", ylab = "Var. de ondaletas (log)", pch = 19, xaxt = "n", ylim = c(-25, 0),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5
@@ -400,24 +400,24 @@ for (i in 1:10) {
   )
 
   abline(
-    v = results_INMET[1, 2], lty = "dashed",
+    v = results_inmet[1, 2], lty = "dashed",
     lwd = 1.5
   )
 
-  wv_est <- wv_estimates(INMET[, 4])
+  wv_est <- wv_estimates(inmet[, 4])
   plot(log2(wv_est),
     xlab = "", ylab = "", pch = 19, xaxt = "n", ylim = c(-25, 0),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5
   )
   Axis(side = 1, labels = FALSE)
 
-  wv_est <- wv_estimates(INMET[, 5])
+  wv_est <- wv_estimates(inmet[, 5])
   plot(log2(wv_est),
     xlab = "Nível", ylab = "Var. de ondaletas (log)", pch = 19, ylim = c(-25, 0),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5
   )
 
-  wv_est <- wv_estimates(INMET[, 6])
+  wv_est <- wv_estimates(inmet[, 6])
   plot(log2(wv_est),
     xlab = "Nível", ylab = "", pch = 19, ylim = c(-25, 0),
     cex.lab = 1.5, cex.main = 1.5, cex.axis = 1.5, cex.sub = 1.5
@@ -429,7 +429,7 @@ for (i in 1:10) {
 wv_ests <- NULL
 
 for (i in 3:12) {
-  wv_ests <- rbind(wv_ests, wv_estimates(INMET[, i]))
+  wv_ests <- rbind(wv_ests, wv_estimates(inmet[, i]))
 }
 
-save.image(file.path(WORKSPACE_DIR, "6_char_scales_aplicacoes_final.RData"))
+save.image(file.path(workspace_dir, "6_char_scales_aplicacoes_final.RData"))

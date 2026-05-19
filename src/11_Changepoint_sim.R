@@ -2,7 +2,7 @@
 # 11_Changepoint_sim.R
 # =============================================================================
 # Purpose  : Simulation study for changepoint detection performance.
-# Chapter  : Chapter 3, Appendix B.5
+# Chapter  : Chapter 3, Appendix b.5
 # Inputs   : 10_Comparison_Changepoint_functions.R
 # Outputs  : Power and size rejection rates for changepoint detection.
 # Depends  : 10_Comparison_Changepoint_functions.R
@@ -10,29 +10,29 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "10_Comparison_Changepoint_functions.R"))
+source(file.path(base_path, "src", "10_Comparison_Changepoint_functions.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 ################################################################################
 
-#' Run changepoint detection simulation (N=2048, block=128)
+#' Run changepoint detection simulation (n=2048, block=128)
 #'
 #' @param model Model identifier ("A" through "D")
 #' @param iterations Number of simulation iterations
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @param alpha_0 Target significance level
 #' @param change Logical. If TRUE, introduces a variance change.
 #' @param change_type Either "abrupt" or "drift"
 #' @return Matrix of rejection proportions per block
-changepoint_sim <- function(model, iterations, B, alpha_0, change, change_type) {
-  sim_fun <- get(paste0("Model_", model, "_sim"))
+changepoint_sim <- function(model, iterations, b, alpha_0, change, change_type) {
+  sim_fun <- get(paste0("model_", model, "_sim"))
 
   results <- matrix(0, nrow = 15, ncol = 4)
 
@@ -41,43 +41,43 @@ changepoint_sim <- function(model, iterations, B, alpha_0, change, change_type) 
   for (i in 1:iterations) {
     print(i)
 
-    X <- sim_fun(2048)
+    x <- sim_fun(2048)
 
     if (change == TRUE) {
       if (change_type == "abrupt") {
-        X[501:1471] <- 1.25 * X[501:1471]
-        X[1472:2048] <- (1.25^2) * X[1472:2048]
+        x[501:1471] <- 1.25 * x[501:1471]
+        x[1472:2048] <- (1.25^2) * x[1472:2048]
       } else if (change_type == "drift") {
-        X <- seq(1, 1.25^2, length.out = length(X)) * X
+        x <- seq(1, 1.25^2, length.out = length(x)) * x
       }
     }
 
-    # plot(X, type = "l")
+    # plot(x, type = "l")
 
-    temp <- changepointdetection(X, 128, FALSE, "F", alpha_0, 2, NA)
+    temp <- changepointdetection(x, 128, FALSE, "F", alpha_0, 2, NA)
     results[temp[, 2] - 1, 1] <- results[temp[, 2] - 1, 1] + 1
 
-    temp <- changepointdetection(X, 128, TRUE, "F", alpha_0, 2, NA)
+    temp <- changepointdetection(x, 128, TRUE, "F", alpha_0, 2, NA)
     results[temp[, 2] - 1, 2] <- results[temp[, 2] - 1, 2] + 1
 
-    temp <- changepointdetection(X, 128, FALSE, "boot_quant", alpha_0, 2, B)
+    temp <- changepointdetection(x, 128, FALSE, "boot_quant", alpha_0, 2, b)
     results[temp[, 2] - 1, 3] <- results[temp[, 2] - 1, 3] + 1
 
-    temp <- changepointdetection(X, 128, TRUE, "boot_quant", alpha_0, 2, B)
+    temp <- changepointdetection(x, 128, TRUE, "boot_quant", alpha_0, 2, b)
     results[temp[, 2] - 1, 4] <- results[temp[, 2] - 1, 4] + 1
   }
 
   return(results / iterations)
 }
 
-changepoint_sim_B_abrupt <- changepoint_sim("B", 10, 100, 0.05, TRUE, "abrupt")
-changepoint_sim_B_drift <- changepoint_sim("B", 10, 100, 0.05, TRUE, "drift")
-changepoint_sim_B_NA <- changepoint_sim("B", 10, 100, 0.05, FALSE, NA)
+changepoint_sim_b_abrupt <- changepoint_sim("B", 10, 100, 0.05, TRUE, "abrupt")
+changepoint_sim_b_drift <- changepoint_sim("B", 10, 100, 0.05, TRUE, "drift")
+changepoint_sim_b_na <- changepoint_sim("B", 10, 100, 0.05, FALSE, NA)
 
 ################################################################################
 
-iterations <- if (TEST_MODE) 2 else 100
-B <- if (TEST_MODE) 2 else 100
+iterations <- if (test_mode) 2 else 100
+b <- if (test_mode) 2 else 100
 
 ################################################################################
 # 128
@@ -86,31 +86,31 @@ set.seed(66)
 
 start_time <- Sys.time()
 
-changepoint_sim_A_abrupt <- changepoint_sim("A", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_A_drift <- changepoint_sim("A", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_A_NA <- changepoint_sim("A", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_a_abrupt <- changepoint_sim("A", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_a_drift <- changepoint_sim("A", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_a_na <- changepoint_sim("A", iterations, b, 0.05, FALSE, NA)
 
-changepoint_sim_B_abrupt <- changepoint_sim("B", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_B_drift <- changepoint_sim("B", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_B_NA <- changepoint_sim("B", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_b_abrupt <- changepoint_sim("B", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_b_drift <- changepoint_sim("B", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_b_na <- changepoint_sim("B", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
 duration <- end_time - start_time
 print(duration)
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_1.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_part_1.RData"))
 set.seed(67)
 
 start_time <- Sys.time()
 
-changepoint_sim_C_abrupt <- changepoint_sim("C", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_C_drift <- changepoint_sim("C", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_C_NA <- changepoint_sim("C", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_c_abrupt <- changepoint_sim("C", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_c_drift <- changepoint_sim("C", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_c_na <- changepoint_sim("C", iterations, b, 0.05, FALSE, NA)
 
-changepoint_sim_D_abrupt <- changepoint_sim("D", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_D_drift <- changepoint_sim("D", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_D_NA <- changepoint_sim("D", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_d_abrupt <- changepoint_sim("D", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_d_drift <- changepoint_sim("D", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_d_na <- changepoint_sim("D", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
@@ -119,17 +119,17 @@ print(duration)
 
 ################################################################################
 
-#' Run changepoint detection simulation (N=8192, block=512)
+#' Run changepoint detection simulation (n=8192, block=512)
 #'
 #' @param model Model identifier ("A" through "D")
 #' @param iterations Number of simulation iterations
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @param alpha_0 Target significance level
 #' @param change Logical. If TRUE, introduces a variance change.
 #' @param change_type Either "abrupt" or "drift"
 #' @return Matrix of rejection proportions per block
-changepoint_sim_512 <- function(model, iterations, B, alpha_0, change, change_type) {
-  sim_fun <- get(paste0("Model_", model, "_sim"))
+changepoint_sim_512 <- function(model, iterations, b, alpha_0, change, change_type) {
+  sim_fun <- get(paste0("model_", model, "_sim"))
 
   results <- matrix(0, nrow = 15, ncol = 4)
 
@@ -138,29 +138,29 @@ changepoint_sim_512 <- function(model, iterations, B, alpha_0, change, change_ty
   for (i in 1:iterations) {
     print(i)
 
-    X <- sim_fun(8192)
+    x <- sim_fun(8192)
 
     if (change == TRUE) {
       if (change_type == "abrupt") {
-        X[2004:5884] <- 1.25 * X[2004:5884]
-        X[5885:8192] <- (1.25^2) * X[5885:8192]
+        x[2004:5884] <- 1.25 * x[2004:5884]
+        x[5885:8192] <- (1.25^2) * x[5885:8192]
       } else if (change_type == "drift") {
-        X <- seq(1, 1.25^2, length.out = length(X)) * X
+        x <- seq(1, 1.25^2, length.out = length(x)) * x
       }
     }
 
-    # plot(X, type = "l")
+    # plot(x, type = "l")
 
-    temp <- changepointdetection(X, 512, FALSE, "F", alpha_0, 3, NA)
+    temp <- changepointdetection(x, 512, FALSE, "F", alpha_0, 3, NA)
     results[temp[, 2] - 1, 1] <- results[temp[, 2] - 1, 1] + 1
 
-    temp <- changepointdetection(X, 512, TRUE, "F", alpha_0, 3, NA)
+    temp <- changepointdetection(x, 512, TRUE, "F", alpha_0, 3, NA)
     results[temp[, 2] - 1, 2] <- results[temp[, 2] - 1, 2] + 1
 
-    temp <- changepointdetection(X, 512, FALSE, "boot_quant", alpha_0, 3, B)
+    temp <- changepointdetection(x, 512, FALSE, "boot_quant", alpha_0, 3, b)
     results[temp[, 2] - 1, 3] <- results[temp[, 2] - 1, 3] + 1
 
-    temp <- changepointdetection(X, 512, TRUE, "boot_quant", alpha_0, 3, B)
+    temp <- changepointdetection(x, 512, TRUE, "boot_quant", alpha_0, 3, b)
     results[temp[, 2] - 1, 4] <- results[temp[, 2] - 1, 4] + 1
   }
 
@@ -172,56 +172,56 @@ changepoint_sim_512("B", 10, 100, 0.05, TRUE, "abrupt")
 ################################################################################
 # 512
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_2.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_part_2.RData"))
 set.seed(68)
 
 start_time <- Sys.time()
 
-changepoint_sim_A_abrupt_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_A_drift_512 <- changepoint_sim_512("A", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_A_NA_512 <- changepoint_sim_512("A", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_a_abrupt_512 <- changepoint_sim_512("A", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_a_drift_512 <- changepoint_sim_512("A", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_a_na_512 <- changepoint_sim_512("A", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
 duration <- end_time - start_time
 print(duration)
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_3.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_part_3.RData"))
 set.seed(69)
 
 start_time <- Sys.time()
 
-changepoint_sim_B_abrupt_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_B_drift_512 <- changepoint_sim_512("B", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_B_NA_512 <- changepoint_sim_512("B", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_b_abrupt_512 <- changepoint_sim_512("B", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_b_drift_512 <- changepoint_sim_512("B", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_b_na_512 <- changepoint_sim_512("B", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
 duration <- end_time - start_time
   print(duration)
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_4.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_part_4.RData"))
 set.seed(70)
 
 start_time <- Sys.time()
 
-changepoint_sim_C_abrupt_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_C_drift_512 <- changepoint_sim_512("C", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_C_NA_512 <- changepoint_sim_512("C", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_c_abrupt_512 <- changepoint_sim_512("C", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_c_drift_512 <- changepoint_sim_512("C", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_c_na_512 <- changepoint_sim_512("C", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
 duration <- end_time - start_time
 print(duration)
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_part_5.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_part_5.RData"))
 set.seed(71)
 
 start_time <- Sys.time()
 
-changepoint_sim_D_abrupt_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "abrupt")
-changepoint_sim_D_drift_512 <- changepoint_sim_512("D", iterations, B, 0.05, TRUE, "drift")
-changepoint_sim_D_NA_512 <- changepoint_sim_512("D", iterations, B, 0.05, FALSE, NA)
+changepoint_sim_d_abrupt_512 <- changepoint_sim_512("D", iterations, b, 0.05, TRUE, "abrupt")
+changepoint_sim_d_drift_512 <- changepoint_sim_512("D", iterations, b, 0.05, TRUE, "drift")
+changepoint_sim_d_na_512 <- changepoint_sim_512("D", iterations, b, 0.05, FALSE, NA)
 
 end_time <- Sys.time()
 
@@ -258,21 +258,21 @@ latex_fun <- function(df, df2) {
   cat("\\end{table} \n")
 }
 
-latex_fun(changepoint_sim_A_NA, changepoint_sim_A_NA_512)
-latex_fun(changepoint_sim_A_drift, changepoint_sim_A_drift_512)
-latex_fun(changepoint_sim_A_abrupt, changepoint_sim_A_abrupt_512)
+latex_fun(changepoint_sim_a_na, changepoint_sim_a_na_512)
+latex_fun(changepoint_sim_a_drift, changepoint_sim_a_drift_512)
+latex_fun(changepoint_sim_a_abrupt, changepoint_sim_a_abrupt_512)
 
-latex_fun(changepoint_sim_B_NA, changepoint_sim_B_NA_512)
-latex_fun(changepoint_sim_B_drift, changepoint_sim_B_drift_512)
-latex_fun(changepoint_sim_B_abrupt, changepoint_sim_B_abrupt_512)
+latex_fun(changepoint_sim_b_na, changepoint_sim_b_na_512)
+latex_fun(changepoint_sim_b_drift, changepoint_sim_b_drift_512)
+latex_fun(changepoint_sim_b_abrupt, changepoint_sim_b_abrupt_512)
 
-latex_fun(changepoint_sim_C_NA, changepoint_sim_C_NA_512)
-latex_fun(changepoint_sim_C_drift, changepoint_sim_C_drift_512)
-latex_fun(changepoint_sim_C_abrupt, changepoint_sim_C_abrupt_512)
+latex_fun(changepoint_sim_c_na, changepoint_sim_c_na_512)
+latex_fun(changepoint_sim_c_drift, changepoint_sim_c_drift_512)
+latex_fun(changepoint_sim_c_abrupt, changepoint_sim_c_abrupt_512)
 
-latex_fun(changepoint_sim_D_NA, changepoint_sim_D_NA_512)
-latex_fun(changepoint_sim_D_drift, changepoint_sim_D_drift_512)
-latex_fun(changepoint_sim_D_abrupt, changepoint_sim_D_abrupt_512)
+latex_fun(changepoint_sim_d_na, changepoint_sim_d_na_512)
+latex_fun(changepoint_sim_d_drift, changepoint_sim_d_drift_512)
+latex_fun(changepoint_sim_d_abrupt, changepoint_sim_d_abrupt_512)
 
 
-save.image(file.path(WORKSPACE_DIR, "11_Changepoint_sim_final.RData"))
+save.image(file.path(workspace_dir, "11_Changepoint_sim_final.RData"))

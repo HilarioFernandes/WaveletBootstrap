@@ -10,15 +10,16 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+# <- SET THIS before running
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap"
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 ################################################################################
@@ -27,105 +28,105 @@ TEST_MODE <- TRUE
 
 set.seed(42)
 
-B <- if (TEST_MODE) 5 else 100
-iterations <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 5 else 100
+iterations <- if (test_mode) 2 else 100
 
-A.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-B.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-C.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
-D.wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+a_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+b_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+c_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
+d_wv <- list("128" = NULL, "512" = NULL, "2048" = NULL)
 
-A.wv_wb_NBB <- list(
+a_wv_wb_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_bw_NBB <- list(
+a_wv_bw_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_wb_SB <- list(
+a_wv_wb_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-A.wv_bw_SB <- list(
+a_wv_bw_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_wb_NBB <- list(
+b_wv_wb_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_bw_NBB <- list(
+b_wv_bw_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_wb_SB <- list(
+b_wv_wb_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-B.wv_bw_SB <- list(
+b_wv_bw_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_wb_NBB <- list(
+c_wv_wb_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_bw_NBB <- list(
+c_wv_bw_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_wb_SB <- list(
+c_wv_wb_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-C.wv_bw_SB <- list(
+c_wv_bw_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_wb_NBB <- list(
+d_wv_wb_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_bw_NBB <- list(
+d_wv_bw_nbb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_wb_SB <- list(
+d_wv_wb_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
 )
 
-D.wv_bw_SB <- list(
+d_wv_bw_sb <- list(
   "128" = vector("list", length = iterations),
   "512" = vector("list", length = iterations),
   "2048" = vector("list", length = iterations)
@@ -139,85 +140,100 @@ for (iter in 1:iterations) {
   print(iter)
 
   for (i in 1:3) {
-    # print(c(iter,i))
 
-    N <- 2^((2 * i - 1) + 6)
+    n <- 2^((2 * i - 1) + 6)
 
     # simulating from each model
-    YA <- Model_A_sim(N)
-    YB <- Model_B_sim(N)
-    YC <- Model_C_sim(N)
-    YD <- Model_D_sim(N)
+    ya <- model_a_sim(n)
+    yb <- model_b_sim(n)
+    yc <- model_c_sim(n)
+    yd <- model_d_sim(n)
 
     # calculating the point estimates of the wavelet variances
-    A.wv[[i]] <- rbind(A.wv[[i]], wv_estimates(YA))
-    B.wv[[i]] <- rbind(B.wv[[i]], wv_estimates(YB))
-    C.wv[[i]] <- rbind(C.wv[[i]], wv_estimates(YC))
-    D.wv[[i]] <- rbind(D.wv[[i]], wv_estimates(YD))
+    a_wv[[i]] <- rbind(a_wv[[i]], wv_estimates(ya))
+    b_wv[[i]] <- rbind(b_wv[[i]], wv_estimates(yb))
+    c_wv[[i]] <- rbind(c_wv[[i]], wv_estimates(yc))
+    d_wv[[i]] <- rbind(d_wv[[i]], wv_estimates(yd))
 
-    A.wv_wb_NBB[[i]][[iter]] <- bootstrap_wavelet(YA, "wb", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    a_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      ya, "wb", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    A.wv_bw_NBB[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    a_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      ya, "bw", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    A.wv_wb_SB[[i]][[iter]] <- bootstrap_wavelet(YA, "wb", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    a_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
+      ya, "wb", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    A.wv_bw_SB[[i]][[iter]] <- bootstrap_wavelet(YA, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    a_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
+      ya, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    B.wv_wb_NBB[[i]][[iter]] <- bootstrap_wavelet(YB, "wb", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    b_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yb, "wb", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    B.wv_bw_NBB[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    b_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yb, "bw", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    B.wv_wb_SB[[i]][[iter]] <- bootstrap_wavelet(YB, "wb", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    b_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yb, "wb", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    B.wv_bw_SB[[i]][[iter]] <- bootstrap_wavelet(YB, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    b_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yb, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    C.wv_wb_NBB[[i]][[iter]] <- bootstrap_wavelet(YC, "wb", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    c_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yc, "wb", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    C.wv_bw_NBB[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    c_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yc, "bw", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    C.wv_wb_SB[[i]][[iter]] <- bootstrap_wavelet(YC, "wb", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    c_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yc, "wb", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    C.wv_bw_SB[[i]][[iter]] <- bootstrap_wavelet(YC, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    c_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yc, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    D.wv_wb_NBB[[i]][[iter]] <- bootstrap_wavelet(YD, "wb", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    d_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yd, "wb", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    D.wv_bw_NBB[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "NBB", function(N) {
-      floor(4 * log2(N))
-    }, B)
+    d_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
+      yd, "bw", TRUE, "NBB", function(n) {
+      floor(4 * log2(n))
+    }, b)
 
-    D.wv_wb_SB[[i]][[iter]] <- bootstrap_wavelet(YD, "wb", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    d_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yd, "wb", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
 
-    D.wv_bw_SB[[i]][[iter]] <- bootstrap_wavelet(YD, "bw", TRUE, "SB", function(N) {
-      1 / (4 * log2(N))
-    }, B)
+    d_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
+      yd, "bw", TRUE, "SB", function(n) {
+      1 / (4 * log2(n))
+    }, b)
   }
 }
 
@@ -231,9 +247,9 @@ for (iter in 1:iterations) {
 #' @param list2 Second nested list of bootstrap wavelet variance estimates
 #' @return A list of matrices (one per sample size) containing the max abs diff for each iteration and level
 max_abs_diff_cdfs <- function(list1, list2) {
-  # We create a matrix in which rows correspond to iterations and columns correspond to scales.
-  # Each element of this matrix is the maximum absolute difference between the bootstrap
-  # empirical cdfs
+  # We create a matrix in which rows correspond to iterations and columns
+  # correspond to scales. Each element of this matrix is the maximum absolute
+  # difference between the bootstrap empirical cdfs
 
   list_temp <- list(
     matrix(NA, nrow = iterations, ncol = floor(log2(1 + (128 - 1) / (8 - 1)))),
@@ -244,73 +260,76 @@ max_abs_diff_cdfs <- function(list1, list2) {
 
   for (i in 1:3) {
     for (iter in 1:iterations) {
-      # we check the maximum level for which there is at least one bootstrap estimate on that particular iteration
+      # we check the maximum level for which there is at least one bootstrap
+      # estimate on that particular iteration
       n_levels <- max(which(apply(list2[[i]][[iter]], 2, function(x) {
         sum(1 - is.na(x))
       }) >= 2))
 
       for (j in 1:n_levels) {
         # We will then fill the matrices
-        list_temp[[i]][iter, j] <- distance_cdfs(list2[[i]][[iter]][, j], list1[[i]][, j], 100)
+        list_temp[[i]][iter, j] <- distance_cdfs(
+          list2[[i]][[iter]][, j], list1[[i]][, j], 100
+        )
       }
     }
   }
 
-  return(list_temp)
+  list_temp
 }
 
 # comparing true values with (bootstrap then wavelet transformation)
 
-# A.wv vs A.wv_bw_NBB
-A.NBB_bw_dist <- max_abs_diff_cdfs(A.wv, A.wv_bw_NBB)
+# a_wv vs a_wv_bw_nbb
+a_nbb_bw_dist <- max_abs_diff_cdfs(a_wv, a_wv_bw_nbb)
 
-# A.wv vs A.wv_bw_SB
-A.SB_bw_dist <- max_abs_diff_cdfs(A.wv, A.wv_bw_SB)
+# a_wv vs a_wv_bw_sb
+a_sb_bw_dist <- max_abs_diff_cdfs(a_wv, a_wv_bw_sb)
 
-# B.wv vs B.wv_bw_NBB
-B.NBB_bw_dist <- max_abs_diff_cdfs(B.wv, B.wv_bw_NBB)
+# b_wv vs b_wv_bw_nbb
+b_nbb_bw_dist <- max_abs_diff_cdfs(b_wv, b_wv_bw_nbb)
 
-# B.wv vs B.wv_bw_SB
-B.SB_bw_dist <- max_abs_diff_cdfs(B.wv, B.wv_bw_SB)
+# b_wv vs b_wv_bw_sb
+b_sb_bw_dist <- max_abs_diff_cdfs(b_wv, b_wv_bw_sb)
 
-# A.wv vs C.wv_bw_NBB
-C.NBB_bw_dist <- max_abs_diff_cdfs(C.wv, C.wv_bw_NBB)
+# a_wv vs c_wv_bw_nbb
+c_nbb_bw_dist <- max_abs_diff_cdfs(c_wv, c_wv_bw_nbb)
 
-# C.wv vs C.wv_bw_SB
-C.SB_bw_dist <- max_abs_diff_cdfs(C.wv, C.wv_bw_SB)
+# c_wv vs c_wv_bw_sb
+c_sb_bw_dist <- max_abs_diff_cdfs(c_wv, c_wv_bw_sb)
 
-# D.wv vs D.wv_bw_NBB
-D.NBB_bw_dist <- max_abs_diff_cdfs(D.wv, D.wv_bw_NBB)
+# d_wv vs d_wv_bw_nbb
+d_nbb_bw_dist <- max_abs_diff_cdfs(d_wv, d_wv_bw_nbb)
 
-# D.wv vs D.wv_bw_SB
-D.SB_bw_dist <- max_abs_diff_cdfs(D.wv, D.wv_bw_SB)
+# d_wv vs d_wv_bw_sb
+d_sb_bw_dist <- max_abs_diff_cdfs(d_wv, d_wv_bw_sb)
 
 
 # comparing true values with (wavelet transformation then bootstrap)
 
-# A.wv vs A.wv_wb_NBB
-A.NBB_wb_dist <- max_abs_diff_cdfs(A.wv, A.wv_wb_NBB)
+# a_wv vs a_wv_wb_nbb
+a_nbb_wb_dist <- max_abs_diff_cdfs(a_wv, a_wv_wb_nbb)
 
-# A.wv vs A.wv_wb_SB
-A.SB_wb_dist <- max_abs_diff_cdfs(A.wv, A.wv_wb_SB)
+# a_wv vs a_wv_wb_sb
+a_sb_wb_dist <- max_abs_diff_cdfs(a_wv, a_wv_wb_sb)
 
-# B.wv vs B.wv_wb_NBB
-B.NBB_wb_dist <- max_abs_diff_cdfs(B.wv, B.wv_wb_NBB)
+# b_wv vs b_wv_wb_nbb
+b_nbb_wb_dist <- max_abs_diff_cdfs(b_wv, b_wv_wb_nbb)
 
-# B.wv vs B.wv_wb_SB
-B.SB_wb_dist <- max_abs_diff_cdfs(B.wv, B.wv_wb_SB)
+# b_wv vs b_wv_wb_sb
+b_sb_wb_dist <- max_abs_diff_cdfs(b_wv, b_wv_wb_sb)
 
-# A.wv vs C.wv_wb_NBB
-C.NBB_wb_dist <- max_abs_diff_cdfs(C.wv, C.wv_wb_NBB)
+# a_wv vs c_wv_wb_nbb
+c_nbb_wb_dist <- max_abs_diff_cdfs(c_wv, c_wv_wb_nbb)
 
-# C.wv vs C.wv_wb_SB
-C.SB_wb_dist <- max_abs_diff_cdfs(C.wv, C.wv_wb_SB)
+# c_wv vs c_wv_wb_sb
+c_sb_wb_dist <- max_abs_diff_cdfs(c_wv, c_wv_wb_sb)
 
-# D.wv vs D.wv_wb_NBB
-D.NBB_wb_dist <- max_abs_diff_cdfs(D.wv, D.wv_wb_NBB)
+# d_wv vs d_wv_wb_nbb
+d_nbb_wb_dist <- max_abs_diff_cdfs(d_wv, d_wv_wb_nbb)
 
-# D.wv vs D.wv_wb_SB
-D.SB_wb_dist <- max_abs_diff_cdfs(D.wv, D.wv_wb_SB)
+# d_wv vs d_wv_wb_sb
+d_sb_wb_dist <- max_abs_diff_cdfs(d_wv, d_wv_wb_sb)
 
 
 ################################################################################
@@ -323,9 +342,10 @@ D.SB_wb_dist <- max_abs_diff_cdfs(D.wv, D.wv_wb_SB)
 #' @param list2 Second nested list of bootstrap wavelet variance estimates
 #' @return A list of matrices with minimum of var ratio and its inverse
 ratio_vars <- function(list1, list2) {
-  # We create a matrix in which rows correspond to iterations and columns correspond to scales.
-  # Each element of this matrix is the minimum between the ratio of the corresponding bootstrap
-  # variance estimates and the inverse ratio
+  # We create a matrix in which rows correspond to iterations and columns
+  # correspond to scales. Each element of this matrix is the minimum between
+  # the ratio of the corresponding bootstrap variance estimates and the
+  # inverse ratio
 
   list_temp <- list(
     matrix(NA, nrow = iterations, ncol = floor(log2(1 + (128 - 1) / (8 - 1)))),
@@ -336,7 +356,8 @@ ratio_vars <- function(list1, list2) {
 
   for (i in 1:3) {
     for (iter in 1:iterations) {
-      # we check the maximum level for which there is at least one bootstrap estimate on that particular iteration
+      # we check the maximum level for which there is at least one bootstrap
+      # estimate on that particular iteration
       n_levels <- max(which(apply(list2[[i]][[iter]], 2, function(x) {
         sum(1 - is.na(x))
       }) >= 2))
@@ -350,61 +371,61 @@ ratio_vars <- function(list1, list2) {
     }
   }
 
-  return(list_temp)
+  list_temp
 }
 
 # comparing true values with (bootstrap then wavelet transformation)
 
-# A.wv vs A.wv_bw_NBB
-A.NBB_bw_var <- ratio_vars(A.wv, A.wv_bw_NBB)
+# a_wv vs a_wv_bw_nbb
+a_nbb_bw_var <- ratio_vars(a_wv, a_wv_bw_nbb)
 
-# A.wv vs A.wv_bw_SB
-A.SB_bw_var <- ratio_vars(A.wv, A.wv_bw_SB)
+# a_wv vs a_wv_bw_sb
+a_sb_bw_var <- ratio_vars(a_wv, a_wv_bw_sb)
 
-# B.wv vs B.wv_bw_NBB
-B.NBB_bw_var <- ratio_vars(B.wv, B.wv_bw_NBB)
+# b_wv vs b_wv_bw_nbb
+b_nbb_bw_var <- ratio_vars(b_wv, b_wv_bw_nbb)
 
-# B.wv vs B.wv_bw_SB
-B.SB_bw_var <- ratio_vars(B.wv, B.wv_bw_SB)
+# b_wv vs b_wv_bw_sb
+b_sb_bw_var <- ratio_vars(b_wv, b_wv_bw_sb)
 
-# A.wv vs C.wv_bw_NBB
-C.NBB_bw_var <- ratio_vars(C.wv, C.wv_bw_NBB)
+# a_wv vs c_wv_bw_nbb
+c_nbb_bw_var <- ratio_vars(c_wv, c_wv_bw_nbb)
 
-# C.wv vs C.wv_bw_SB
-C.SB_bw_var <- ratio_vars(C.wv, C.wv_bw_SB)
+# c_wv vs c_wv_bw_sb
+c_sb_bw_var <- ratio_vars(c_wv, c_wv_bw_sb)
 
-# D.wv vs D.wv_bw_NBB
-D.NBB_bw_var <- ratio_vars(D.wv, D.wv_bw_NBB)
+# d_wv vs d_wv_bw_nbb
+d_nbb_bw_var <- ratio_vars(d_wv, d_wv_bw_nbb)
 
-# D.wv vs D.wv_bw_SB
-D.SB_bw_var <- ratio_vars(D.wv, D.wv_bw_SB)
+# d_wv vs d_wv_bw_sb
+d_sb_bw_var <- ratio_vars(d_wv, d_wv_bw_sb)
 
 
 # comparing true values with (wavelet transformation then bootstrap)
 
-# A.wv vs A.wv_wb_NBB
-A.NBB_wb_var <- ratio_vars(A.wv, A.wv_wb_NBB)
+# a_wv vs a_wv_wb_nbb
+a_nbb_wb_var <- ratio_vars(a_wv, a_wv_wb_nbb)
 
-# A.wv vs A.wv_wb_SB
-A.SB_wb_var <- ratio_vars(A.wv, A.wv_wb_SB)
+# a_wv vs a_wv_wb_sb
+a_sb_wb_var <- ratio_vars(a_wv, a_wv_wb_sb)
 
-# B.wv vs B.wv_wb_NBB
-B.NBB_wb_var <- ratio_vars(B.wv, B.wv_wb_NBB)
+# b_wv vs b_wv_wb_nbb
+b_nbb_wb_var <- ratio_vars(b_wv, b_wv_wb_nbb)
 
-# B.wv vs B.wv_wb_SB
-B.SB_wb_var <- ratio_vars(B.wv, B.wv_wb_SB)
+# b_wv vs b_wv_wb_sb
+b_sb_wb_var <- ratio_vars(b_wv, b_wv_wb_sb)
 
-# A.wv vs C.wv_wb_NBB
-C.NBB_wb_var <- ratio_vars(C.wv, C.wv_wb_NBB)
+# a_wv vs c_wv_wb_nbb
+c_nbb_wb_var <- ratio_vars(c_wv, c_wv_wb_nbb)
 
-# C.wv vs C.wv_wb_SB
-C.SB_wb_var <- ratio_vars(C.wv, C.wv_wb_SB)
+# c_wv vs c_wv_wb_sb
+c_sb_wb_var <- ratio_vars(c_wv, c_wv_wb_sb)
 
-# D.wv vs D.wv_wb_NBB
-D.NBB_wb_var <- ratio_vars(D.wv, D.wv_wb_NBB)
+# d_wv vs d_wv_wb_nbb
+d_nbb_wb_var <- ratio_vars(d_wv, d_wv_wb_nbb)
 
-# D.wv vs D.wv_wb_SB
-D.SB_wb_var <- ratio_vars(D.wv, D.wv_wb_SB)
+# d_wv vs d_wv_wb_sb
+d_sb_wb_var <- ratio_vars(d_wv, d_wv_wb_sb)
 
 ################################################################################
 
@@ -423,48 +444,50 @@ summary_study_dist <- function(list1) {
     }) >= 2))
 
     for (j in 1:n_levels) {
-      temp[(5 * (i - 1) + 1):(5 * i), j] <- quantile(list1[[i]][, j], na.rm = TRUE)
+      temp[(5 * (i - 1) + 1):(5 * i), j] <- quantile(
+        list1[[i]][, j], na.rm = TRUE
+      )
     }
   }
 
-  return(round(temp, digits = 2))
+  round(temp, digits = 2)
 }
 
 # bootstrap then wavelet transform
 
-A.NBB_bw_dist_summary <- summary_study_dist(A.NBB_bw_dist)
+a_nbb_bw_dist_summary <- summary_study_dist(a_nbb_bw_dist)
 
-A.SB_bw_dist_summary <- summary_study_dist(A.SB_bw_dist)
+a_sb_bw_dist_summary <- summary_study_dist(a_sb_bw_dist)
 
-B.NBB_bw_dist_summary <- summary_study_dist(B.NBB_bw_dist)
+b_nbb_bw_dist_summary <- summary_study_dist(b_nbb_bw_dist)
 
-B.SB_bw_dist_summary <- summary_study_dist(B.SB_bw_dist)
+b_sb_bw_dist_summary <- summary_study_dist(b_sb_bw_dist)
 
-C.NBB_bw_dist_summary <- summary_study_dist(C.NBB_bw_dist)
+c_nbb_bw_dist_summary <- summary_study_dist(c_nbb_bw_dist)
 
-C.SB_bw_dist_summary <- summary_study_dist(C.SB_bw_dist)
+c_sb_bw_dist_summary <- summary_study_dist(c_sb_bw_dist)
 
-D.NBB_bw_dist_summary <- summary_study_dist(D.NBB_bw_dist)
+d_nbb_bw_dist_summary <- summary_study_dist(d_nbb_bw_dist)
 
-D.SB_bw_dist_summary <- summary_study_dist(D.SB_bw_dist)
+d_sb_bw_dist_summary <- summary_study_dist(d_sb_bw_dist)
 
 # wavelet transform then bootstrap
 
-A.NBB_wb_dist_summary <- summary_study_dist(A.NBB_wb_dist)
+a_nbb_wb_dist_summary <- summary_study_dist(a_nbb_wb_dist)
 
-A.SB_wb_dist_summary <- summary_study_dist(A.SB_wb_dist)
+a_sb_wb_dist_summary <- summary_study_dist(a_sb_wb_dist)
 
-B.NBB_wb_dist_summary <- summary_study_dist(B.NBB_wb_dist)
+b_nbb_wb_dist_summary <- summary_study_dist(b_nbb_wb_dist)
 
-B.SB_wb_dist_summary <- summary_study_dist(B.SB_wb_dist)
+b_sb_wb_dist_summary <- summary_study_dist(b_sb_wb_dist)
 
-C.NBB_wb_dist_summary <- summary_study_dist(C.NBB_wb_dist)
+c_nbb_wb_dist_summary <- summary_study_dist(c_nbb_wb_dist)
 
-C.SB_wb_dist_summary <- summary_study_dist(C.SB_wb_dist)
+c_sb_wb_dist_summary <- summary_study_dist(c_sb_wb_dist)
 
-D.NBB_wb_dist_summary <- summary_study_dist(D.NBB_wb_dist)
+d_nbb_wb_dist_summary <- summary_study_dist(d_nbb_wb_dist)
 
-D.SB_wb_dist_summary <- summary_study_dist(D.SB_wb_dist)
+d_sb_wb_dist_summary <- summary_study_dist(d_sb_wb_dist)
 
 
 ################################################################################
@@ -485,49 +508,51 @@ summary_study_var <- function(list1) {
     }) >= 2))
 
     for (j in 1:n_levels) {
-      temp[(5 * (i - 1) + 1):(5 * i), j] <- quantile(list1[[i]][, j], na.rm = TRUE)
+      temp[(5 * (i - 1) + 1):(5 * i), j] <- quantile(
+        list1[[i]][, j], na.rm = TRUE
+      )
     }
   }
 
-  return(round(temp, digits = 2))
+  round(temp, digits = 2)
 }
 
 
 # bootstrap then wavelet transform
 
-A.NBB_bw_var_summary <- summary_study_var(A.NBB_bw_var)
+a_nbb_bw_var_summary <- summary_study_var(a_nbb_bw_var)
 
-A.SB_bw_var_summary <- summary_study_var(A.SB_bw_var)
+a_sb_bw_var_summary <- summary_study_var(a_sb_bw_var)
 
-B.NBB_bw_var_summary <- summary_study_var(B.NBB_bw_var)
+b_nbb_bw_var_summary <- summary_study_var(b_nbb_bw_var)
 
-B.SB_bw_var_summary <- summary_study_var(B.SB_bw_var)
+b_sb_bw_var_summary <- summary_study_var(b_sb_bw_var)
 
-C.NBB_bw_var_summary <- summary_study_var(C.NBB_bw_var)
+c_nbb_bw_var_summary <- summary_study_var(c_nbb_bw_var)
 
-C.SB_bw_var_summary <- summary_study_var(C.SB_bw_var)
+c_sb_bw_var_summary <- summary_study_var(c_sb_bw_var)
 
-D.NBB_bw_var_summary <- summary_study_var(D.NBB_bw_var)
+d_nbb_bw_var_summary <- summary_study_var(d_nbb_bw_var)
 
-D.SB_bw_var_summary <- summary_study_var(D.SB_bw_var)
+d_sb_bw_var_summary <- summary_study_var(d_sb_bw_var)
 
 # wavelet transform then bootstrap
 
-A.NBB_wb_var_summary <- summary_study_var(A.NBB_wb_var)
+a_nbb_wb_var_summary <- summary_study_var(a_nbb_wb_var)
 
-A.SB_wb_var_summary <- summary_study_var(A.SB_wb_var)
+a_sb_wb_var_summary <- summary_study_var(a_sb_wb_var)
 
-B.NBB_wb_var_summary <- summary_study_var(B.NBB_wb_var)
+b_nbb_wb_var_summary <- summary_study_var(b_nbb_wb_var)
 
-B.SB_wb_var_summary <- summary_study_var(B.SB_wb_var)
+b_sb_wb_var_summary <- summary_study_var(b_sb_wb_var)
 
-C.NBB_wb_var_summary <- summary_study_var(C.NBB_wb_var)
+c_nbb_wb_var_summary <- summary_study_var(c_nbb_wb_var)
 
-C.SB_wb_var_summary <- summary_study_var(C.SB_wb_var)
+c_sb_wb_var_summary <- summary_study_var(c_sb_wb_var)
 
-D.NBB_wb_var_summary <- summary_study_var(D.NBB_wb_var)
+d_nbb_wb_var_summary <- summary_study_var(d_nbb_wb_var)
 
-D.SB_wb_var_summary <- summary_study_var(D.SB_wb_var)
+d_sb_wb_var_summary <- summary_study_var(d_sb_wb_var)
 
 ################################################################################
 
@@ -567,29 +592,29 @@ latex_output <- function(matrix1, matrix2) {
   }
 }
 
-latex_output(A.NBB_bw_dist_summary, A.NBB_wb_dist_summary)
-latex_output(A.SB_bw_dist_summary, A.SB_wb_dist_summary)
+latex_output(a_nbb_bw_dist_summary, a_nbb_wb_dist_summary)
+latex_output(a_sb_bw_dist_summary, a_sb_wb_dist_summary)
 
-latex_output(B.NBB_bw_dist_summary, B.NBB_wb_dist_summary)
-latex_output(B.SB_bw_dist_summary, B.SB_wb_dist_summary)
+latex_output(b_nbb_bw_dist_summary, b_nbb_wb_dist_summary)
+latex_output(b_sb_bw_dist_summary, b_sb_wb_dist_summary)
 
-latex_output(C.NBB_bw_dist_summary, C.NBB_wb_dist_summary)
-latex_output(C.SB_bw_dist_summary, C.SB_wb_dist_summary)
+latex_output(c_nbb_bw_dist_summary, c_nbb_wb_dist_summary)
+latex_output(c_sb_bw_dist_summary, c_sb_wb_dist_summary)
 
-latex_output(D.NBB_bw_dist_summary, D.NBB_wb_dist_summary)
-latex_output(D.SB_bw_dist_summary, D.SB_wb_dist_summary)
+latex_output(d_nbb_bw_dist_summary, d_nbb_wb_dist_summary)
+latex_output(d_sb_bw_dist_summary, d_sb_wb_dist_summary)
 
 
-latex_output(A.NBB_bw_var_summary, A.NBB_wb_var_summary)
-latex_output(A.SB_bw_var_summary, A.SB_wb_var_summary)
+latex_output(a_nbb_bw_var_summary, a_nbb_wb_var_summary)
+latex_output(a_sb_bw_var_summary, a_sb_wb_var_summary)
 
-latex_output(B.NBB_bw_var_summary, B.NBB_wb_var_summary)
-latex_output(B.SB_bw_var_summary, B.SB_wb_var_summary)
+latex_output(b_nbb_bw_var_summary, b_nbb_wb_var_summary)
+latex_output(b_sb_bw_var_summary, b_sb_wb_var_summary)
 
-latex_output(C.NBB_bw_var_summary, C.NBB_wb_var_summary)
-latex_output(C.SB_bw_var_summary, C.SB_wb_var_summary)
+latex_output(c_nbb_bw_var_summary, c_nbb_wb_var_summary)
+latex_output(c_sb_bw_var_summary, c_sb_wb_var_summary)
 
-latex_output(D.NBB_bw_var_summary, D.NBB_wb_var_summary)
-latex_output(D.SB_bw_var_summary, D.SB_wb_var_summary)
+latex_output(d_nbb_bw_var_summary, d_nbb_wb_var_summary)
+latex_output(d_sb_bw_var_summary, d_sb_wb_var_summary)
 
-save.image(file.path(WORKSPACE_DIR, "3_Bootstrap_Wavelet_order.RData"))
+save.image(file.path(workspace_dir, "3_Bootstrap_Wavelet_order.RData"))

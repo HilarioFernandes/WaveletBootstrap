@@ -1,7 +1,7 @@
 # =============================================================================
 # 12_Clustering_Bn_aplicacoes.R
 # =============================================================================
-# Purpose  : Real-data clustering applications (Arrowhead, INMET).
+# Purpose  : Real-data clustering applications (Arrowhead, inmet).
 # Chapter  : Chapter 4
 # Inputs   : ArrowHead.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : Clustering labels and ARI results for various methods.
@@ -10,16 +10,16 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
-source(file.path(BASE_PATH, "src", "7_Quasi_U_statistics_functions.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "7_Quasi_U_statistics_functions.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
 # Define kernel for Bn
@@ -31,7 +31,7 @@ library(TSclust)
 
 library(cluster)
 
-B <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 2 else 100
 
 ################################################################################
 
@@ -68,16 +68,16 @@ possible_clusters <- function(n) {
 #' @param n Number of elements
 #' @param clusters_list Output from possible_clusters
 #' @return A list containing Bn matrices for each size division
-Bn_matrices_list <- function(data_wv, n, clusters_list) {
+bn_matrices_list <- function(data_wv, n, clusters_list) {
   output <- list()
 
   for (nprime in 2:floor(n / 2)) {
-    quasi_U_statistics <- matrix(NA, nrow = nrow(clusters_list[[1]][[nprime - 1]]), ncol = ncol(data_wv))
+    quasi_u_statistics <- matrix(NA, nrow = nrow(clusters_list[[1]][[nprime - 1]]), ncol = ncol(data_wv))
 
 
-    for (i in 1:nrow(quasi_U_statistics)) {
-      for (j in 1:ncol(quasi_U_statistics)) {
-        quasi_U_statistics[i, j] <- B_n(
+    for (i in 1:nrow(quasi_u_statistics)) {
+      for (j in 1:ncol(quasi_u_statistics)) {
+        quasi_u_statistics[i, j] <- b_n(
           data_wv[clusters_list[[1]][[nprime - 1]][i, ], j],
           data_wv[clusters_list[[2]][[nprime - 1]][i, ], j],
           kernel
@@ -85,7 +85,7 @@ Bn_matrices_list <- function(data_wv, n, clusters_list) {
       }
     }
 
-    output[[nprime - 1]] <- quasi_U_statistics
+    output[[nprime - 1]] <- quasi_u_statistics
   }
 
   return(output)
@@ -101,7 +101,7 @@ Bn_matrices_list <- function(data_wv, n, clusters_list) {
 data_matrix_gen <- function(t, n, n1, model) {
   data <- matrix(NA, nrow = n, ncol = t)
 
-  gen_fun <- get(paste0("Model_", model, "_sim"))
+  gen_fun <- get(paste0("model_", model, "_sim"))
 
   for (i in 1:n) {
     if (i <= n1) {
@@ -116,44 +116,44 @@ data_matrix_gen <- function(t, n, n1, model) {
 
 #' Find maximum value and index per column
 #'
-#' @param X Data matrix
+#' @param x Data matrix
 #' @return Matrix with [max_row, col_index, max_value]
-max_per_col <- function(X) {
-  Y <- matrix(0, nrow = ncol(X), ncol = 3)
+max_per_col <- function(x) {
+  y <- matrix(0, nrow = ncol(x), ncol = 3)
 
-  for (i in 1:ncol(X)) {
+  for (i in 1:ncol(x)) {
     # Find the index of the maximum element in the current column
-    max_index <- which.max(X[, i])
+    max_index <- which.max(x[, i])
 
-    # Insert values into matrix Y
-    Y[i, 1] <- max_index
-    Y[i, 2] <- i
-    Y[i, 3] <- X[max_index, i]
+    # Insert values into matrix y
+    y[i, 1] <- max_index
+    y[i, 2] <- i
+    y[i, 3] <- x[max_index, i]
   }
 
-  return(Y)
+  return(y)
 }
 
 #' Apply max_per_col across multiple clusters
 #'
-#' @param Bn_matrices List of Bn matrices
+#' @param bn_matrices List of Bn matrices
 #' @param n Number of elements
 #' @return List of results from max_per_col
-max_per_col_list <- function(Bn_matrices, n) {
-  max_Bn_scales <- vector(mode = "list", length = floor(n / 2) - 1)
+max_per_col_list <- function(bn_matrices, n) {
+  max_bn_scales <- vector(mode = "list", length = floor(n / 2) - 1)
 
   for (nprime in 2:floor(n / 2)) {
-    max_Bn_scales[[nprime - 1]] <- max_per_col(Bn_matrices[[nprime - 1]])
+    max_bn_scales[[nprime - 1]] <- max_per_col(bn_matrices[[nprime - 1]])
   }
 
-  return(max_Bn_scales)
+  return(max_bn_scales)
 }
 
 #' Bootstrap Bn statistic across scales
 #'
 #' @param data_wv_list List containing wavelet variances for two groups
 #' @return A vector of pooled bootstrap Bn estimates
-Bootstrap_Bn_multiscale <- function(data_wv_list) {
+bootstrap_bn_multiscale <- function(data_wv_list) {
   data1 <- data_wv_list[[1]]
   data2 <- data_wv_list[[2]]
 
@@ -175,7 +175,7 @@ Bootstrap_Bn_multiscale <- function(data_wv_list) {
   output <- NULL
 
   for (j in 1:ncol(data1)) {
-    output <- c(output, B_n(
+    output <- c(output, b_n(
       data1_temp[, j],
       data2_temp[, j],
       kernel
@@ -190,57 +190,57 @@ Bootstrap_Bn_multiscale <- function(data_wv_list) {
 #' @param data_wv Matrix of wavelet variance estimates
 #' @param clusters_list List of possible clusters
 #' @param n Total elements
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return List of bootstrap Bn matrices
-Bootstrap_Bn_multiscale_list <- function(data_wv, clusters_list, n, B) {
-  Bootstrap_Bn_versions <- vector(mode = "list", length = floor(n / 2) - 1)
+bootstrap_bn_multiscale_list <- function(data_wv, clusters_list, n, b) {
+  bootstrap_bn_versions <- vector(mode = "list", length = floor(n / 2) - 1)
 
-  for (b in 1:B) {
+  for (b in 1:b) {
     for (nprime in 2:floor(n / 2)) {
       data_wv_list <- list(
         data_wv[clusters_list[[1]][[nprime - 1]][1, ], ],
         data_wv[clusters_list[[2]][[nprime - 1]][1, ], ]
       )
 
-      Bootstrap_Bn_versions[[nprime - 1]] <- rbind(
-        Bootstrap_Bn_versions[[nprime - 1]],
-        Bootstrap_Bn_multiscale(data_wv_list)
+      bootstrap_bn_versions[[nprime - 1]] <- rbind(
+        bootstrap_bn_versions[[nprime - 1]],
+        bootstrap_bn_multiscale(data_wv_list)
       )
     }
   }
 
-  return(Bootstrap_Bn_versions)
+  return(bootstrap_bn_versions)
 }
 
 #' Estimate standard errors from bootstrap samples
 #'
-#' @param Bootstrap_Bn_versions List of bootstrap Bn matrices
+#' @param bootstrap_bn_versions List of bootstrap Bn matrices
 #' @param n Total elements
 #' @return A list of standard error vectors
-std.errors_calc <- function(Bootstrap_Bn_versions, n) {
-  std.errors <- vector(mode = "list", length = floor(n / 2) - 1)
+std_errors_calc <- function(bootstrap_bn_versions, n) {
+  std_errors <- vector(mode = "list", length = floor(n / 2) - 1)
 
   for (nprime in 2:floor(n / 2)) {
-    std.errors[[nprime - 1]] <- apply(Bootstrap_Bn_versions[[nprime - 1]], 2, function(x) {
+    std_errors[[nprime - 1]] <- apply(bootstrap_bn_versions[[nprime - 1]], 2, function(x) {
       sd(x)
     })
   }
 
-  return(std.errors)
+  return(std_errors)
 }
 
 #' Calculate p-values for observed Bn maxima
 #'
-#' @param max_Bn_scales List of observed maxima
-#' @param std.errors List of estimated standard errors
+#' @param max_bn_scales List of observed maxima
+#' @param std_errors List of estimated standard errors
 #' @param n Total elements
 #' @return List of p-values
-p_values_calc <- function(max_Bn_scales, std.errors, n) {
+p_values_calc <- function(max_bn_scales, std_errors, n) {
   p_values <- vector(mode = "list", length = floor(n / 2) - 1)
 
   for (nprime in 2:floor(n / 2)) {
-    for (j in 1:nrow(max_Bn_scales[[1]])) {
-      p_values[[nprime - 1]] <- c(p_values[[nprime - 1]], 1 - pnorm(max_Bn_scales[[nprime - 1]][j, 3], sd = std.errors[[nprime - 1]][j]))
+    for (j in 1:nrow(max_bn_scales[[1]])) {
+      p_values[[nprime - 1]] <- c(p_values[[nprime - 1]], 1 - pnorm(max_bn_scales[[nprime - 1]][j, 3], sd = std_errors[[nprime - 1]][j]))
     }
   }
 
@@ -251,10 +251,10 @@ p_values_calc <- function(max_Bn_scales, std.errors, n) {
 #'
 #' @param p_values List of p-values
 #' @param t Time series length
-#' @param max_Bn_scales observed maxima
+#' @param max_bn_scales observed maxima
 #' @param clusters_list Possible clusters
 #' @return List of best clusters found per scale
-best_clusters_fun <- function(p_values, t, max_Bn_scales, clusters_list) {
+best_clusters_fun <- function(p_values, t, max_bn_scales, clusters_list) {
   min_value <- Inf
   min_index <- NULL
 
@@ -277,8 +277,8 @@ best_clusters_fun <- function(p_values, t, max_Bn_scales, clusters_list) {
     }
 
     best_cluster[[scal]] <- list(
-      clusters_list[[1]][[min_index[1]]][max_Bn_scales[[min_index[[1]]]][min_index[[2]], 1], ],
-      clusters_list[[2]][[min_index[1]]][max_Bn_scales[[min_index[[1]]]][min_index[[2]], 1], ]
+      clusters_list[[1]][[min_index[1]]][max_bn_scales[[min_index[[1]]]][min_index[[2]], 1], ],
+      clusters_list[[2]][[min_index[1]]][max_bn_scales[[min_index[[1]]]][min_index[[2]], 1], ]
     )
   }
 
@@ -305,9 +305,9 @@ cluster_notation_conv <- function(cluster_list, n) {
 #' Run clustering analysis on real data
 #'
 #' @param data Matrix of time series
-#' @param B Bootstrap reps
+#' @param b Bootstrap reps
 #' @return A list of clustering results for ACF, COR, EUCL, PER and pooled Bn
-cluster_fun <- function(data, B) {
+cluster_fun <- function(data, b) {
   n <- nrow(data)
 
   t <- ncol(data)
@@ -316,17 +316,17 @@ cluster_fun <- function(data, B) {
 
   clusters_list <- possible_clusters(n)
 
-  Bn_matrices <- Bn_matrices_list(data_wv, n, clusters_list)
+  bn_matrices <- bn_matrices_list(data_wv, n, clusters_list)
 
-  max_Bn_scales <- max_per_col_list(Bn_matrices, n)
+  max_bn_scales <- max_per_col_list(bn_matrices, n)
 
-  Bootstrap_Bn_versions <- Bootstrap_Bn_multiscale_list(data_wv, clusters_list, n, B)
+  bootstrap_bn_versions <- bootstrap_bn_multiscale_list(data_wv, clusters_list, n, b)
 
-  std.errors <- std.errors_calc(Bootstrap_Bn_versions, n)
+  std_errors <- std_errors_calc(bootstrap_bn_versions, n)
 
-  p_values <- p_values_calc(max_Bn_scales, std.errors, n)
+  p_values <- p_values_calc(max_bn_scales, std_errors, n)
 
-  best_clusters <- best_clusters_fun(p_values, t, max_Bn_scales, clusters_list)
+  best_clusters <- best_clusters_fun(p_values, t, max_bn_scales, clusters_list)
 
   best_clusters <- lapply(best_clusters, function(x) {
     cluster_notation_conv(x, n)
@@ -334,37 +334,37 @@ cluster_fun <- function(data, B) {
 
   # ACF
 
-  dist_obj_ACF <- diss(data, "ACF")
+  dist_obj_acf <- diss(data, "ACF")
 
-  clust_ACF <- pam(dist_obj_ACF, k = 2, diss = TRUE)
+  clust_acf <- pam(dist_obj_acf, k = 2, diss = TRUE)
 
-  output_ACF <- clust_ACF$clustering
+  output_acf <- clust_acf$clustering
 
   # COR
 
-  dist_obj_COR <- diss(data, "COR")
+  dist_obj_cor <- diss(data, "COR")
 
-  clust_COR <- pam(dist_obj_COR, k = 2, diss = TRUE)
+  clust_cor <- pam(dist_obj_cor, k = 2, diss = TRUE)
 
-  output_COR <- clust_COR$clustering
+  output_cor <- clust_cor$clustering
 
   # EUCL
 
-  dist_obj_EUCL <- diss(data, "EUCL")
+  dist_obj_eucl <- diss(data, "EUCL")
 
-  clust_EUCL <- pam(dist_obj_EUCL, k = 2, diss = TRUE)
+  clust_eucl <- pam(dist_obj_eucl, k = 2, diss = TRUE)
 
-  output_EUCL <- clust_EUCL$clustering
+  output_eucl <- clust_eucl$clustering
 
   # PER
 
-  dist_obj_PER <- diss(data, "PER")
+  dist_obj_per <- diss(data, "PER")
 
-  clust_PER <- pam(dist_obj_PER, k = 2, diss = TRUE)
+  clust_per <- pam(dist_obj_per, k = 2, diss = TRUE)
 
-  output_PER <- clust_PER$clustering
+  output_per <- clust_per$clustering
 
-  output <- c(list(output_ACF, output_COR, output_EUCL, output_PER), best_clusters)
+  output <- c(list(output_acf, output_cor, output_eucl, output_per), best_clusters)
 
   names(output) <- c("ACF", "COR", "EUCL", "PER", seq(1, length(output) - 4))
 
@@ -376,7 +376,7 @@ cluster_fun <- function(data, B) {
 # Arrowhead data
 
 # Note: Data file is not included in the repository. See thesis for sources.
-arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Dados", "Arrowhead", "ArrowHead.txt"))))
+arrowhead <- unname(unlist(read.table(file.path(base_path, "Dados", "Arrowhead", "ArrowHead.txt"))))
 
 plot(arrowhead, type = "l")
 
@@ -431,7 +431,7 @@ plot(
 abline(v = seq(0.5, 620.5, by = 62), lty = "dashed")
 
 set.seed(0)
-results_arrowhead <- cluster_fun(arrowhead_diff, B)
+results_arrowhead <- cluster_fun(arrowhead_diff, b)
 
 results_arrowhead <- as.data.frame(matrix(unlist(results_arrowhead), ncol = 20, byrow = TRUE), row.names = names(results_arrowhead))
 
@@ -439,23 +439,23 @@ results_arrowhead[c(2, 3, 4), ] <- 3 - results_arrowhead[c(2, 3, 4), ]
 
 ################################################################################
 
-# INMET data
+# inmet data
 
 # Note: Data file is not included in the repository. See thesis for sources.
-INMET <- read.csv(file.path(BASE_PATH, "Dados", "Selecao", "dados_INMET_processados.csv"))
+inmet <- read.csv(file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv"))
 
-INMET <- t(INMET[seq(1, nrow(INMET), by = 12), -c(1, 2)])
+inmet <- t(inmet[seq(1, nrow(inmet), by = 12), -c(1, 2)])
 
-INMET_diff <- unname(t(apply(INMET, 1, diff)))
+inmet_diff <- unname(t(apply(inmet, 1, diff)))
 
-save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_aplicacoes_part_1.RData"))
+save.image(file.path(workspace_dir, "12_Clustering_Bn_aplicacoes_part_1.RData"))
 set.seed(0)
-results_INMET <- cluster_fun(INMET_diff, B)
+results_inmet <- cluster_fun(inmet_diff, b)
 
-results_INMET <- as.data.frame(matrix(unlist(results_INMET), ncol = 10, byrow = TRUE), row.names = names(results_INMET))
+results_inmet <- as.data.frame(matrix(unlist(results_inmet), ncol = 10, byrow = TRUE), row.names = names(results_inmet))
 
-results_INMET[-c(1, 4), ] <- 3 - results_INMET[-c(1, 4), ]
+results_inmet[-c(1, 4), ] <- 3 - results_inmet[-c(1, 4), ]
 
-results_INMET <- 3 - results_INMET
+results_inmet <- 3 - results_inmet
 
-save.image(file.path(WORKSPACE_DIR, "12_Clustering_Bn_aplicacoes_final.RData"))
+save.image(file.path(workspace_dir, "12_Clustering_Bn_aplicacoes_final.RData"))

@@ -10,10 +10,10 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
 
-source(file.path(BASE_PATH, "src", "1_Simulation_functions.R"))
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "1_Simulation_functions.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 #' Check if ratio falls outside confidence interval
 #'
@@ -29,38 +29,38 @@ interval_check <- function(x) {
 
 #' Compare two blocks of data for variance change
 #'
-#' @param X Data vector for block 1
-#' @param Y Data vector for block 2
+#' @param x Data vector for block 1
+#' @param y Data vector for block 2
 #' @param approximation Either "F" (F-test) or "boot_quant" (Bootstrap quantiles)
 #' @param alpha_0 Significance level
 #' @param jmax Maximum wavelet level to consider
-#' @param B Number of bootstrap reps (if approximation == "boot_quant")
+#' @param b Number of bootstrap reps (if approximation == "boot_quant")
 #' @return 1 if change detected, 0 otherwise
-blocks_comparison <- function(X, Y, approximation, alpha_0, jmax, B) {
-  X.wv <- wv_estimates(X)
-  Y.wv <- wv_estimates(Y)
+blocks_comparison <- function(x, y, approximation, alpha_0, jmax, b) {
+  x_wv <- wv_estimates(x)
+  y_wv <- wv_estimates(y)
 
-  ratios <- Y.wv / X.wv
+  ratios <- y_wv / x_wv
 
-  X_Y <- c(X, Y)
+  x_y <- c(x, y)
 
-  N1 <- length(X)
-  N2 <- length(Y)
-  N <- N1 + N2
+  n1 <- length(x)
+  n2 <- length(y)
+  n <- n1 + n2
 
   alpha <- alpha_0 / jmax
 
   if (approximation == "boot_quant") {
     ratios_boot <- NULL
 
-    for (b in 1:B) {
-      boot_indexes <- block_boot(N, "SB", 1 / (4 * log2(N)))
+    for (b in 1:b) {
+      boot_indexes <- block_boot(n, "SB", 1 / (4 * log2(n)))
 
-      X_Y_boot <- X_Y[boot_indexes]
-      X_boot.wv <- wv_estimates(X_Y_boot[1:N1])
-      Y_boot.wv <- wv_estimates(X_Y_boot[(N1 + 1):(N)])
+      x_y_boot <- x_y[boot_indexes]
+      x_boot_wv <- wv_estimates(x_y_boot[1:n1])
+      y_boot_wv <- wv_estimates(x_y_boot[(n1 + 1):(n)])
 
-      ratios_boot <- rbind(ratios_boot, array(Y_boot.wv / X_boot.wv))
+      ratios_boot <- rbind(ratios_boot, array(y_boot_wv / x_boot_wv))
     }
 
     quants <- t(apply(ratios_boot, 2, function(x) {
@@ -71,11 +71,11 @@ blocks_comparison <- function(X, Y, approximation, alpha_0, jmax, B) {
   } else if (approximation == "F") {
     js <- 1:jmax
 
-    L_js <- (2^(js) - 1) * (8 - 1) + 1
+    l_js <- (2^(js) - 1) * (8 - 1) + 1
 
-    N_js <- N - L_js + 1
+    n_js <- n - l_js + 1
 
-    eta_js <- sapply(N_js / 2^js, function(x) {
+    eta_js <- sapply(n_js / 2^js, function(x) {
       max(x, 1)
     })
 
@@ -93,19 +93,19 @@ blocks_comparison <- function(X, Y, approximation, alpha_0, jmax, B) {
 if (FALSE) {
   # mult_factor <- 1
   #
-  # N <- 128
-  # X <- Model_B_sim(2*N)
-  # Y <- mult_factor*X[(N+1):(2*N)]
-  # X <- X[1:N]
+  # n <- 128
+  # x <- model_b_sim(2*n)
+  # y <- mult_factor*x[(n+1):(2*n)]
+  # x <- x[1:n]
   #
   # jmax <- 3
   #
   # alpha_0 <- 0.05
   #
-  # plot(c(X,Y), type = "l")
+  # plot(c(x,y), type = "l")
   #
-  # blocks_comparison(X, Y, "F", 0.05, 3, NA)
-  # blocks_comparison(X, Y, "boot_quant", 0.05, 3, 100)
+  # blocks_comparison(x, y, "F", 0.05, 3, NA)
+  # blocks_comparison(x, y, "boot_quant", 0.05, 3, 100)
 }
 
 ################################################################################
@@ -119,9 +119,9 @@ if (FALSE) {
 #' @param approximation Either "F" or "boot_quant"
 #' @param alpha_0 Significance level
 #' @param jmax Maximum wavelet level to consider
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return Matrix of block index pairs indicating where rejections occurred
-changepointdetection <- function(data, block_size, sequential, approximation, alpha_0, jmax, B) {
+changepointdetection <- function(data, block_size, sequential, approximation, alpha_0, jmax, b) {
   amount_blocks <- as.integer(length(data) / block_size)
 
   changepoint_blocks <- NULL
@@ -129,12 +129,12 @@ changepointdetection <- function(data, block_size, sequential, approximation, al
   if (sequential == TRUE) {
     for (index1 in 2:amount_blocks) {
       for (index2 in (index1 - 1):1) {
-        X <- data[(block_size * (index1 - 1) + 1):(index1 * block_size)]
-        Y <- data[(block_size * (index2 - 1) + 1):(index2 * block_size)]
+        x <- data[(block_size * (index1 - 1) + 1):(index1 * block_size)]
+        y <- data[(block_size * (index2 - 1) + 1):(index2 * block_size)]
 
         alpha <- alpha_0 * (2^(-index2)) / (1 - 2^(1 - index1))
 
-        rejection_temp <- blocks_comparison(Y, X, approximation, alpha, jmax, B)
+        rejection_temp <- blocks_comparison(y, x, approximation, alpha, jmax, b)
 
         if (rejection_temp == 1) {
           changepoint_blocks <- rbind(changepoint_blocks, c(index2, index1))
@@ -147,10 +147,10 @@ changepointdetection <- function(data, block_size, sequential, approximation, al
     for (index1 in 2:amount_blocks) {
       index2 <- index1 - 1
 
-      X <- data[(block_size * (index1 - 1) + 1):(index1 * block_size)]
-      Y <- data[(block_size * (index2 - 1) + 1):(index2 * block_size)]
+      x <- data[(block_size * (index1 - 1) + 1):(index1 * block_size)]
+      y <- data[(block_size * (index2 - 1) + 1):(index2 * block_size)]
 
-      rejection_temp <- blocks_comparison(Y, X, approximation, alpha_0, jmax, B)
+      rejection_temp <- blocks_comparison(y, x, approximation, alpha_0, jmax, b)
 
       if (rejection_temp == 1) {
         changepoint_blocks <- rbind(changepoint_blocks, c(index2, index1))
@@ -167,47 +167,47 @@ if (FALSE) {
 
 # mult_factor <- 1
 #
-# N <- 128
-# X <- Model_B_sim(2*N)
-# Y <- mult_factor*X[(N+1):(2*N)]
-# X <- X[1:N]
+# n <- 128
+# x <- model_b_sim(2*n)
+# y <- mult_factor*x[(n+1):(2*n)]
+# x <- x[1:n]
 #
 # jmax <- 3
 #
 # alpha_0 <- 0.05
 #
-# plot(c(X,Y), type = "l")
+# plot(c(x,y), type = "l")
 
   #
   #
-  # blocks_comparison(X, Y, "F", 0.05, 3, NA)
-  # changepointdetection(c(X,Y), 128, FALSE, "F", 0.05, 3, NA)
-  # changepointdetection(c(X,Y), 128, TRUE, "F", 0.05, 3, NA)
+  # blocks_comparison(x, y, "F", 0.05, 3, NA)
+  # changepointdetection(c(x,y), 128, FALSE, "F", 0.05, 3, NA)
+  # changepointdetection(c(x,y), 128, TRUE, "F", 0.05, 3, NA)
   #
-  # blocks_comparison(X, Y, "boot_quant", 0.05, 3, 100)
-  # changepointdetection(c(X,Y), 128, FALSE, "boot_quant", 0.05, 3, 100)
-  # changepointdetection(c(X,Y), 128, TRUE, "boot_quant", 0.05, 3, 100)
+  # blocks_comparison(x, y, "boot_quant", 0.05, 3, 100)
+  # changepointdetection(c(x,y), 128, FALSE, "boot_quant", 0.05, 3, 100)
+  # changepointdetection(c(x,y), 128, TRUE, "boot_quant", 0.05, 3, 100)
   #
   # #Example with three blocks of size 128
   #
 
-# N <- 128
-# X <- Model_B_sim(3*N)
-# Z <- X[(2*N+1):(3*N)]
-# Y <- X[(N+1):(2*N)]
-# X <- X[1:N]
+# n <- 128
+# x <- model_b_sim(3*n)
+# z <- x[(2*n+1):(3*n)]
+# y <- x[(n+1):(2*n)]
+# x <- x[1:n]
 #
 # jmax <- 3
 #
 # alpha_0 <- 0.05
 #
-# plot(c(X,Y), type = "l")
+# plot(c(x,y), type = "l")
 
   #
   #
-  # changepointdetection(c(X,Y,Z), 128, FALSE, "F", 0.05, 3, NA)
-  # changepointdetection(c(X,Y,Z), 128, TRUE, "F", 0.05, 3, NA)
+  # changepointdetection(c(x,y,z), 128, FALSE, "F", 0.05, 3, NA)
+  # changepointdetection(c(x,y,z), 128, TRUE, "F", 0.05, 3, NA)
   #
-  # changepointdetection(c(X,Y,Z), 128, FALSE, "boot_quant", 0.05, 3, 100)
-  # changepointdetection(c(X,Y,Z), 128, TRUE, "boot_quant", 0.05, 3, 100)
+  # changepointdetection(c(x,y,z), 128, FALSE, "boot_quant", 0.05, 3, 100)
+  # changepointdetection(c(x,y,z), 128, TRUE, "boot_quant", 0.05, 3, 100)
 }

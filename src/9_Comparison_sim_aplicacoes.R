@@ -1,7 +1,7 @@
 # =============================================================================
 # 9_Comparison_sim_aplicacoes.R
 # =============================================================================
-# Purpose  : Real-data comparison of feature sets (Arrowhead, INMET).
+# Purpose  : Real-data comparison of feature sets (Arrowhead, inmet).
 # Chapter  : Chapter 3
 # Inputs   : ArrowHead.txt, dados_INMET_processados.csv (Data files not included).
 # Outputs  : LaTeX tables for feature comparisons.
@@ -10,17 +10,17 @@
 # Date     : 2024
 # =============================================================================
 
-BASE_PATH <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
-WORKSPACE_DIR <- file.path(BASE_PATH, "src", "WorkspaceData")
-if (!dir.exists(WORKSPACE_DIR)) dir.create(WORKSPACE_DIR, recursive = TRUE)
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+workspace_dir <- file.path(base_path, "src", "WorkspaceData")
+if (!dir.exists(workspace_dir)) dir.create(workspace_dir, recursive = TRUE)
 
-source(file.path(BASE_PATH, "src", "2_Bootstrap_methods.R"))
+source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
 # --- Testing Mode ---
-TEST_MODE <- TRUE
+test_mode <- TRUE
 # --------------------
 
-B <- if (TEST_MODE) 2 else 100
+b <- if (test_mode) 2 else 100
 
 alpha_0 <- 0.05
 
@@ -72,45 +72,45 @@ index_conversion <- function(arr) {
 
 #' Compare two time series features via wavelet variance ratios
 #'
-#' @param X Data vector for group 1
-#' @param Y Data vector for group 2
+#' @param x Data vector for group 1
+#' @param y Data vector for group 2
 #' @param alpha Significance level
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return Matrix of rejections for F-test and Bootstrap (dep/indep)
-comparison_fun <- function(X, Y, alpha, B) {
+comparison_fun <- function(x, y, alpha, b) {
   # we assume both have the same length
-  N <- length(X)
+  n <- length(x)
 
-  n_levels <- floor(log2(1 + (N - 1) / (8 - 1)))
+  n_levels <- floor(log2(1 + (n - 1) / (8 - 1)))
 
-  X.wv <- wv_estimates(X)
-  Y.wv <- wv_estimates(Y)
+  x_wv <- wv_estimates(x)
+  y_wv <- wv_estimates(y)
 
-  ratios <- Y.wv / X.wv
+  ratios <- y_wv / x_wv
 
-  X_Y <- c(X, Y)
+  x_y <- c(x, y)
 
-  ratios_F <- NULL
+  ratios_f <- NULL
 
-  rejections_F <- NULL
+  rejections_f <- NULL
 
   for (jmax in 1:n_levels) {
     alpha <- alpha_0 / jmax
 
     js <- 1:jmax
 
-    L_js <- (2^(js) - 1) * (8 - 1) + 1
+    l_js <- (2^(js) - 1) * (8 - 1) + 1
 
-    N_js <- N - L_js + 1
+    n_js <- n - l_js + 1
 
-    eta_js <- sapply(N_js / 2^js, function(x) {
+    eta_js <- sapply(n_js / 2^js, function(x) {
       max(x, 1)
     })
 
-    quants_F <- t(sapply(eta_js, function(x) {
+    quants_f <- t(sapply(eta_js, function(x) {
       qf(c(alpha / 2, 1 - alpha / 2), x, x)
     }))
-    rejections_F <- c(rejections_F, max(apply(cbind(ratios[1:jmax], quants_F), 1, interval_check)))
+    rejections_f <- c(rejections_f, max(apply(cbind(ratios[1:jmax], quants_f), 1, interval_check)))
   }
 
   # bootstrap-based tests
@@ -118,30 +118,30 @@ comparison_fun <- function(X, Y, alpha, B) {
   ratios_boot_indep <- NULL
   ratios_boot_dep <- NULL
 
-  for (b in 1:B) {
+  for (b in 1:b) {
     # dep method
 
-    boot_indexes <- block_boot(2 * N, "SB", 1 / (4 * log2(2 * N)))
+    boot_indexes <- block_boot(2 * n, "SB", 1 / (4 * log2(2 * n)))
 
-    X_Y_boot <- X_Y[boot_indexes]
-    X_boot.wv_dep <- wv_estimates(X_Y_boot[1:N])
-    Y_boot.wv_dep <- wv_estimates(X_Y_boot[(N + 1):(2 * N)])
+    x_y_boot <- x_y[boot_indexes]
+    x_boot_wv_dep <- wv_estimates(x_y_boot[1:n])
+    y_boot_wv_dep <- wv_estimates(x_y_boot[(n + 1):(2 * n)])
 
     # indep method
 
-    boot_indexes_A <- block_boot(N, "SB", 1 / (4 * log2(N)))
-    boot_indexes_B <- block_boot(N, "SB", 1 / (4 * log2(N)))
+    boot_indexes_a <- block_boot(n, "SB", 1 / (4 * log2(n)))
+    boot_indexes_b <- block_boot(n, "SB", 1 / (4 * log2(n)))
 
-    X_boot <- X[boot_indexes_A]
-    Y_boot <- Y[boot_indexes_B]
+    x_boot <- x[boot_indexes_a]
+    y_boot <- y[boot_indexes_b]
 
-    X_boot.wv_indep <- wv_estimates(X_boot)
-    Y_boot.wv_indep <- wv_estimates(Y_boot)
+    x_boot_wv_indep <- wv_estimates(x_boot)
+    y_boot_wv_indep <- wv_estimates(y_boot)
 
     # calculating
 
-    ratios_boot_dep <- rbind(ratios_boot_dep, array(Y_boot.wv_dep / X_boot.wv_dep))
-    ratios_boot_indep <- rbind(ratios_boot_indep, array(Y_boot.wv_indep / X_boot.wv_indep))
+    ratios_boot_dep <- rbind(ratios_boot_dep, array(y_boot_wv_dep / x_boot_wv_dep))
+    ratios_boot_indep <- rbind(ratios_boot_indep, array(y_boot_wv_indep / x_boot_wv_indep))
   }
 
 
@@ -162,16 +162,16 @@ comparison_fun <- function(X, Y, alpha, B) {
     rejections_boot_indep <- c(rejections_boot_indep, max(apply(cbind(ratios[1:jmax], quants_boot_indep), 1, interval_check)))
   }
 
-  return(cbind(rejections_F, rejections_boot_dep, rejections_boot_indep))
+  return(cbind(rejections_f, rejections_boot_dep, rejections_boot_indep))
 }
 
 #' Perform multiple pairwise feature comparisons
 #'
 #' @param data Matrix of time series datasets
 #' @param alpha Significance level
-#' @param B Number of bootstrap reps
+#' @param b Number of bootstrap reps
 #' @return A list of matrices (F, bootstrap_sem_sep, bootstrap_com_sep)
-multiple_comparison_fun <- function(data, alpha, B) {
+multiple_comparison_fun <- function(data, alpha, b) {
   output1 <- matrix(NA, nrow = ncol(data), ncol = ncol(data))
   output2 <- matrix(NA, nrow = ncol(data), ncol = ncol(data))
   output3 <- matrix(NA, nrow = ncol(data), ncol = ncol(data))
@@ -195,10 +195,10 @@ multiple_comparison_fun <- function(data, alpha, B) {
 
       k <- k + 1
 
-      X <- data[, i]
-      Y <- data[, j]
+      x <- data[, i]
+      y <- data[, j]
 
-      comparison_temp <- comparison_fun(X, Y, alpha, B)
+      comparison_temp <- comparison_fun(x, y, alpha, b)
 
       output1[i, j] <- index_conversion(comparison_temp[, 1])
       output2[i, j] <- index_conversion(comparison_temp[, 2])
@@ -214,7 +214,7 @@ multiple_comparison_fun <- function(data, alpha, B) {
 
 # Interest rates data
 
-# interest_rates <- read.csv(file.path(BASE_PATH, "Dados", "Interest Rates", "Interest_rates.csv"), row.names = 1)
+# interest_rates <- read.csv(file.path(base_path, "Dados", "Interest Rates", "interest_rates.csv"), row.names = 1)
 #
 # plot(interest_rates[1:239,1], type = "l")
 # lines(interest_rates[1:239,2], col = "red")
@@ -243,10 +243,10 @@ multiple_comparison_fun <- function(data, alpha, B) {
 # lines(interest_rates_log[1:239,4], col = "green")
 #
 #
-# X <- interest_rates_diff[,1]
-# Y <- interest_rates_diff[,3]
+# x <- interest_rates_diff[,1]
+# y <- interest_rates_diff[,3]
 #
-# comparison_fun(X,Y,0.05,100)
+# comparison_fun(x,y,0.05,100)
 #
 # set.seed(0)
 # results_interest_rates <- multiple_comparison_fun(interest_rates_diff, 0.05, 100)
@@ -259,7 +259,7 @@ multiple_comparison_fun <- function(data, alpha, B) {
 # Arrowhead
 
 # Note: Data file is not included in the repository. See thesis for sources.
-arrowhead <- unname(unlist(read.table(file.path(BASE_PATH, "Dados/Arrowhead", "ArrowHead.txt"))))
+arrowhead <- unname(unlist(read.table(file.path(base_path, "Dados/Arrowhead", "ArrowHead.txt"))))
 
 plot(arrowhead, type = "l")
 
@@ -309,30 +309,30 @@ results_arrowhead <- multiple_comparison_fun(sample_arrowhead, 0.05, 100)
 
 ################################################################################
 
-# INMET data
+# inmet data
 
 # Note: Data file is not included in the repository. See thesis for sources.
-INMET <- read.csv(file.path(BASE_PATH, "Dados", "Selecao", "dados_INMET_processados.csv"))
+inmet <- read.csv(file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv"))
 
-INMET_selec <- INMET[seq(1, 8760, by = 12), ]
+inmet_selec <- inmet[seq(1, 8760, by = 12), ]
 
-plot(INMET_selec[, 3], type = "l")
-lines(INMET_selec[, 8], col = "blue")
+plot(inmet_selec[, 3], type = "l")
+lines(inmet_selec[, 8], col = "blue")
 
-INMET_selec_diff <- apply(INMET_selec[-(1:2)], 2, diff)
+inmet_selec_diff <- apply(inmet_selec[-(1:2)], 2, diff)
 
-plot(INMET_selec_diff[, 1], type = "l")
-lines(INMET_selec_diff[, 5], col = "blue")
+plot(inmet_selec_diff[, 1], type = "l")
+lines(inmet_selec_diff[, 5], col = "blue")
 
 comparison_fun(
-  INMET_selec_diff[, 1],
-  INMET_selec_diff[, 6],
+  inmet_selec_diff[, 1],
+  inmet_selec_diff[, 6],
   0.05, 100
 )
 
-save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_aplicacoes_part_1.RData"))
+save.image(file.path(workspace_dir, "9_Comparison_sim_aplicacoes_part_1.RData"))
 set.seed(0)
-results_INMET <- multiple_comparison_fun(INMET_selec_diff, 0.05, 100)
+results_inmet <- multiple_comparison_fun(inmet_selec_diff, 0.05, 100)
 
 
-save.image(file.path(WORKSPACE_DIR, "9_Comparison_sim_aplicacoes_final.RData"))
+save.image(file.path(workspace_dir, "9_Comparison_sim_aplicacoes_final.RData"))
