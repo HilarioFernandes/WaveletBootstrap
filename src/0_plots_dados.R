@@ -10,7 +10,8 @@
 # Date     : 2024
 # =============================================================================
 
-base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap" # <- SET THIS before running
+# <- SET THIS before running
+base_path <- "C:/Users/Hilar/Projects/WaveletBootstrap"
 
 source(file.path(base_path, "src", "2_Bootstrap_methods.R"))
 
@@ -26,10 +27,15 @@ if (!dir.exists(output_path)) dir.create(output_path, recursive = TRUE)
 # Cisalhamento Oceânico
 
 # Note: Data file is not included in the repository. See thesis for sources.
-ocean_shear <- unname(unlist(as.vector(read.table(file.path(base_path, "Dados", "Ocean Shear", "Ocean Shear.txt")))))
+ocean_shear <- unname(unlist(as.vector(read.table(
+  file.path(base_path, "Dados", "Ocean Shear", "Ocean Shear.txt")
+))))
 
 
-png(file = file.path(output_path, "OceanShear.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "OceanShear.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mfrow = c(1, 1), mar = c(4.1, 4, 1, 1))
 plot(ocean_shear,
@@ -47,7 +53,10 @@ dev.off()
 
 oceanshear_diff <- diff(ocean_shear)
 
-png(file = file.path(output_path, "OceanShear2.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "OceanShear2.png"),
+  width = 1800, height = 900, res = 210
+)
 par(mfrow = c(1, 1), mar = c(4.1, 5, 1, 1))
 plot(oceanshear_diff,
   type = "l", xaxt = "n", xlab = "Profundidade (metros)",
@@ -72,10 +81,16 @@ oceanshear_diff_modwt <- modwt(oceanshear_diff, n.levels = n_levels)[1:n_levels]
 for (j in 1:n_levels) {
   l_j <- (2^j - 1) * (8 - 1) + 1
 
-  oceanshear_diff_modwt[[j]] <- c(rep(NA, l_j), oceanshear_diff_modwt[[j]][l_j:length(oceanshear_diff_modwt[[j]])])
+  oceanshear_diff_modwt[[j]] <- c(
+    rep(NA, l_j),
+    oceanshear_diff_modwt[[j]][l_j:length(oceanshear_diff_modwt[[j]])]
+  )
 }
 
-png(file = file.path(output_path, "OceanShear3.png"), width = 1600, height = 1600, res = 280)
+png(
+  file = file.path(output_path, "OceanShear3.png"),
+  width = 1600, height = 1600, res = 280
+)
 
 par(mar = c(3, 3.5, 0.1, 1))
 par(mfrow = c(6, 1))
@@ -151,8 +166,7 @@ returns_fun <- function(data) {
   for (i in 2:length(data_temp)) {
     output <- c(output, (data_temp[i] - data_temp[i - 1]) / data_temp[i - 1])
   }
-
-  return(output)
+  output
 }
 
 #' Subset data by time intervals
@@ -172,19 +186,23 @@ subset_data <- function(interval_type, interval, day_start, day_stop) {
   }
 
   output1 <- seq(1, 24600, by = adj_interval)
-
-  return(list(output1, c(1, day_start:day_stop)))
+  list(output1, c(1, day_start:day_stop))
 }
 
 # Note: Data file is not included in the repository. See thesis for sources.
-cboe <- read.csv(file.path(base_path, "Dados", "SPX_second", "SPX.csv"), check.names = FALSE)
+cboe <- read.csv(
+  file.path(base_path, "Dados", "SPX_second", "SPX.csv"),
+  check.names = FALSE
+)
 
 # sampling
 indexes <- subset_data("minutes", 15, 2, 44)
 
 cboe_selection <- cboe[indexes[[1]], indexes[[2]]]
 
-cboe_selection_temp <- unname(unlist(as.vector(cboe_selection[, 2:ncol(cboe_selection)])))
+cboe_selection_temp <- unname(unlist(as.vector(
+  cboe_selection[, 2:ncol(cboe_selection)]
+)))
 
 labels_plot <- substr(colnames(cboe_selection)[1 + seq(1, 43, by = 7)], 6, 10)
 
@@ -192,7 +210,10 @@ labels_plot <- sapply(labels_plot, function(x) {
   paste0(substr(x, 4, 5), ".", substr(x, 1, 2))
 })
 
-png(file = file.path(output_path, "cboe.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "cboe.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mar = c(4, 4, 1, 1), mfrow = c(1, 1))
 
@@ -211,7 +232,10 @@ dev.off()
 
 cboe_selection_returns <- returns_fun(cboe_selection)
 
-png(file = file.path(output_path, "CBOE2.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "CBOE2.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mar = c(4, 4, 1, 1))
 
@@ -232,7 +256,8 @@ dev.off()
 # Oscilação de Madden-Julian
 
 # Note: Data file is not included in the repository. See thesis for sources.
-# Added na.strings="*****" to handle missing values and prevent coercion warnings
+# Added na.strings="*****" to handle missing values
+# and prevent coercion warnings
 mjo_df <- read.table(file.path(base_path, "Dados", "mjo", "mjo.txt"),
   na.strings = c("NA", "*****")
 )
@@ -249,10 +274,16 @@ years_plot <- seq(1978, 2010, by = 2)
 indexes_years_plot <- NULL
 
 for (year in years_plot) {
-  indexes_years_plot <- c(indexes_years_plot, which(mjo_labels_paper == year)[1])
+  indexes_years_plot <- c(
+    indexes_years_plot,
+    which(mjo_labels_paper == year)[1]
+  )
 }
 
-png(file = file.path(output_path, "mjo.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "mjo.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mar = c(4.1, 5, 1, 1))
 par(mfrow = c(1, 1))
@@ -270,9 +301,15 @@ dev.off()
 # Pontas de flechas
 
 # Note: Data file is not included in the repository. See thesis for sources.
-arrowhead <- unname(unlist(read.table(file.path(base_path, "Dados", "Arrowhead", "ArrowHead.txt"))))
+arrowhead <- unname(unlist(read.table(
+  file.path(base_path, "Dados", "Arrowhead", "ArrowHead.txt")
+)))
 
-indexes_min <- c(1, 64, 126, 189, 251, 314, 377, 439, 503, 565, 629, 691, 753, 816, 878, 942, 1005, 1068, 1130, 1192, 1255, 1319, 1381, 1443, 1506)
+indexes_min <- c(
+  1, 64, 126, 189, 251, 314, 377, 439, 503, 565, 629, 691,
+  753, 816, 878, 942, 1005, 1068, 1130, 1192, 1255, 1319,
+  1381, 1443, 1506
+)
 
 png(
   file = file.path(output_path, "arrowhead.png"),
@@ -286,7 +323,10 @@ plot(arrowhead[1:753],
   lwd = 1.5, ylim = c(-2.5, 3), yaxt = "n", xaxt = "n"
 )
 abline(v = indexes_min, col = "black", lty = 2)
-axis(1, at = indexes_min[c(1, 3, 5, 7, 9, 11, 13)], cex.axis = 1.5, cex.lab = 1.5, )
+axis(
+  1, at = indexes_min[c(1, 3, 5, 7, 9, 11, 13)],
+  cex.axis = 1.5, cex.lab = 1.5
+)
 axis(2, at = c(-2, 0, 2), cex.axis = 1.5)
 
 plot(arrowhead[754:1506],
@@ -294,7 +334,11 @@ plot(arrowhead[754:1506],
   lwd = 1.5, ylim = c(-2.5, 3), yaxt = "n", xaxt = "n"
 )
 abline(v = indexes_min, col = "black", lty = 2)
-axis(1, at = indexes_min[c(13, 15, 17, 19, 21, 23, 25)] - 753, labels = indexes_min[c(13, 15, 17, 19, 21, 23, 25)], cex.axis = 1.5, cex.lab = 1.5)
+axis(
+  1, at = indexes_min[c(13, 15, 17, 19, 21, 23, 25)] - 753,
+  labels = indexes_min[c(13, 15, 17, 19, 21, 23, 25)],
+  cex.axis = 1.5, cex.lab = 1.5
+)
 axis(2, at = c(-2, 0, 2), cex.axis = 1.5)
 
 dev.off()
@@ -308,7 +352,9 @@ dev.off()
 # Temperaturas em cidades Brasileiras
 
 # Note: Data file is not included in the repository. See thesis for sources.
-inmet <- read.csv(file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv"))
+inmet <- read.csv(
+  file.path(base_path, "Dados", "Selecao", "dados_INMET_processados.csv")
+)
 
 inmet_selec <- inmet[seq(1, 8760, by = 12), ]
 
@@ -332,7 +378,6 @@ plot(inmet_selec[, 3],
   lwd = 1.5
 )
 lines(inmet_selec[, 10], col = "grey")
-# axis(1,at = seq(0,609, length.out = 6), labels = c("Jan", "Mar", "Mai", "Jul", "Set", "Nov"))
 axis(1, at = c(first_days, length(inmet_selec[, 3] + 1)), labels = c(
   "Jan", "Fev", "Mar",
   "Abr", "Mai", "Jun",
@@ -395,15 +440,30 @@ block_lengths <- rgeom(6, 1 / 28)
 block_start_points <- sample(128, 6, replace = TRUE)
 
 boot_example_bootstrap <- c(
-  boot_example_extended[block_start_points[1]:(block_start_points[1] + block_lengths[1] - 1)],
-  boot_example_extended[block_start_points[2]:(block_start_points[2] + block_lengths[2] - 1)],
-  boot_example_extended[block_start_points[3]:(block_start_points[3] + block_lengths[3] - 1)],
-  boot_example_extended[block_start_points[4]:(block_start_points[4] + block_lengths[4] - 1)],
-  boot_example_extended[block_start_points[5]:(block_start_points[5] + block_lengths[5] - 1)],
-  boot_example_extended[block_start_points[6]:(block_start_points[6] + block_lengths[6] - 1)]
+  boot_example_extended[
+    block_start_points[1]:(block_start_points[1] + block_lengths[1] - 1)
+  ],
+  boot_example_extended[
+    block_start_points[2]:(block_start_points[2] + block_lengths[2] - 1)
+  ],
+  boot_example_extended[
+    block_start_points[3]:(block_start_points[3] + block_lengths[3] - 1)
+  ],
+  boot_example_extended[
+    block_start_points[4]:(block_start_points[4] + block_lengths[4] - 1)
+  ],
+  boot_example_extended[
+    block_start_points[5]:(block_start_points[5] + block_lengths[5] - 1)
+  ],
+  boot_example_extended[
+    block_start_points[6]:(block_start_points[6] + block_lengths[6] - 1)
+  ]
 )
 
-png(file = file.path(output_path, "boot_example_1.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "boot_example_1.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mar = c(3.1, 3, 1, 1))
 par(mfrow = c(1, 1))
@@ -411,11 +471,17 @@ plot(boot_example, type = "p", pch = 1, xlab = "", ylab = "", lwd = 1.5)
 lines(boot_example, lwd = 1.5)
 dev.off()
 
-png(file = file.path(output_path, "boot_example_2.png"), width = 1800, height = 900, res = 210)
+png(
+  file = file.path(output_path, "boot_example_2.png"),
+  width = 1800, height = 900, res = 210
+)
 
 par(mar = c(3.1, 3, 1, 1))
 par(mfrow = c(1, 1))
-plot(boot_example_bootstrap, type = "p", pch = 1, xlab = "", ylab = "", lwd = 1.5)
+plot(
+  boot_example_bootstrap, type = "p",
+  pch = 1, xlab = "", ylab = "", lwd = 1.5
+)
 lines(boot_example_bootstrap, lwd = 1.5)
 abline(v = c(5.5, 12.5, 22.5, 97.5, 116.5), lty = 2)
 dev.off()

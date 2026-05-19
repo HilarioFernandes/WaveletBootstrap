@@ -155,85 +155,44 @@ for (iter in 1:iterations) {
     c_wv[[i]] <- rbind(c_wv[[i]], wv_estimates(yc))
     d_wv[[i]] <- rbind(d_wv[[i]], wv_estimates(yd))
 
-    a_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      ya, "wb", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
+    f_nbb <- function(n) floor(4 * log2(n))
+    f_sb <- function(n) 1 / (4 * log2(n))
 
-    a_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      ya, "bw", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
+    a_wv_wb_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(ya, "wb", TRUE, "NBB", f_nbb, b)
+    a_wv_bw_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(ya, "bw", TRUE, "NBB", f_nbb, b)
+    a_wv_wb_sb[[i]][[iter]] <-
+      bootstrap_wavelet(ya, "wb", TRUE, "SB", f_sb, b)
+    a_wv_bw_sb[[i]][[iter]] <-
+      bootstrap_wavelet(ya, "bw", TRUE, "SB", f_sb, b)
 
-    a_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
-      ya, "wb", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
+    b_wv_wb_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yb, "wb", TRUE, "NBB", f_nbb, b)
+    b_wv_bw_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yb, "bw", TRUE, "NBB", f_nbb, b)
+    b_wv_wb_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yb, "wb", TRUE, "SB", f_sb, b)
+    b_wv_bw_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yb, "bw", TRUE, "SB", f_sb, b)
 
-    a_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
-      ya, "bw", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
+    c_wv_wb_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yc, "wb", TRUE, "NBB", f_nbb, b)
+    c_wv_bw_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yc, "bw", TRUE, "NBB", f_nbb, b)
+    c_wv_wb_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yc, "wb", TRUE, "SB", f_sb, b)
+    c_wv_bw_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yc, "bw", TRUE, "SB", f_sb, b)
 
-    b_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yb, "wb", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    b_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yb, "bw", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    b_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yb, "wb", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
-
-    b_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yb, "bw", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
-
-    c_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yc, "wb", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    c_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yc, "bw", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    c_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yc, "wb", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
-
-    c_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yc, "bw", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
-
-    d_wv_wb_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yd, "wb", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    d_wv_bw_nbb[[i]][[iter]] <- bootstrap_wavelet(
-      yd, "bw", TRUE, "NBB", function(n) {
-      floor(4 * log2(n))
-    }, b)
-
-    d_wv_wb_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yd, "wb", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
-
-    d_wv_bw_sb[[i]][[iter]] <- bootstrap_wavelet(
-      yd, "bw", TRUE, "SB", function(n) {
-      1 / (4 * log2(n))
-    }, b)
+    d_wv_wb_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yd, "wb", TRUE, "NBB", f_nbb, b)
+    d_wv_bw_nbb[[i]][[iter]] <-
+      bootstrap_wavelet(yd, "bw", TRUE, "NBB", f_nbb, b)
+    d_wv_wb_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yd, "wb", TRUE, "SB", f_sb, b)
+    d_wv_bw_sb[[i]][[iter]] <-
+      bootstrap_wavelet(yd, "bw", TRUE, "SB", f_sb, b)
   }
 }
 
@@ -245,7 +204,8 @@ for (iter in 1:iterations) {
 #'
 #' @param list1 First nested list of wavelet variance estimates
 #' @param list2 Second nested list of bootstrap wavelet variance estimates
-#' @return A list of matrices (one per sample size) containing the max abs diff for each iteration and level
+#' @return A list of matrices (one per sample size) containing the max abs diff
+#'   for each iteration and level
 max_abs_diff_cdfs <- function(list1, list2) {
   # We create a matrix in which rows correspond to iterations and columns
   # correspond to scales. Each element of this matrix is the maximum absolute
@@ -268,7 +228,7 @@ max_abs_diff_cdfs <- function(list1, list2) {
 
       for (j in 1:n_levels) {
         # We will then fill the matrices
-        list_temp[[i]][iter, j] <- distance_cdfs(
+        list_temp[[i]][iter, j] <- distance_cdfs( # nolint: object_usage_linter
           list2[[i]][[iter]][, j], list1[[i]][, j], 100
         )
       }
